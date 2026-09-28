@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="tr" data-ui="tr">
+<html lang="en" data-ui="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Varsayım yerine ölçüm — İlkay Murat Ertekin</title>
-<meta name="description" content="Framework kullanmadan küçük bir coding agent yazarken makul görünen ama ölçüme dayanamayan yedi varsayım. Devam eden bir projeden ara not.">
-<link rel="canonical" href="https://imertekin.com/yazilar/varsayim-yerine-olcum/">
+<title>Measure, don’t assume — İlkay Murat Ertekin</title>
+<meta name="description" content="Seven reasonable-looking assumptions that did not survive measurement while building a small coding agent without a framework. An interim note from an ongoing project.">
+<link rel="canonical" href="https://imertekin.com/writing/measure-dont-assume/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.6' fill='none' stroke='%23a93d27' stroke-width='1.6'/%3E%3Cpath d='M7 1.4A5.6 5.6 0 0 1 7 12.6Z' fill='%23a93d27'/%3E%3C/svg%3E">
-<meta property="og:title" content="Varsayım yerine ölçüm — İlkay Murat Ertekin">
-<meta property="og:description" content="Framework kullanmadan küçük bir coding agent yazarken makul görünen ama ölçüme dayanamayan yedi varsayım. Devam eden bir projeden ara not.">
-<meta property="og:url" content="https://imertekin.com/yazilar/varsayim-yerine-olcum/">
+<meta property="og:title" content="Measure, don’t assume — İlkay Murat Ertekin">
+<meta property="og:description" content="Seven reasonable-looking assumptions that did not survive measurement while building a small coding agent without a framework. An interim note from an ongoing project.">
+<meta property="og:url" content="https://imertekin.com/writing/measure-dont-assume/">
 <meta property="og:type" content="website">
 <meta name="author" content="İlkay Murat Ertekin">
 <link rel="alternate" hreflang="tr" href="https://imertekin.com/yazilar/varsayim-yerine-olcum/">
@@ -493,237 +493,235 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 </header>
 <nav class="crumbs"><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a> / <span class="ui" lang="tr">Ara not</span><span class="ui" lang="en">Interim note</span></nav>
 
-<header class="post-head" lang="tr">
-  <h1>Varsayım yerine ölçüm: küçük bir coding agent yazarken yanlış çıkan yedi varsayım</h1>
-  <p class="dek">Devam eden bir projeden ara not.</p>
+<header class="post-head" lang="en">
+  <h1>Measure, don&rsquo;t assume: seven assumptions that turned out wrong while building a small coding agent</h1>
+  <p class="dek">An interim note from an ongoing project.</p>
 </header>
 
 <dl class="survey-strip">
   <div><dt><span class="ui" lang="tr">Tarih</span><span class="ui" lang="en">Date</span></dt><dd>2026-09</dd></div>
   <div><dt><span class="ui" lang="tr">Durum</span><span class="ui" lang="en">Status</span></dt><dd><svg class="status measured" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path class="fill" d="M7 1.8A5.2 5.2 0 0 1 7 12.2Z"/></svg> <span class="ui" lang="tr">devam ediyor</span><span class="ui" lang="en">ongoing</span></dd></div>
   <div><dt><span class="ui" lang="tr">Sürüm</span><span class="ui" lang="en">Version</span></dt><dd>0.1</dd></div>
-  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">TR</span> <a href="/writing/measure-dont-assume/" hreflang="en">EN →</a></dd></div>
-  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
+  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">EN</span> <a href="/yazilar/varsayim-yerine-olcum/" hreflang="tr">TR →</a></dd></div>
+  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~13 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
 </dl>
 
-<p class="ongoing"><span class="ui" lang="tr">Bu bir ara not. Proje devam ediyor; “harness mi, model mi?” sorusunun cevabı geldiğinde son bölüm güncellenecek ve değişiklik kaydına işlenecek.</span><span class="ui" lang="en">This is an interim note. The project is ongoing; the last section will be updated once the “harness or model?” question is answered.</span></p>
+<p class="ongoing">This is an interim note. The project is ongoing; the last section will be updated once the “harness or model?” question is answered, and the change will be recorded in the changelog.</p>
 
-<section class="abstract" lang="tr">
-  <h2>Kısaca</h2>
-  <p>Framework kullanmadan, sıfırdan küçük bir coding agent yazıyorum. Amacım bir ürün çıkarmak değil; &ldquo;agent&rdquo; dediğimiz şeyin gerçekte ne olduğunu kendi elimle kurarak öğrenmek. Yol boyunca makul görünen varsayımlarımın önemli bir kısmı ölçüme dayanamadı. Bu yazıda bunlardan yedisini anlatıyorum, ve hepsinin ortak dersi aynı çıktı: <strong>tahmin etme, ölç.</strong></p>
-  <p class="kw"><b><span class="ui" lang="tr">Anahtar kelimeler</span><span class="ui" lang="en">Keywords</span>:</b> coding agent · harness · tool calling · <span class="ui" lang="tr">tekrarlanabilir ölçüm</span><span class="ui" lang="en">reproducible measurement</span> · trace · memory</p>
+<section class="abstract" lang="en">
+  <h2>In short</h2>
+  <p>I&rsquo;m building a small coding agent from scratch, without a framework. The goal isn&rsquo;t a product; it&rsquo;s to learn what an &ldquo;agent&rdquo; actually is by assembling one with my own hands. Along the way, a good share of my reasonable-looking assumptions didn&rsquo;t survive measurement. This note covers seven of them, and they all taught the same lesson: <strong>don&rsquo;t guess, measure.</strong></p>
+  <p class="kw"><b>Keywords:</b> coding agent · harness · tool calling · reproducible measurement · trace · memory</p>
 </section>
 
-<article class="article" lang="tr">
+<article class="article" lang="en">
 <div class="prose">
-<h2>Proje ne?</h2>
-<p>Agentic coding üzerine okurken en sık karşılaştığım cümle şuydu: <strong>Agent = Model + Harness.</strong> Model, metin alıp metin üreten LLM. Harness ise onun etrafındaki her şey: modele hangi tool&rsquo;ların tarif edildiği, context&rsquo;in nasıl kurulduğu, state&rsquo;in nerede tutulduğu, döngünün ne zaman durduğu. Model hiçbir şey çalıştırmaz, sadece <em>ister</em>. Dosyayı okuyan, testi koşan, sonucu geri veren kod harness&rsquo;ta.</p>
-<span class="fn"><b>Not ·</b> Bu deneyin çıkış noktası SWE-agent ekibinin <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> çalışması <a class="cite" href="#r1">[1]</a>: küçük ve okunabilir bir agent döngüsünün ne kadar ileri gidebildiğini göstermesi <a class="cite" href="#r2">[2]</a>.</span>
-<p>Bu cümleyi okumak ile anlamak arasında fark olduğunu düşündüm ve harness&rsquo;ı kendim yazmaya karar verdim. Birkaç kural koydum:</p>
+<h2>What is the project?</h2>
+<p>The sentence I kept running into while reading about agentic coding was: <strong>Agent = Model + Harness.</strong> The model is the LLM that takes text in and produces text. The harness is everything around it: which tools are described to the model, how the context is built, where state lives, when the loop stops. The model doesn&rsquo;t execute anything; it only <em>asks</em>. The code that reads the file, runs the test and returns the result lives in the harness.</p>
+<span class="fn"><b>Note ·</b> The starting point for this experiment was the SWE-agent team’s <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> <a class="cite" href="#r1">[1]</a>, which showed how far a small, readable agent loop can go <a class="cite" href="#r2">[2]</a>.</span>
+<p>I suspected there was a gap between reading that sentence and understanding it, so I decided to write the harness myself. I set a few rules:</p>
 <ul>
-<li><strong>Agent framework&rsquo;ü yok.</strong> LangGraph veya Google ADK gibi araçlara, neden var olduklarını kendi eksikliklerimden görünce bakacağım.</li>
-<li><strong>LLM SDK&rsquo;sı yok.</strong> Sağlayıcıyla ham HTTP üzerinden konuşuyorum; tek runtime bağımlılığı <code>httpx</code>.</li>
-<li><strong>Model:</strong> Gemini Flash-Lite, ücretsiz katman. Yerel GPU&rsquo;m şu an kullanılabilir değildi ve bu projeyi bloklamamalıydı.</li>
-<li><strong>Hedef repo:</strong> <a href="https://github.com/python-poetry/tomlkit">tomlkit</a>, sabit bir commit&rsquo;e pinlenmiş. Sıfır runtime bağımlılığı, 1.052 test, ~1,3 saniyede koşuyor.</li>
-<li><strong>Her şey kayıt altında.</strong> Her model çağrısı, her tool çağrısı, her sonuç satır satır bir JSONL trace&rsquo;e yazılıyor ve sonradan kayıpsız okunabiliyor.</li>
+<li><strong>No agent framework.</strong> I&rsquo;ll look at tools like LangGraph or Google ADK once my own gaps show me why they exist.</li>
+<li><strong>No LLM SDK.</strong> I talk to the provider over raw HTTP; the only runtime dependency is <code>httpx</code>.</li>
+<li><strong>Model:</strong> Gemini Flash-Lite, free tier. My local GPU wasn&rsquo;t available at the time, and that shouldn&rsquo;t block the project.</li>
+<li><strong>Target repo:</strong> <a href="https://github.com/python-poetry/tomlkit">tomlkit</a>, pinned to a fixed commit. Zero runtime dependencies, 1,052 tests, runs in ~1.3 seconds.</li>
+<li><strong>Everything is recorded.</strong> Every model call, every tool call and every result is written line by line to a JSONL trace that can be read back losslessly later.</li>
 </ul>
-<p>Çalışma şeklim de deneyin bir parçası: kodu Claude Code yazıyor, ben okuyup üzerine gidiyorum; her adımın tasarım sorularını ve kararlarını ayrı bir Claude oturumunda hazırlıyorum. Aşağıdaki yanlış tahminlerin bir kısmı benim, bir kısmı bu iki asistanın. İlginç olan, üç tarafın da aynı <em>tür</em> hatayı yapması.</p>
-<p>Bu çalışma düzeni, ileride agent&rsquo;a eklemeyi planladığım <strong>Project Historian</strong> fikrinin elle yapılan erken bir hâli sayılabilir. Kararlar koddan önce ayrı bir oturumda yazılıyor, duran kararlar bir tabloda tutuluyor ve her adım bir durum belgesiyle bir sonrakine devrediliyor. Tam bir uygulaması değil. Ama aşağıdaki derslerin bir kısmı, bu düzenin nerede tuttuğunu ve nerede tutmadığını gösteriyor.</p>
-<h2><span class="no">1</span>&ldquo;Dokümantasyonu okuyup provider&rsquo;ı yazarım&rdquo;</h2>
-<p>İlk iş olarak Gemini API&rsquo;sine istek atan sınıfı yazacaktım. Yazmadan önce ham istekler atıp protokolün gerçekte ne döndürdüğünü ölçtüm. Dokümantasyondan yazsaydım dört <strong>sessiz</strong> hatayla başlayacaktım:</p>
+<p>The way I work is part of the experiment too: Claude Code writes the code, I read it and push back; I prepare the design questions and decisions for each step in a separate Claude session. Some of the wrong guesses below are mine, some are the two assistants&rsquo;. What&rsquo;s interesting is that all three of us made the same <em>kind</em> of mistake.</p>
+<p>This way of working can be seen as an early, manual form of the <strong>Project Historian</strong> idea I plan to add to the agent later. Decisions are written in a separate session before the code, standing decisions are kept in a table, and each step is handed over to the next through a status document. It isn&rsquo;t a full implementation. But some of the lessons below show where this setup holds and where it doesn&rsquo;t.</p>
+<h2><span class="no">1</span>&ldquo;I&rsquo;ll read the docs and write the provider&rdquo;</h2>
+<p>The first job was the class that sends requests to the Gemini API. Before writing it, I sent raw requests and measured what the protocol actually returns. Had I written it from the documentation, I would have started with four <strong>silent</strong> bugs:</p>
 <ul>
-<li><strong><code>thoughtsTokenCount</code> Flash-Lite&rsquo;ta sıfır değil, hiç yok.</strong> <code>usage["thoughtsTokenCount"]</code> diye okuyan kod ilk çağrıda <code>KeyError</code> verirdi.</li>
-<li><strong>Düşünme token&rsquo;ları <code>candidatesTokenCount</code>&rsquo;a dahil değil, ama <code>totalTokenCount</code>&rsquo;a dahil.</strong> Çıktı token&rsquo;larını 3–4 kat eksik sayardım, ve bu projede maliyet ana metriklerden biri.</li>
-<li><strong>Tool çağrısı içeren bir cevapta bile <code>finishReason</code> <code>"STOP"</code>.</strong> &ldquo;Model tool mu istedi&rdquo; sorusunu <code>finishReason</code>&rsquo;a bakarak cevaplayan bir döngü hiçbir tool çağrısını görmezdi.</li>
-<li><strong><code>thoughtSignature</code>.</strong> Modelin iç muhakemesinin opak bir imzası, tool çağrısıyla aynı yapının içinde geliyor. Okunamıyor, üretilemiyor, doğrulanamıyor; sadece bir sonraki istekte aynen geri gönderilebiliyor. Cevabı temiz bir iç formata çevirip sonra yeniden kuran kod bu alanı sessizce düşürürdü.</li>
+<li><strong><code>thoughtsTokenCount</code> isn&rsquo;t zero on Flash-Lite; it&rsquo;s absent.</strong> Code that reads <code>usage["thoughtsTokenCount"]</code> would have raised a <code>KeyError</code> on the first call.</li>
+<li><strong>Thinking tokens are not included in <code>candidatesTokenCount</code>, but they are included in <code>totalTokenCount</code>.</strong> I would have undercounted output tokens by 3–4×, and cost is one of the main metrics in this project.</li>
+<li><strong><code>finishReason</code> is <code>"STOP"</code> even on a response that contains a tool call.</strong> A loop that answers &ldquo;did the model ask for a tool?&rdquo; by looking at <code>finishReason</code> would never see a single tool call.</li>
+<li><strong><code>thoughtSignature</code>.</strong> An opaque signature of the model&rsquo;s internal reasoning, delivered inside the same structure as the tool call. It can&rsquo;t be read, generated or verified; it can only be sent back verbatim in the next request. Code that converts the response into a clean internal format and rebuilds it later would silently drop this field.</li>
 </ul>
-<p>Ölçümden sonra yazılan sınıf, gerçek API&rsquo;yle ilk temasında sıfır sürprizle çalıştı. Yolda bir şey daha öğrendim: tool calling bir modelin &ldquo;yeteneği&rdquo; değil. İstekteki <code>tools</code> bloğuyla açılan bir sözleşme, ve o sözleşmenin zarfı sağlayıcıdan sağlayıcıya değişiyor. Gemini <code>functionCall</code> döndürüyor, OpenAI <code>tool_calls</code>, Anthropic <code>tool_use</code>. Aynı açık modeli ham servis ettiğinizde ise etiketleri kendiniz parse ediyorsunuz. Format ağırlıklardan değil, servis katmanından geliyor.</p>
-<h2><span class="no">2</span>&ldquo;Bir değişikliğin etkisini tek koşuyla görürüm&rdquo;</h2>
-<p>Agent gerçek bir kod tabanı hakkındaki bir soruyu doğru cevaplamayı başardıktan sonra, system prompt&rsquo;taki bir cümlenin davranışı ne kadar etkilediğini görmek istedim. Cümleyi çıkarıp aynı görevi yeniden koştum. Aynı görev, neredeyse aynı kurulum, dört koşu:</p>
+<p>The class written after measuring worked with zero surprises on its first contact with the real API. I learned one more thing on the way: tool calling isn&rsquo;t a &ldquo;capability&rdquo; of a model. It&rsquo;s a contract opened by the <code>tools</code> block in the request, and the envelope of that contract changes from provider to provider. Gemini returns <code>functionCall</code>, OpenAI <code>tool_calls</code>, Anthropic <code>tool_use</code>. Serve the same open model raw and you parse the tags yourself. The format comes from the serving layer, not the weights.</p>
+<h2><span class="no">2</span>&ldquo;One run will show me the effect of a change&rdquo;</h2>
+<p>Once the agent managed to answer a question about a real codebase correctly, I wanted to see how much one sentence in the system prompt affected its behaviour. I removed the sentence and ran the same task again. Same task, nearly the same setup, four runs:</p>
 <div class="table-wrap"><table class="data">
 <thead>
 <tr>
-<th>koşu</th>
-<th>turn</th>
-<th>token</th>
-<th>sonuç</th>
+<th>run</th>
+<th>turns</th>
+<th>tokens</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>baseline</td>
 <td>10</td>
-<td>43.843</td>
-<td>tam doğru</td>
+<td>43,843</td>
+<td>fully correct</td>
 </tr>
 <tr>
 <td>ablation 1</td>
 <td>10</td>
-<td>41.144</td>
-<td><strong>cevapsız</strong>, turn sınırına takıldı</td>
+<td>41,144</td>
+<td><strong>no answer</strong>, hit the turn limit</td>
 </tr>
 <tr>
 <td>ablation 2</td>
 <td>5</td>
-<td>17.900</td>
-<td>kısmi</td>
+<td>17,900</td>
+<td>partial</td>
 </tr>
 <tr>
 <td>ablation 3</td>
 <td>5</td>
-<td>14.557</td>
-<td>kısmi</td>
+<td>14,557</td>
+<td>partial</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>2,8 kat maliyet farkı, dörtte biri cevapsız.</strong> Sadece baseline ile ablation 2&rsquo;yi karşılaştırsaydım, o cümlenin maliyeti 2,4 kat artırdığı sonucuna varırdım. Bu verinin söylediği tek şey, n=1&rsquo;lik bir karşılaştırmanın hiçbir şey söylemediği.</p>
-<p>Sebebi basit: LLM deterministik değil ve <strong>agent bu rastgeleliği yutmuyor, büyütüyor.</strong> Birinci turn&rsquo;deki küçük bir fark, onuncu turn&rsquo;de bambaşka bir yol demek. Sonradan yazma görevlerinde de ölçtüm: üç koşunun üçünün de başarılı olduğu bir görevde yayılım 2,6 kat çıktı.</p>
-<p>Aynı tablodan ikinci bir tuzak da çıktı: <strong>&ldquo;bitti&rdquo; başarı demek değil.</strong> İki koşu cevap vererek bitti ama üç doğru konumdan yalnızca birini buldu. Ucuz koşular ucuzdu çünkü daha az iş yaptılar. Koşulsuz bir &ldquo;token / episode&rdquo; sıralaması, tam doğru cevabı sonuncu yapardı.</p>
-<p>Bu tablo planın geri kalanını değiştirdi. Her kol için çok sayıda koşu, dereceli sonuç (cevapsız / kısmi / tam), sonuç kalitesine koşullu maliyet, ve ana ölçüm olarak <strong>test ile doğrulanan bug-fix görevleri</strong> geldi.</p>
-<h2><span class="no">3</span>&ldquo;Yazdığım bir karar, uygulanmış bir karardır&rdquo;</h2>
-<p>Model cevabını temsil eden veri yapısında <code>retries</code> ve <code>retry_wait_ms</code> alanları vardı. Karar netti: her çağrının kaç kez yeniden denendiği trace&rsquo;e yazılacaktı. Ama trace&rsquo;i yazan kod bu iki alanı hiç yazmıyordu. Trace&rsquo;i okuyan araç da onları <code>.get(..., 0)</code> ile okuyordu, yani ekranda &ldquo;0 retry&rdquo; görünüyordu.</p>
-<p><strong>Ölçümün yokluğu bir ölçüm gibi görünüyordu.</strong> Hatayı gizleyen şey, &ldquo;güvenli&rdquo; olsun diye yazılmış savunmacı bir satırdı.</p>
-<p>Bu örüntü defalarca tekrarladı. &ldquo;Bildirilmeyen bir değer sıfır değildir&rdquo; ilkesi bir dosyada yazılıydı, başka bir dosyada ihlal ediliyordu. Agent&rsquo;ın repoyu her görevden sonra temiz duruma döndürmesini sağlayan kod <code>finally</code> içinde değildi; ilk crash pinlenmiş repoyu değiştirilmiş halde bıraktı. Aynı kod, görev bittiğinde agent&rsquo;ın yaptığı değişikliği de siliyordu. Bir bug-fix episode&rsquo;unun en bilgilendirici çıktısı buydu, ve bir kez yalnızca şans eseri kurtuldu. Kendi raporundaki cümleyle: <em>&ldquo;guardrail vardı, yarısı yoktu.&rdquo;</em></p>
-<p>Düzeltmesi basit oldu. Projenin duran kararlarını tuttuğum tabloya <strong>&ldquo;bu karar nerede zorlanıyor&rdquo;</strong> diye bir sütun ekledim. İçine bir test adı ya da kod satırı yazılamayan her satır, yarım kalmış bir karar demek.</p>
-<h2><span class="no">4</span>&ldquo;Kaydettiğim bir ders, öğrenilmiş bir derstir&rdquo;</h2>
-<p>Testlerde gerçek API cevaplarını kaydedip isteğin hash&rsquo;iyle eşleştiriyorum (bu kayıtlara <em>cassette</em> deniyor). Neredeyse her adımda &ldquo;bu değişiklik kayıtları geçersiz kılacak&rdquo; diye tahmin edildi, ve kılmadı. Aynı yanlış tahmin, iki kez düzeltildikten sonra <strong>üçüncü kez</strong> yapıldı.</p>
-<p>Düzeltme bir yerde yazılıydı: öğrenme günlüğünde. Ama o dosya bir sonraki adımın planı yazılırken okunmuyordu. Kayıt vardı; getirilmedi.</p>
-<p>Başka bir vakada kural her oturumda okunan dosyadaydı. Getiriliyordu, ama kodda yarım uygulanıyordu. Bu da başka bir kapıda başarısızlık.</p>
-<p>İkisini yan yana koyunca bir taksonomi çıktı:</p>
+<p><strong>A 2.8× cost spread, and a quarter of the runs with no answer.</strong> Had I compared only the baseline with ablation 2, I would have concluded that the sentence increased cost by 2.4×. The only thing this data says is that an n=1 comparison says nothing.</p>
+<p>The reason is simple: LLMs aren&rsquo;t deterministic, and <strong>an agent doesn&rsquo;t absorb that randomness, it amplifies it.</strong> A small difference in turn one means an entirely different path by turn ten. I measured it again later on write tasks: on a task where all three runs succeeded, the spread was 2.6×.</p>
+<p>The same table held a second trap: <strong>&ldquo;finished&rdquo; doesn&rsquo;t mean success.</strong> Two runs ended with an answer but found only one of the three correct locations. The cheap runs were cheap because they did less work. An unconditional &ldquo;tokens per episode&rdquo; ranking would have put the fully correct answer last.</p>
+<p>This table changed the rest of the plan: many runs per arm, graded outcomes (no answer / partial / full), cost conditioned on outcome quality, and <strong>bug-fix tasks verified by tests</strong> as the main measurement.</p>
+<h2><span class="no">3</span>&ldquo;A decision I&rsquo;ve written down is a decision implemented&rdquo;</h2>
+<p>The data structure representing a model response had <code>retries</code> and <code>retry_wait_ms</code> fields. The decision was clear: how many times each call was retried would be written to the trace. But the code that wrote the trace never wrote those two fields. The tool that read the trace read them with <code>.get(..., 0)</code>, so the screen showed &ldquo;0 retries&rdquo;.</p>
+<p><strong>The absence of a measurement looked like a measurement.</strong> What hid the bug was a defensive line written to be &ldquo;safe&rdquo;.</p>
+<p>This pattern repeated many times. The principle &ldquo;an unreported value is not zero&rdquo; was written in one file and violated in another. The code that returned the repo to a clean state after each task wasn&rsquo;t inside a <code>finally</code>; the first crash left the pinned repo modified. The same code also wiped the agent&rsquo;s change when a task finished. That was the most informative output of a bug-fix episode, and once it survived only by luck. In the words of its own report: <em>&ldquo;the guardrail existed; half of it didn&rsquo;t.&rdquo;</em></p>
+<p>The fix was simple. I added a column to the table where I keep the project&rsquo;s standing decisions: <strong>&ldquo;where is this decision enforced?&rdquo;</strong> Any row where you can&rsquo;t write a test name or a line of code is a half-finished decision.</p>
+<h2><span class="no">4</span>&ldquo;A lesson I&rsquo;ve recorded is a lesson learned&rdquo;</h2>
+<p>In tests, I record real API responses and match them by request hash (these recordings are called <em>cassettes</em>). At almost every step someone predicted &ldquo;this change will invalidate the recordings&rdquo;, and it didn&rsquo;t. The same wrong prediction was made a <strong>third time</strong> after being corrected twice.</p>
+<p>The correction was written down somewhere: in the learning log. But that file wasn&rsquo;t read when the plan for the next step was written. The record existed; it wasn&rsquo;t retrieved.</p>
+<p>In another case, the rule was in the file read every session. It was retrieved, but only half-applied in the code. That&rsquo;s a failure at a different gate.</p>
+<p>Putting the two side by side produced a taxonomy:</p>
 <figure>
-<svg class="diag" viewBox="0 0 640 150" role="img" aria-label="Memory için üç kapı: saklandı mı, getirildi mi, uygulandı mı">
+<svg class="diag" viewBox="0 0 640 150" role="img" aria-label="Three gates for memory: stored, retrieved, applied">
 <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0 8 4 0 8Z"/></marker></defs>
-<rect class="box" x="4" y="20" width="170" height="50"/><text x="18" y="42">1 · Saklandı mı?</text><text class="sub" x="18" y="60">bilgi bir yere yazıldı</text>
-<rect class="box" x="234" y="20" width="170" height="50"/><text x="248" y="42">2 · Getirildi mi?</text><text class="sub" x="248" y="60">gerektiğinde okundu</text>
-<rect class="box" x="464" y="20" width="172" height="50"/><text x="478" y="42">3 · Uygulandı mı?</text><text class="sub" x="478" y="60">davranış değişti</text>
+<rect class="box" x="4" y="20" width="170" height="50"/><text x="18" y="42">1 · Stored?</text><text class="sub" x="18" y="60">written down somewhere</text>
+<rect class="box" x="234" y="20" width="170" height="50"/><text x="248" y="42">2 · Retrieved?</text><text class="sub" x="248" y="60">read when needed</text>
+<rect class="box" x="464" y="20" width="172" height="50"/><text x="478" y="42">3 · Applied?</text><text class="sub" x="478" y="60">behaviour changed</text>
 <path class="arrow" marker-end="url(#ah)" d="M174 45H232"/><path class="arrow" marker-end="url(#ah)" d="M404 45H462"/>
-<path class="leak" d="M319 70V100"/><text class="loss" x="236" y="116">düzeltme öğrenme günlüğündeydi,</text><text class="loss" x="236" y="130">plan yazılırken okunmadı</text>
-<path class="leak" d="M550 70V100"/><text class="loss" x="466" y="116">kural her oturumda okunuyordu,</text><text class="loss" x="466" y="130">kodda yarım uygulandı</text>
+<path class="leak" d="M319 70V100"/><text class="loss" x="236" y="116">the fix was in the learning log,</text><text class="loss" x="236" y="130">not read when planning</text>
+<path class="leak" d="M550 70V100"/><text class="loss" x="466" y="116">rule read every session,</text><text class="loss" x="466" y="130">half-applied in code</text>
 </svg>
-<figcaption>Şekil 1 — Her kapı ayrı ayrı başarısız olabiliyor. Yalnızca ilk kapıyı ölçen bir memory deneyi, işe yaramayan bir sistemi “çalışıyor” diye raporlar.</figcaption>
+<figcaption>Figure 1 — Each gate can fail on its own. A memory experiment that measures only the first gate reports a system that doesn’t work as “working”.</figcaption>
 </figure>
-<p>Her kapı ayrı ayrı başarısız olabiliyor. Bu önemli, çünkü projenin ikinci yarısı agent&rsquo;a memory eklemek. <strong>Yalnızca ilk kapıyı ölçen bir memory deneyi (&ldquo;bunu kaydetti mi?&rdquo;), işe yaramayan bir sistemi &ldquo;çalışıyor&rdquo; diye raporlar.</strong> Doğru soru şu: agent&rsquo;ın makul olarak soracağı bir sorgu bu bilgiyi getirir miydi, ve getirdiğinde davranış değişti mi?</p>
-<p>Kendim için pratik çözüm, her adımda yeniden ürettiğim tek durum belgesine &ldquo;bilinen yanlış inançlar&rdquo; diye bir bölüm eklemek oldu. Düzeltmeyi, gerçekten okunan yere taşıdım.</p>
-<h2><span class="no">5</span>&ldquo;İyi bir özet, kaynağın yerini tutar&rdquo;</h2>
-<p>Yukarıdaki dört koşuluk tabloda ablation 2 &ldquo;kısmi&rdquo; diye işaretliydi. Bu etiket birkaç tartışma boyunca sorgulanmadan taşındı ve &ldquo;yanlış cevap&rdquo; gibi okunmaya başladı. Bir noktada &ldquo;ama bu aynı çıktı değil mi?&rdquo; diye sordum. Cevaplara tek tek bakınca durum netleşti: ablation 2 <strong>doğruydu, sadece dardı.</strong> Yorum satırlarının korunmasından sorumlu <code>Trivia</code> sınıfını doğru dosya ve satırla buldu; <code>Comment</code> sınıfını ve parser&rsquo;daki ilgili fonksiyonu kaçırdı.</p>
-<p>Etiket, bir özet kaynağı açmaktan daha ucuz olduğu için hayatta kaldı. Oysa kaynak tek bir komut uzaklıktaydı; trace&rsquo;leri kayıpsız okumak için yazdığım araç tam olarak bunun içindi.</p>
-<p>Buradan çıkardığım ders şu: <strong>tehlikeli olan kötü özet değil, iyi özet.</strong> İyi özet çoğu zaman doğrudur, o yüzden güvenilir, o yüzden kaynağın yerine geçer. Aynı olay bana bir şey daha gösterdi: 160 episode&rsquo;u tutarlı notlandırması gereken bir insan, bir metrik değildir. Bu, test ile doğrulanan görevlere geçmenin üçüncü gerekçesi oldu.</p>
-<p>Memory deneyi için de bir tahmin çıkardım: memory kolunda <code>read_file</code> / <code>search_code</code> çağrılarının azalması, bir doğruluk ölçümüyle eşleşene kadar <strong>verimlilik değil, uyarı işaretidir.</strong></p>
-<h2><span class="no">6</span>&ldquo;Agent&rsquo;ın ilk sorunu kötü düzenleme olacak&rdquo;</h2>
-<p>Agent&rsquo;a yazma yetenekleri ekledim: bir dosyada birebir metin değiştiren <code>edit_file</code>, testleri koşup başarısız test isimlerini döndüren <code>run_tests</code>, salt-okunur git komutları, allowlist&rsquo;li bir shell. Görev tipi de değişti. tomlkit&rsquo;in geçmişinde hem kaynağı hem testi değiştiren commit&rsquo;lerden seçip kaynak değişikliğini geri alıyorum, testi bırakıyorum ve agent&rsquo;a &ldquo;bu testi geçir&rdquo; diyorum.</p>
-<p>Koşmadan önce <code>edit_file</code> için beş hata modu tahmin ettim: boşluk/girinti uyuşmazlığı, birden fazla eşleşme, var olmayan bir metnin uydurulması ve benzerleri. Sonra üç görevi üçer kez koştum:</p>
+<p>Each gate can fail on its own. That matters, because the second half of the project is adding memory to the agent. <strong>A memory experiment that measures only the first gate (&ldquo;did it save this?&rdquo;) will report a system that doesn&rsquo;t work as &ldquo;working&rdquo;.</strong> The right question is: would a query the agent could reasonably make retrieve this information, and when it did, did the behaviour change?</p>
+<p>My practical fix for myself was to add a &ldquo;known false beliefs&rdquo; section to the single status document I regenerate at every step. I moved the correction to the place that actually gets read.</p>
+<h2><span class="no">5</span>&ldquo;A good summary can stand in for the source&rdquo;</h2>
+<p>In the four-run table above, ablation 2 was marked &ldquo;partial&rdquo;. That label was carried through several discussions without being questioned and started to be read as &ldquo;wrong answer&rdquo;. At one point I asked, &ldquo;but isn&rsquo;t this the same output?&rdquo; Looking at the answers one by one made it clear: ablation 2 was <strong>correct, just narrow.</strong> It found the <code>Trivia</code> class, responsible for preserving comment lines, with the right file and line; it missed the <code>Comment</code> class and the related function in the parser.</p>
+<p>The label survived because it was cheaper than opening the source. Yet the source was one command away; the tool I wrote to read traces losslessly existed precisely for this.</p>
+<p>The lesson I drew: <strong>the dangerous summary isn&rsquo;t the bad one, it&rsquo;s the good one.</strong> A good summary is usually right, so it&rsquo;s trusted, so it replaces the source. The same incident showed me something else: a human who has to grade 160 episodes consistently is not a metric. That became the third reason to move to test-verified tasks.</p>
+<p>It also gave me a prediction for the memory experiment: in the memory arm, a drop in <code>read_file</code> / <code>search_code</code> calls is <strong>a warning sign, not efficiency,</strong> until it&rsquo;s matched by a correctness measurement.</p>
+<h2><span class="no">6</span>&ldquo;The agent&rsquo;s first problem will be bad edits&rdquo;</h2>
+<p>I gave the agent write capabilities: <code>edit_file</code>, which replaces exact text in a file; <code>run_tests</code>, which runs the tests and returns the names of failing ones; read-only git commands; and an allowlisted shell. The task type changed too. From tomlkit&rsquo;s history I pick commits that changed both source and test, revert the source change, keep the test, and tell the agent &ldquo;make this test pass&rdquo;.</p>
+<p>Before running, I predicted five failure modes for <code>edit_file</code>: whitespace/indentation mismatch, multiple matches, hallucinating text that doesn&rsquo;t exist, and similar. Then I ran three tasks three times each:</p>
 <div class="table-wrap"><table class="data">
 <thead>
 <tr>
-<th>görev</th>
-<th>3 koşu</th>
-<th>turn</th>
-<th>düzenleme</th>
+<th>task</th>
+<th>3 runs</th>
+<th>turns</th>
+<th>edits</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>kolay</td>
-<td>geçti · geçti · geçti</td>
+<td>easy</td>
+<td>pass · pass · pass</td>
 <td>11 / 12 / 18</td>
 <td>1 / 1 / 1</td>
 </tr>
 <tr>
-<td>orta</td>
-<td>çöktü · sınır · sınır</td>
+<td>medium</td>
+<td>crash · limit · limit</td>
 <td>23 / 25 / 25</td>
 <td><strong>0 / 0 / 0</strong></td>
 </tr>
 <tr>
-<td>zor</td>
-<td>sınır · çöktü · sınır</td>
+<td>hard</td>
+<td>limit · crash · limit</td>
 <td>25 / 22 / 25</td>
 <td><strong>0 / 0 / 0</strong></td>
 </tr>
 </tbody>
 </table></div>
-<p>Kolay görevde yol her seferinde aynıydı ve mantıklıydı: testi koş, başarısız testin adını al, testi bul, kaynağı bul, oku, tek düzenleme yap, testi tekrar koş, <code>git diff</code> ile kendi değişikliğini kontrol et.</p>
-<p>Diğer altı episode&rsquo;da ise <strong>agent 22–25 turn boyunca okudu, aradı ve bir kez bile düzenleme yapmadı.</strong> Tahmin ettiğim beş hata modunun hiçbiri gerçekleşemezdi, çünkü ortada düzenleme yoktu. Sorduğum soru yanlıştı. Asıl soru &ldquo;doğru mu düzenliyor?&rdquo; değil, <strong>&ldquo;düzenlemeye karar veriyor mu?&rdquo;</strong> idi. Bu da 4. maddedeki hatanın aynısı: bir sonraki kapıyı ölçmek için tasarım yapıp, ondan önceki kapının var olup olmadığını kontrol etmemek.</p>
-<p>İki ucuz açıklamayı birer koşuyla test ettim:</p>
+<p>On the easy task the path was the same every time, and sensible: run the tests, get the failing test&rsquo;s name, find the test, find the source, read it, make one edit, run the tests again, check its own change with <code>git diff</code>.</p>
+<p>In the other six episodes, <strong>the agent read and searched for 22–25 turns and didn&rsquo;t make a single edit.</strong> None of the five failure modes I predicted could happen, because there were no edits. I was asking the wrong question. The real question wasn&rsquo;t &ldquo;is it editing correctly?&rdquo; but <strong>&ldquo;does it decide to edit at all?&rdquo;</strong> That&rsquo;s the same mistake as in item 4: designing to measure the next gate without checking whether the gate before it exists.</p>
+<p>I tested two cheap explanations with one run each:</p>
 <ul>
-<li><strong>Yer mi kalmadı?</strong> Turn sınırını 25&rsquo;ten 40&rsquo;a çıkardım. Fazladan 15 turn, aynı ara-oku-ara-oku salınımının 15 turn&rsquo;ü daha oldu. Projenin en pahalı episode&rsquo;u buydu (366.359 token), ve yine sıfır düzenleme.</li>
-<li><strong>Bütçesini bilmiyor mu?</strong> Her turn&rsquo;de context&rsquo;e &ldquo;turn 7/25&rdquo; gibi bir satır ekledim. Hatalı fonksiyonu 7. turn&rsquo;de buldu ve kalan 18 turn&rsquo;ü aramaya devam ederek geçirdi.</li>
+<li><strong>Did it run out of room?</strong> I raised the turn limit from 25 to 40. The extra 15 turns became 15 more turns of the same search-read-search-read oscillation. This was the most expensive episode in the project (366,359 tokens), and still zero edits.</li>
+<li><strong>Does it not know its budget?</strong> I added a line like &ldquo;turn 7/25&rdquo; to the context every turn. It found the buggy function in turn 7 and spent the remaining 18 turns still searching.</li>
 </ul>
-<p>Sonra trace&rsquo;leri tek tek okudum. Altı başarısızlığın <strong>dördünde agent hatalı fonksiyonu bulmuş ve okumuştu, ama düzenlemedi.</strong> Biri o fonksiyonu 4. turn&rsquo;de ekranına aldı ve 21 turn daha aradı. Kalan ikisi aynı görevdi: testin adı &ldquo;dotted inline table&rdquo; diyordu, agent 25 turn parser&rsquo;da kaldı, bug ise <code>Container.append</code> içindeydi.</p>
-<p>Görevlere verdiğim zorluk etiketleri de çöktü. Etiketleri kaynak değişikliğinin büyüklüğüne göre vermiştim (4, 9 ve 24 satır). Kolay/kolay-değil sınırında tuttu, orta ile zor arasında hiçbir şey öngörmedi. &ldquo;Başarısız test adından hatalı fonksiyona kaç adım var?&rdquo; ölçüsü de yanlış sırayı verdi. Şu an elimdeki hipotez şu: ayıran şey, <strong>testin dilinin doğru modülü gösterip göstermediği.</strong> Üç görevlik bir gözlem bu; bulgu değil, yanlışlanabilir bir hipotez.</p>
-<h2><span class="no">7</span>&ldquo;Ölçüm aletim güvenilir&rdquo;</h2>
-<p>Görevler arasında repo temizlenirken Claude Code bir şey fark etti: Python&rsquo;un bytecode cache&rsquo;i (<code>.pyc</code>), kaynak dosyanın güncel olup olmadığını <strong>saniye çözünürlüklü değişiklik zamanı ve byte boyutu</strong> ile kontrol ediyor. <code>a - b</code> ifadesi aynı saniye içinde <code>a + b</code> yapılırsa ikisi de değişmiyor, eski bytecode koşuyor, ve agent kendi <em>doğru</em> düzeltmesinin işe yaramadığını görüyor. Dışarıdan bakınca bu, &ldquo;bug&rsquo;ı düzeltemeyen agent&rdquo;tan ayırt edilemez.</p>
-<p>Mekanizmayı ayrıca ölçtüm:</p>
-<pre><code>dar döngüde doğal yarış          → 200 denemenin 198'inde eski bytecode koştu
-PYTHONDONTWRITEBYTECODE=1        → HÂLÂ eski bytecode
-__pycache__ silindikten sonra    → doğru sonuç
+<p>Then I read the traces one by one. In <strong>four of the six failures, the agent had found and read the buggy function, but didn&rsquo;t edit it.</strong> One had that function on screen at turn 4 and searched for 21 more turns. The remaining two were the same task: the test&rsquo;s name said &ldquo;dotted inline table&rdquo;, the agent stayed in the parser for 25 turns, and the bug was in <code>Container.append</code>.</p>
+<p>The difficulty labels I&rsquo;d given the tasks collapsed as well. I had labelled them by the size of the source change (4, 9 and 24 lines). That held at the easy/not-easy boundary and predicted nothing between medium and hard. A &ldquo;how many steps from the failing test&rsquo;s name to the buggy function?&rdquo; measure also gave the wrong order. My current hypothesis: what separates them is <strong>whether the test&rsquo;s language points to the right module.</strong> It&rsquo;s an observation from three tasks; not a finding, a falsifiable hypothesis.</p>
+<h2><span class="no">7</span>&ldquo;My measuring instrument is reliable&rdquo;</h2>
+<p>While the repo was being cleaned between tasks, Claude Code noticed something: Python&rsquo;s bytecode cache (<code>.pyc</code>) checks whether a source file is up to date using its <strong>second-resolution modification time and size in bytes</strong>. If <code>a - b</code> becomes <code>a + b</code> within the same second, neither changes, the old bytecode runs, and the agent sees its own <em>correct</em> fix fail. From the outside, that&rsquo;s indistinguishable from &ldquo;an agent that can&rsquo;t fix the bug&rdquo;.</p>
+<p>I measured the mechanism separately:</p>
+<pre><code>natural race in a tight loop      → stale bytecode ran in 198 of 200 trials
+PYTHONDONTWRITEBYTECODE=1         → STILL stale bytecode
+after deleting __pycache__        → correct result
 </code></pre>
-<p>İlk akla gelen düzeltme işe yaramıyor. <code>PYTHONDONTWRITEBYTECODE=1</code> yalnızca yeni <code>.pyc</code> <em>yazılmasını</em> engelliyor, var olan eski dosyanın <em>okunmasını</em> engellemiyor. Doğru düzeltme, her görevden önce <code>__pycache__</code> dizinlerini silmek.</p>
-<p>Hikâyenin ikinci yarısı da aynı derecede öğretici oldu. İlk tepki &ldquo;o zaman topladığımız bütün sayılar kirli&rdquo; idi. Silip yeniden koşmadan önce trace&rsquo;lerdeki zaman damgalarına baktık: düzenlemeler, repo sıfırlandıktan 29, 41 ve 201 saniye sonra yapılmıştı; kalan altı episode&rsquo;da hiç düzenleme yoktu. Veri temizdi. <strong>Veriyi çöpe atmadan önce de ölçmek gerekiyor.</strong></p>
-<h2>Açık soru: harness mi, model mi?</h2>
-<p>İki ucuz açıklama elendi. Geriye iki aday kaldı:</p>
+<p>The first fix that comes to mind doesn&rsquo;t work. <code>PYTHONDONTWRITEBYTECODE=1</code> only prevents <em>writing</em> new <code>.pyc</code> files; it doesn&rsquo;t prevent <em>reading</em> the stale one that already exists. The right fix is to delete the <code>__pycache__</code> directories before every task.</p>
+<p>The second half of the story was just as instructive. The first reaction was &ldquo;then all the numbers we collected are dirty.&rdquo; Before deleting and rerunning, we looked at the timestamps in the traces: the edits had been made 29, 41 and 201 seconds after the repo reset; the other six episodes had no edits at all. The data was clean. <strong>You have to measure before you throw data away, too.</strong></p>
+<h2>Open question: harness or model?</h2>
+<p>Two cheap explanations are out. Two candidates remain:</p>
 <ol>
-<li><strong>Harness hiçbir adımda karar istemiyor.</strong> Döngü agent&rsquo;ın sonsuza kadar arayıp okumasına izin veriyor. Her tek çağrı kendi içinde makul, ve hiçbir aşama ondan bir hipoteze bağlanmasını istemiyor.</li>
-<li><strong>Model bu görevi yapamıyor.</strong> Flash-Lite küçük ve ucuz bir model.</li>
+<li><strong>The harness never asks for a decision.</strong> The loop lets the agent search and read forever. Each individual call is reasonable on its own, and no stage asks it to commit to a hypothesis.</li>
+<li><strong>The model can&rsquo;t do this task.</strong> Flash-Lite is a small, cheap model.</li>
 </ol>
-<p>İkisi de aynı veriyle uyumlu, ve şu ana kadar koşulan on bir episode&rsquo;un hepsi <strong>aynı modelde</strong> koştu. Tek modelle bu ikisini ayırt etmek mümkün değil. Bir sonraki adım bu yüzden tek bir soru soruyor: aynı görev, aynı harness, daha güçlü bir model. Projenin başından beri model katmanını bir arayüzün arkasında tutmamın sebebi tam olarak bu tür bir sorunun gelecek olmasıydı.</p>
-<p>İki cevap da işe yarar. Güçlü model de düzenlemezse, &ldquo;harness&rsquo;ta karar noktası yoksa model ne olursa olsun karar vermiyor&rdquo; sonucunu iki modelle ölçmüş olurum. Düzenlerse, deneyin ilk kararı model seçimi olur. Task&rsquo;ların üçte ikisini hiç çözemeyen bir modelle memory&rsquo;nin etkisini ölçmek mümkün değil, çünkü ölçülecek bir aralık kalmıyor.</p>
-<p>Bariz bir düzeltme de var: system prompt&rsquo;a &ldquo;önce hipotez kur, sonra düzenle, sonra test et&rdquo; yazmak. Muhtemelen işe yarar, ve tam da bu yüzden şimdilik yapmıyorum. O zaman ölçtüğüm şey agent değil prompt olur. Bu ayrı bir karar ve ayrı bir deney kolu olacak.</p>
-<h2>Sırada ne var?</h2>
-<p>Bu adımdan sonra agent&rsquo;a memory ve <strong>Project Historian</strong> dediğim bir bileşen ekleyeceğim. Historian, projede alınan kararları ve geçmişi görevler arasında taşıyan bir katman. Bu fikrin önceden yapılmış benzer çalışmaları var; kendi katkım fikrin kendisi değil, onu çalışan bir agent üzerinde ölçmek. Sonra aynı görevlerde memory&rsquo;siz ve memory&rsquo;li agent&rsquo;ı karşılaştıracağım.</p>
-<ol>
-<li>ve 4. maddedeki hataları, Historian&rsquo;ı kendi çalışma şeklime elle uygularken yaşadım: karar yazılıydı ama zorlanmıyordu; ders kayıtlıydı ama getirilmiyordu. Agent&rsquo;a eklenecek Historian&rsquo;ın ölçmesi gereken şey de tam olarak bu iki kapı.</li>
-</ol>
-<p>Bu yazıdaki bulguların bir kısmı zaten o deneyin girdisi oldu. Örneğin &ldquo;bu repoda test adları bug&rsquo;ın yerini yanlış gösteriyor&rdquo; bilgisi, tam olarak bir memory sisteminin taşıması gereken türden bir proje bilgisi. Yukarıdaki üç kapılık taksonomi de o deneyin nasıl değerlendirileceğini belirliyor.</p>
-<h2>Şimdiye kadar öğrendiklerim</h2>
+<p>Both fit the same data, and all eleven episodes run so far used <strong>the same model</strong>. With one model, the two can&rsquo;t be told apart. So the next step asks a single question: same task, same harness, a stronger model. Keeping the model layer behind an interface since the start of the project was for exactly this kind of question.</p>
+<p>Either answer is useful. If the stronger model doesn&rsquo;t edit either, I&rsquo;ll have measured with two models that &ldquo;without a decision point in the harness, the model doesn&rsquo;t decide, whichever model it is.&rdquo; If it does, the experiment&rsquo;s first decision becomes the choice of model. You can&rsquo;t measure the effect of memory with a model that can&rsquo;t solve two thirds of the tasks, because there&rsquo;s no range left to measure.</p>
+<p>There&rsquo;s an obvious fix too: write &ldquo;form a hypothesis first, then edit, then test&rdquo; in the system prompt. It would probably work, and that&rsquo;s exactly why I&rsquo;m not doing it for now. Then what I&rsquo;d be measuring would be the prompt, not the agent. That&rsquo;s a separate decision and a separate arm of the experiment.</p>
+<h2>What&rsquo;s next?</h2>
+<p>After this step I&rsquo;ll add memory to the agent, along with a component I call <strong>Project Historian</strong>. The Historian is a layer that carries the decisions and history of a project across tasks. There is prior work on similar ideas; my contribution isn&rsquo;t the idea itself but measuring it on a working agent. Then I&rsquo;ll compare the agent with and without memory on the same tasks.</p>
+<p>I ran into the failures in items 3 and 4 while applying the Historian to my own way of working by hand: the decision was written down but not enforced; the lesson was recorded but not retrieved. Those two gates are exactly what the Historian added to the agent will need to measure.</p>
+<p>Some of the findings in this note have already become inputs to that experiment. For example, &ldquo;in this repo, test names point to the wrong place for the bug&rdquo; is exactly the kind of project knowledge a memory system should carry. The three-gate taxonomy above also determines how that experiment will be evaluated.</p>
+<h2>What I&rsquo;ve learned so far</h2>
 <ul class="learned">
-<li><strong>Sistem davranışı hakkındaki makul öngörüler bu projede sık sık yanlış çıktı.</strong> Bir oran veremem. Yanlışlar bedel ödettiği için kaydedildi, doğrular çoğu zaman yazılmadı, yani elimdeki örneklem temiz değil. Ama yön net: tek güvenilir filtre, ölçümü koşmak.</li>
-<li><strong>Agent, modelin belirsizliğini büyütüyor.</strong> Tek koşuluk bir karşılaştırma bir şey söylemez.</li>
-<li><strong>Projenin en değerli kodu agent değil, trace.</strong> Yukarıdaki derslerin neredeyse hepsi, &ldquo;ne oldu?&rdquo; sorusuna tahminle değil kayıtla cevap verebildiğim için mümkün oldu.</li>
-<li><strong>Guardrail&rsquo;ler koşudan önce kurulmalı, sonra değil.</strong> Ve kurulduğunu değil, zorlandığını kontrol etmek gerekiyor.</li>
-<li><strong>Memory&rsquo;nin zor kısmı saklamak değil, getirmek ve uygulamak.</strong> Bunu önce kendi çalışma şeklimde öğrendim.</li>
+<li><strong>Reasonable predictions about system behaviour were frequently wrong in this project.</strong> I can&rsquo;t give a rate. The wrong ones were recorded because they cost something; the right ones mostly weren&rsquo;t written down, so my sample isn&rsquo;t clean. But the direction is clear: the only reliable filter is running the measurement.</li>
+<li><strong>The agent amplifies the model&rsquo;s uncertainty.</strong> A single-run comparison tells you nothing.</li>
+<li><strong>The most valuable code in the project isn&rsquo;t the agent, it&rsquo;s the trace.</strong> Almost every lesson above was possible because I could answer &ldquo;what happened?&rdquo; with a record rather than a guess.</li>
+<li><strong>Guardrails must be in place before the run, not after.</strong> And you need to check that they&rsquo;re enforced, not just that they exist.</li>
+<li><strong>The hard part of memory isn&rsquo;t storing, it&rsquo;s retrieving and applying.</strong> I learned that in my own way of working first.</li>
 </ul>
-<p>Proje devam ediyor. Harness mi model mi sorusunun cevabı geldiğinde bu yazının son bölümünü güncelleyeceğim.</p>
+<p>The project is ongoing. When the harness-or-model question is answered, I&rsquo;ll update the last section of this note.</p>
 </div>
 
-<section class="refs" id="kaynaklar">
+<section class="refs" id="references">
   <h2><span class="ui" lang="tr">Kaynaklar</span><span class="ui" lang="en">References</span></h2>
   <ol>
-    <li id="r1">SWE-agent <span class="ui" lang="tr">ekibi</span><span class="ui" lang="en">team</span>. <i>mini-swe-agent.</i> GitHub. <a href="https://github.com/SWE-agent/mini-swe-agent">github.com/SWE-agent/mini-swe-agent</a></li>
+    <li id="r1">SWE-agent team. <i>mini-swe-agent.</i> GitHub. <a href="https://github.com/SWE-agent/mini-swe-agent">github.com/SWE-agent/mini-swe-agent</a></li>
     <li id="r2">Yang, J., Jimenez, C. E., Wettig, A., Lieret, K., Yao, S., Narasimhan, K., &amp; Press, O. (2024). SWE-agent: Agent-computer interfaces enable automated software engineering. <i>Advances in Neural Information Processing Systems 37 (NeurIPS 2024).</i> <a href="https://arxiv.org/abs/2405.15793">arXiv:2405.15793</a></li>
     <li id="r3">python-poetry. <i>tomlkit.</i> GitHub. <a href="https://github.com/python-poetry/tomlkit">github.com/python-poetry/tomlkit</a></li>
-    <li id="r4"><span class="ui" lang="tr">Bu deneyin deposu, trace’leri ve learning log’u. Yayınlandığında bağlantı eklenecek.</span><span class="ui" lang="en">This experiment’s repository, traces and learning log. Link added once public.</span></li>
+    <li id="r4">The repository, traces and learning log for this experiment. Link will be added once public.</li>
   </ol>
 </section>
 </article>
 
 <section class="citebox" id="cite">
   <h2><span class="ui" lang="tr">Atıf</span><span class="ui" lang="en">Cite this</span></h2>
-  <p>Ertekin, İ. M. (2026). <i>Varsayım yerine ölçüm: Küçük bir coding agent yazarken yanlış çıkan yedi varsayım</i> (Ara not, sürüm 0.1). https://imertekin.com/yazilar/varsayim-yerine-olcum</p>
-  <pre id="bib">@misc{ertekin2026olcum,
+  <p>Ertekin, İ. M. (2026). <i>Measure, don’t assume: Seven assumptions that turned out wrong while building a small coding agent</i> (Interim note, version 0.1). https://imertekin.com/writing/measure-dont-assume/</p>
+  <pre id="bib">@misc{ertekin2026measure,
   author       = {Ertekin, {\.I}lkay Murat},
-  title        = {Varsay{\i}m Yerine {\"O}l{\c{c}}{\"u}m: K{\"u}{\c{c}}{\"u}k Bir Coding Agent Yazarken Yanl{\i}{\c{s}} {\c{C}}{\i}kan Yedi Varsay{\i}m},
+  title        = {Measure, Don't Assume: Seven Assumptions That Turned Out Wrong While Building a Small Coding Agent},
   year         = {2026},
-  howpublished = {\url{https://imertekin.com/yazilar/varsayim-yerine-olcum}},
-  note         = {Ara not, devam eden {\c{c}}al{\i}{\c{s}}ma, s{\"u}r{\"u}m 0.1}
+  howpublished = {\url{https://imertekin.com/writing/measure-dont-assume/}},
+  note         = {Interim note, ongoing work, version 0.1}
 }</pre>
-  <button type="button" data-copy="bib" data-label="BibTeX kopyala">BibTeX kopyala</button>
+  <button type="button" data-copy="bib" data-label="Copy BibTeX">Copy BibTeX</button>
 </section>
 
 <div class="post-foot">
   <section>
     <h2><span class="ui" lang="tr">Değişiklik kaydı</span><span class="ui" lang="en">Changelog</span></h2>
     <ol class="revlog">
-      <li><time>2026-09</time><span><span class="ui" lang="tr">v0.1 · İlk ara not yayında</span><span class="ui" lang="en">v0.1 · First interim note published</span></span></li>
-      <li><time>—</time><span><span class="ui" lang="tr">Bekleniyor · “Harness mi, model mi?” sonucu</span><span class="ui" lang="en">Pending · “Harness or model?” result</span></span></li>
+      <li><time>2026-09</time><span>v0.1 · First interim note published (English translation of the Turkish original)</span></li>
+      <li><time>—</time><span>Pending · “Harness or model?” result</span></li>
     </ol>
   </section>
   <section>
     <h2><span class="ui" lang="tr">İlgili</span><span class="ui" lang="en">Related</span></h2>
     <ul class="related">
-      <li><a href="/#calismalar"><span class="ui" lang="tr">Coding agent harness deneyi</span><span class="ui" lang="en">Coding agent harness experiment</span></a><span class="badge"><span class="ui" lang="tr">deney</span><span class="ui" lang="en">exp.</span></span></li>
-      <li><a href="/#calismalar">Precedent — Project Historian</a><span class="badge"><span class="ui" lang="tr">açık kaynak</span><span class="ui" lang="en">OSS</span></span></li>
-      <li><a href="/writing/measure-dont-assume/" hreflang="en">Measure, don’t assume (English)</a><span class="badge">EN</span></li>
+      <li><a href="/#calismalar">Coding agent harness experiment</a><span class="badge">exp.</span></li>
+      <li><a href="/#calismalar">Precedent — Project Historian</a><span class="badge">OSS</span></li>
+      <li><a href="/yazilar/varsayim-yerine-olcum/" hreflang="tr">Varsayım yerine ölçüm (Türkçe)</a><span class="badge">TR</span></li>
     </ul>
   </section>
 </div>
@@ -758,7 +756,7 @@ __pycache__ silindikten sonra    → doğru sonuç
     themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
   };
   themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
-  setUI(r.dataset.ui || 'tr'); paint();
+  setUI(r.dataset.ui || 'en'); paint();
 })();
 </script><script>
 document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
