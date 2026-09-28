@@ -1,74 +1,769 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="tr" data-ui="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilkay Murat Ertekin</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varsayım yerine ölçüm — İlkay Murat Ertekin</title>
+<meta name="description" content="Framework kullanmadan küçük bir coding agent yazarken makul görünen ama ölçüme dayanamayan yedi varsayım. Devam eden bir projeden ara not.">
+<link rel="canonical" href="https://imertekin.com/yazilar/varsayim-yerine-olcum/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.6' fill='none' stroke='%23a93d27' stroke-width='1.6'/%3E%3Cpath d='M7 1.4A5.6 5.6 0 0 1 7 12.6Z' fill='%23a93d27'/%3E%3C/svg%3E">
+<meta property="og:title" content="Varsayım yerine ölçüm — İlkay Murat Ertekin">
+<meta property="og:description" content="Framework kullanmadan küçük bir coding agent yazarken makul görünen ama ölçüme dayanamayan yedi varsayım. Devam eden bir projeden ara not.">
+<meta property="og:url" content="https://imertekin.com/yazilar/varsayim-yerine-olcum/">
+<meta property="og:type" content="website">
+<meta name="author" content="İlkay Murat Ertekin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>/* ————— Tokens ————— */
+:root {
+  --paper: #f3efe4;
+  --paper-2: #ebe5d5;
+  --ink: #1c2320;
+  --ink-2: #49524c;
+  --ink-3: #7b8079;
+  --rule: #d5cbb4;
+  --contour: #a97c4a;
+  --water: #2b6781;
+  --survey: #a93d27;
+  --grid: rgba(43, 103, 129, .07);
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 38rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+    --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+  --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+  color-scheme: dark;
+}
 
-    <!-- Font Awesome CSS dosyasını ekleyin -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+/* ————— Base ————— */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.6 var(--serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--water); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+::selection { background: color-mix(in srgb, var(--contour) 35%, transparent); }
 
-    <style>
-        body {
-            font-family: monospace;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-        }
+/* bilingual UI: every UI string exists twice */
+:root[data-ui="tr"] [lang="en"].ui, :root[data-ui="en"] [lang="tr"].ui { display: none !important; }
 
-        .home {
-            text-align: center;
-        }
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+.mono, .label {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+.label {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ink-3);
+}
 
-        p {
-            color: #555;
-            line-height: 1.5;
-            margin-top: 0;
-            font-size: 18px;
-        }
+/* ————— Sheet header ————— */
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .78rem;
+}
+.sheet-id { color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+.sheet-id b { font-weight: 600; letter-spacing: .08em; }
+.sheet-id span { color: var(--ink-3); }
+.nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; }
+.toggles { display: flex; gap: 6px; }
+.toggles button {
+  font: inherit; color: var(--ink-2); background: none; cursor: pointer;
+  border: 1px solid var(--rule); padding: 3px 8px; border-radius: 2px;
+}
+.toggles button:hover { color: var(--ink); border-color: var(--ink-3); }
+.toggles b { color: var(--ink); font-weight: 600; }
+@media (max-width: 719px) {
+  .sheet-head { flex-wrap: wrap; }
+  .nav { order: 3; width: 100%; gap: 16px; }
+  .sheet-id span { display: none; }
+}
 
-        .error {
-            color: #555;
-            font-weight: bold;
-        }
+.draft-note {
+  font-family: var(--mono); font-size: .72rem; color: var(--survey);
+  border: 1px dashed currentColor; padding: 6px 10px; margin: 16px 0 0; display: inline-block;
+}
 
-        .social-icons {
-            margin-top: 20px;
-        }
+/* ————— Map frame (neatline with graduated border) ————— */
+.mapframe {
+  position: relative;
+  margin: 28px 0 0;
+  padding: 7px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) top / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) bottom / 100% 5px no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) left / 5px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) right / 5px 100% no-repeat;
+  outline: 1px solid var(--ink);
+}
+.mapframe-inner {
+  position: relative;
+  border: 1px solid var(--ink);
+  aspect-ratio: 2.4 / 1;
+  min-height: 260px;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.topo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.topo path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .55; }
+.topo path.idx { stroke-width: 1.8; opacity: .8; }
 
-        .social-icons a {
-            margin: 0 10px;
-            color: #333;
-            text-decoration: none;
-            font-size: 24px;
-        }
-    </style>
+.map-label {
+  position: absolute; left: 6%; top: 50%; transform: translateY(-50%);
+  max-width: 62%;
+}
+.map-label h1 {
+  margin: 0;
+  font: 500 clamp(2rem, 5.2vw, 4rem)/1.02 var(--serif);
+  letter-spacing: -.01em;
+  text-shadow: 0 0 8px var(--paper), 0 0 2px var(--paper);
+}
+.map-label p {
+  margin: 12px 0 0; font-family: var(--mono); font-size: .78rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-2);
+  text-shadow: 0 0 6px var(--paper);
+}
+.trig { position: absolute; font-family: var(--mono); font-size: .7rem; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.trig svg { width: 14px; height: 14px; }
+.coord { position: absolute; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); background: var(--paper); padding: 0 4px; }
+.coord.tl { top: -1px; left: 12px; transform: translateY(-50%); }
+.coord.br { bottom: -1px; right: 12px; transform: translateY(50%); }
+@media (max-width: 719px) {
+  .mapframe-inner { aspect-ratio: auto; height: 300px; }
+  .map-label { left: 20px; right: 20px; max-width: none; top: auto; bottom: 28px; transform: none; }
+}
+
+/* ————— Home layout ————— */
+.intro {
+  display: grid; gap: 32px; margin: 40px 0 8px;
+}
+.intro p { margin: 0 0 1em; max-width: var(--measure); font-size: 1.25rem; line-height: 1.55; }
+.intro p.motto {
+  font-style: italic; color: var(--ink-2); font-size: 1.1rem;
+  border-left: 2px solid var(--contour); padding-left: 16px;
+}
+@media (min-width: 900px) { .intro { grid-template-columns: minmax(0, 1fr) 17rem; } }
+
+.legend {
+  border: 1px solid var(--ink); padding: 14px 16px 12px; align-self: start; background: var(--paper);
+  font-family: var(--mono); font-size: .75rem;
+}
+.legend h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.legend dl { margin: 0; display: grid; grid-template-columns: 28px 1fr; gap: 8px 10px; align-items: center; }
+.legend dt { display: flex; justify-content: center; }
+.legend dd { margin: 0; color: var(--ink-2); }
+.legend dd b { color: var(--ink); font-weight: 600; }
+.legend hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--rule); margin: 4px 0; width: 100%; }
+
+.status { width: 14px; height: 14px; flex: none; }
+.status circle { fill: none; stroke: var(--survey); stroke-width: 1.4; }
+.status .fill { fill: var(--survey); stroke: none; }
+.status circle.fill { stroke: var(--survey); }
+.status .dash { stroke-dasharray: 2.6 2.2; }
+
+.badge { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; border: 1px solid var(--ink-3); color: var(--ink-2); padding: 0 4px; border-radius: 2px; }
+
+.scalebar { display: inline-flex; height: 6px; border: 1px solid var(--ink); vertical-align: middle; }
+.scalebar i { display: block; width: 8px; height: 100%; }
+.scalebar i:nth-child(odd) { background: var(--ink); }
+
+section.block { margin: 64px 0 0; }
+.block-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px;
+}
+.block-head h2 { margin: 0; font: 500 1.6rem/1.2 var(--serif); }
+.block-head a { font-family: var(--mono); font-size: .75rem; }
+
+/* post list */
+.posts { list-style: none; margin: 0; padding: 0; }
+.posts li {
+  display: grid; grid-template-columns: 22px 6.5rem minmax(0, 1fr) auto; gap: 4px 14px;
+  padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
+}
+.posts .status { transform: translateY(2px); }
+.posts time { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.posts h3 { margin: 0; font: 500 1.28rem/1.3 var(--serif); }
+.posts h3 a { color: var(--ink); text-decoration: none; }
+.posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.posts p { grid-column: 3; margin: 2px 0 0; color: var(--ink-2); font-size: 1rem; max-width: 36rem; }
+.posts .meta { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); white-space: nowrap; }
+@media (max-width: 719px) {
+  .posts li { grid-template-columns: 22px minmax(0, 1fr); }
+  .posts time { grid-column: 2; order: -1; }
+  .posts .status { grid-row: 1 / span 2; }
+  .posts h3, .posts p, .posts .meta { grid-column: 2; }
+}
+
+/* active sheets (sheet index grid) */
+.sheets { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); border-left: 1px solid var(--ink); border-top: 1px solid var(--ink); margin-top: 20px; }
+.sheet { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 14px 16px 18px; position: relative; }
+.sheet .no { font-family: var(--mono); font-size: .68rem; color: var(--ink-3); letter-spacing: .1em; }
+.sheet h3 { margin: 6px 0 4px; font: 500 1.2rem/1.25 var(--serif); }
+.sheet p { margin: 0; font-size: .98rem; color: var(--ink-2); }
+.sheet .state { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: .66rem; color: var(--survey); }
+
+/* route */
+.route { list-style: none; margin: 24px 0 0; padding: 0 0 0 28px; position: relative; max-width: 44rem; }
+.route::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 34px; border-left: 2px dashed var(--survey); }
+.route li { position: relative; padding: 0 0 22px; }
+.route li::before {
+  content: ""; position: absolute; left: -26px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--survey);
+}
+.route li:last-child::before { background: var(--survey); }
+.route b { font-weight: 500; font-size: 1.15rem; }
+.route span { display: block; color: var(--ink-2); font-size: 1rem; }
+
+/* ————— Map-margin footer ————— */
+.margin-foot {
+  margin: 96px 0 0; border-top: 1px solid var(--ink); padding: 18px 0 40px;
+  display: grid; gap: 20px 32px; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-2);
+}
+.margin-foot h4 { margin: 0 0 6px; font: 600 .66rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.margin-foot p { margin: 0; line-height: 1.7; }
+.margin-foot a { color: var(--ink-2); }
+.foot-scale { display: flex; flex-direction: column; gap: 6px; }
+.foot-scale .scalebar i { width: 22px; }
+.foot-scale .ticks { display: flex; font-size: .62rem; color: var(--ink-3); }
+.foot-scale .ticks span { width: 22px; }
+.north { width: 22px; height: 34px; }
+.north path { fill: var(--ink); }
+.north text { fill: var(--ink); font: 600 9px var(--mono); }
+
+/* ————— Article ————— */
+.crumbs { margin: 36px 0 0; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.crumbs a { color: var(--ink-2); }
+.post-head { margin: 18px 0 0; max-width: 46rem; }
+.post-head h1 { margin: 0; font: 500 clamp(2rem, 4.6vw, 3.3rem)/1.08 var(--serif); letter-spacing: -.012em; }
+.post-head .dek { margin: 16px 0 0; font-size: 1.3rem; line-height: 1.45; color: var(--ink-2); font-style: italic; }
+
+.survey-strip {
+  margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  font-family: var(--mono); font-size: .74rem;
+}
+.survey-strip div { padding: 10px 12px 10px 0; }
+.survey-strip div + div { padding-left: 12px; border-left: 1px solid var(--rule); }
+.survey-strip dt { color: var(--ink-3); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
+.survey-strip dd { margin: 0; display: flex; align-items: center; gap: 6px; }
+@media (max-width: 719px) {
+  .survey-strip { grid-template-columns: 1fr 1fr; }
+  .survey-strip div, .survey-strip div + div { padding: 10px 0; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .survey-strip div:nth-child(even) { padding-left: 12px; border-left: 1px solid var(--rule); }
+}
+
+.article { margin: 40px 0 0; }
+.prose { max-width: var(--measure); }
+@media (min-width: 1040px) { .article { padding-right: 17rem; } .prose { max-width: 40rem; } }
+.prose > p:first-child::first-letter { font-size: 3.4em; float: left; line-height: .9; padding: .06em .1em 0 0; font-weight: 500; color: var(--contour); }
+.prose p { margin: 0 0 1.2em; hyphens: auto; }
+.prose h2 { font: 500 1.55rem/1.25 var(--serif); margin: 2em 0 .6em; display: flex; gap: 12px; align-items: baseline; }
+.prose h2 .no { font-family: var(--mono); font-size: .75rem; color: var(--survey); font-weight: 500; }
+.prose blockquote { margin: 1.6em 0; padding: 0 0 0 20px; border-left: 2px solid var(--contour); font-style: italic; color: var(--ink-2); }
+.prose code { font-family: var(--mono); font-size: .86em; background: var(--paper-2); padding: .08em .3em; border-radius: 2px; }
+.prose pre {
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6; background: var(--paper-2); border-left: 2px solid var(--water);
+  padding: 14px 16px; overflow-x: auto; margin: 1.6em 0;
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+.prose pre .c { color: var(--ink-3); }
+.prose pre .s { color: var(--survey); }
+
+/* field notes (sidenotes) */
+.fn-ref { font-family: var(--mono); font-size: .66em; vertical-align: super; color: var(--survey); line-height: 0; }
+.fn {
+  display: block; font-family: var(--mono); font-size: .74rem; line-height: 1.55; color: var(--ink-2);
+  margin: -.4em 0 1.4em; padding: 8px 12px; border-left: 2px solid var(--survey);
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 1.55em;
+}
+.fn b { color: var(--survey); font-weight: 600; }
+@media (min-width: 1040px) {
+  .fn {
+    float: right; clear: right; width: 14.5rem; margin: .2em -17rem 1rem 0;
+    border-left: 0; border-top: 1px solid var(--survey); padding: 6px 0 0; background: none;
+  }
+}
+
+figure { margin: 2em 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-top: 8px; }
+.diag text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.diag .sub { fill: var(--ink-3); font-size: 10px; }
+.diag .loss { fill: var(--survey); font-size: 10px; }
+.diag .box { fill: var(--paper); stroke: var(--ink); stroke-width: 1; }
+.diag .arrow { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.diag .leak { stroke: var(--survey); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.diag .ah { fill: var(--ink-2); }
+
+/* post footer */
+.post-foot { margin: 72px 0 0; display: grid; gap: 40px; }
+@media (min-width: 900px) { .post-foot { grid-template-columns: 1fr 1fr; } }
+.post-foot h2 { margin: 0 0 12px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.revlog { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: .75rem; }
+.revlog li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.revlog time { color: var(--ink-3); }
+
+.adjacent { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); }
+.adjacent > a, .adjacent > span {
+  display: block; min-height: 6.2rem; padding: 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-size: .9rem; line-height: 1.3; color: var(--ink); text-decoration: none;
+}
+.adjacent > :nth-child(3n) { border-right: 0; }
+.adjacent > :nth-last-child(-n+3) { border-bottom: 0; }
+.adjacent small { display: block; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); margin-bottom: 4px; letter-spacing: .06em; }
+.adjacent > a:hover { background: var(--paper-2); }
+.adjacent .here { background: var(--ink); color: var(--paper); }
+.adjacent .here small { color: var(--paper); opacity: .7; }
+.adjacent .empty { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--grid) 6px 7px); }
+@media (max-width: 480px) { .adjacent > a, .adjacent > span { font-size: .78rem; min-height: 5.4rem; padding: 8px; } }
+
+/* ————— Hero (software-first, contour only as quiet texture) ————— */
+.hero { position: relative; padding: 72px 0 56px; border-bottom: 1px solid var(--rule); overflow: hidden; }
+.hero .topo {
+  left: auto; right: -4%; width: 62%; height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+          mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+.hero .topo path { opacity: .28; }
+.hero .topo path.idx { opacity: .42; }
+.hero-text { position: relative; max-width: 40rem; }
+.hero h1 { margin: 0; font: 500 clamp(2.4rem, 6vw, 4.2rem)/1.02 var(--serif); letter-spacing: -.015em; }
+.hero .role { margin: 14px 0 0; font-family: var(--mono); font-size: .82rem; color: var(--ink-2); }
+.hero .role b { color: var(--survey); font-weight: 500; }
+.hero .lede { margin: 28px 0 0; font-size: 1.25rem; line-height: 1.55; max-width: 36rem; }
+.hero .lede + .lede { margin-top: 14px; }
+@media (max-width: 719px) { .hero { padding: 48px 0 40px; } .hero .topo { width: 100%; right: -30%; } }
+
+.key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 2px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+
+.related { list-style: none; margin: 0; padding: 0; }
+.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 1.02rem; }
+.related a { color: var(--ink); text-decoration: none; }
+.related a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.prevnext { display: flex; justify-content: space-between; margin: 16px 0 0; font-family: var(--mono); font-size: .75rem; }
+.sheet h3 { margin-top: 0; padding-right: 5rem; }
+
+/* ————— Academic layer ————— */
+.links-row { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 22px 0 0; font-family: var(--mono); font-size: .76rem; }
+.links-row a { color: var(--ink-2); }
+.links-row a:first-child { color: var(--ink); font-weight: 600; }
+
+.interests { margin: 26px 0 0; max-width: 38rem; }
+.interests h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.interests ul { margin: 0; padding: 0; list-style: none; }
+.interests li { padding: 5px 0 5px 28px; position: relative; font-size: 1.05rem; }
+.interests li::before { content: "—"; position: absolute; left: 0; color: var(--survey); }
+
+.pubs { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: pub; }
+.pubs li { display: grid; grid-template-columns: 5.5rem minmax(0,1fr); gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.pubs .kind { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--survey); padding-top: 4px; }
+.pubs .ref { font-size: 1.05rem; line-height: 1.5; }
+.pubs .ref b { font-weight: 500; }
+.pubs .ref i { color: var(--ink-2); }
+.pubs .acts { grid-column: 2; display: flex; gap: 12px; font-family: var(--mono); font-size: .72rem; }
+.pubs .acts a { color: var(--water); }
+@media (max-width: 719px) { .pubs li { grid-template-columns: 1fr; } .pubs .acts { grid-column: 1; } }
+
+.cv { display: grid; gap: 32px; margin-top: 20px; }
+@media (min-width: 820px) { .cv { grid-template-columns: 1fr 1fr; } }
+.cv h3 { margin: 0 0 6px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.cv ol { list-style: none; margin: 0; padding: 0; }
+.cv li { display: grid; grid-template-columns: 6.5rem minmax(0,1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.cv .yr { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); padding-top: 4px; }
+.cv b { font-weight: 500; display: block; }
+.cv span.d { color: var(--ink-2); font-size: .98rem; }
+.ph { background: color-mix(in srgb, var(--survey) 14%, transparent); padding: 0 .2em; border-radius: 2px; }
+
+.abstract { margin: 32px 0 0; max-width: 42rem; padding: 18px 20px; border: 1px solid var(--ink); }
+.abstract h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.abstract p { margin: 0; font-size: 1.02rem; line-height: 1.55; }
+.abstract .kw { margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+.abstract .kw b { color: var(--ink); font-weight: 600; }
+
+.eq { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 1.6em 0; font-size: 1.15rem; }
+.eq .frac { display: inline-flex; flex-direction: column; align-items: center; }
+.eq .frac span:first-child { border-bottom: 1px solid var(--ink); padding: 0 6px 2px; }
+.eq .frac span:last-child { padding-top: 2px; }
+.eq .n { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-left: auto; }
+.cite { font-family: var(--mono); font-size: .78em; color: var(--water); text-decoration: none; }
+
+.refs { max-width: var(--measure); margin: 3em 0 0; }
+.refs h2 { font: 500 1.3rem/1.25 var(--serif); margin: 0 0 .6em; }
+.refs ol { margin: 0; padding-left: 2.2em; font-size: .95rem; line-height: 1.5; color: var(--ink-2); }
+.refs li { padding: 4px 0; }
+.refs li::marker { font-family: var(--mono); font-size: .8em; color: var(--ink-3); }
+
+.citebox { margin: 72px 0 0; border-top: 1px solid var(--ink); padding-top: 16px; }
+.citebox h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.citebox p { margin: 0 0 12px; font-size: 1rem; max-width: 46rem; }
+.citebox pre { font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: 12px 14px; margin: 0; overflow-x: auto; position: relative; }
+.citebox button { font: .72rem var(--mono); color: var(--ink-2); background: none; border: 1px solid var(--rule); padding: 3px 8px; cursor: pointer; margin-top: 8px; }
+.citebox button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ————— v4: work entries, observations, planned list ————— */
+.work { margin-top: 4px; }
+.work article { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 8px 24px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+.work .side { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 6px; }
+.work .side .st { color: var(--survey); text-transform: uppercase; letter-spacing: .1em; }
+.work h3 { margin: 0; font: 500 1.35rem/1.25 var(--serif); }
+.work h3 small { font: 400 .8rem var(--mono); color: var(--ink-3); margin-left: 8px; }
+.work p { margin: 8px 0 0; max-width: 42rem; font-size: 1.04rem; }
+.work .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.work .tags > span { font-family: var(--mono); font-size: .68rem; border: 1px solid var(--rule); padding: 1px 6px; color: var(--ink-2); }
+.work details { margin-top: 12px; max-width: 42rem; }
+.work summary { cursor: pointer; font-family: var(--mono); font-size: .74rem; color: var(--water); }
+.work details ul { margin: 10px 0 0; padding-left: 1.1em; font-size: .98rem; color: var(--ink-2); }
+.work details li { padding: 3px 0; }
+.work .principles { font-family: var(--mono); font-size: .76rem; color: var(--ink); margin-top: 12px; }
+@media (max-width: 719px) { .work article { grid-template-columns: 1fr; } .work .side { flex-direction: row; gap: 14px; } }
+
+.planned { list-style: none; margin: 8px 0 0; padding: 0; columns: 2 22rem; column-gap: 40px; }
+.planned li { break-inside: avoid; padding: 10px 0 10px 22px; border-bottom: 1px solid var(--rule); position: relative; font-size: 1.02rem; }
+.planned li svg { position: absolute; left: 0; top: 15px; }
+.sub-head { margin: 36px 0 0; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+
+.obs { width: 100%; border-collapse: collapse; margin: 1.6em 0; font-size: .92rem; }
+.obs th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 10px 8px 0; }
+.obs td { vertical-align: top; padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); line-height: 1.45; }
+.obs td:first-child { font-family: var(--mono); font-size: .72rem; color: var(--survey); width: 2.2rem; }
+.obs td:nth-child(2) { color: var(--ink-2); }
+.table-wrap { overflow-x: auto; }
+.skills { margin-top: 28px; display: grid; gap: 10px; }
+.skills div { display: grid; grid-template-columns: 12rem minmax(0,1fr); gap: 12px; font-size: 1rem; }
+.skills b { font: 600 .68rem/1.6 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 719px) { .skills div { grid-template-columns: 1fr; gap: 2px; } }
+
+.cv.noyr li { grid-template-columns: 1fr; }
+
+/* ————— v7: data tables, ongoing notice, learned list ————— */
+.data { width: 100%; border-collapse: collapse; margin: 1.4em 0 1.6em; font-size: .92rem; }
+.data th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 14px 8px 0; }
+.data td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.data td:first-child { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); }
+.ongoing { margin: 20px 0 0; max-width: 42rem; font-family: var(--mono); font-size: .76rem; line-height: 1.6; color: var(--ink-2); border-left: 2px solid var(--survey); padding: 4px 0 4px 12px; }
+.prose ul { padding-left: 1.2em; }
+.prose li { margin: .35em 0; }
+.prose ul.learned { list-style: none; padding: 0; border-top: 1px solid var(--ink); }
+.prose ul.learned li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.prose ol { padding-left: 1.4em; }
+
+.work .card-link { margin: 10px 0 0; font-family: var(--mono); font-size: .76rem; }
+</style>
 </head>
 <body>
+<div class="wrap"><header class="sheet-head">
+  <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
+  <nav class="nav" aria-label="Ana menü"><a href="/#calismalar"><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work</span></a><a href="/#yazilar" aria-current="page"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a><a href="/#cv"><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></a></nav>
+  <div class="toggles">
+    <button type="button" id="langBtn" aria-label="Dil / Language"><b>TR</b> / EN</button>
+    <button type="button" id="themeBtn"><span class="ui" lang="tr">Gece</span><span class="ui" lang="en">Night</span></button>
+  </div>
+</header>
+<nav class="crumbs"><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a> / <span class="ui" lang="tr">Ara not</span><span class="ui" lang="en">Interim note</span></nav>
 
-<div class="home">
-    <h1>Hi, I'm Ilkay Murat Ertekin</h1>
-    <p class="error">PageNotReadyError("This page is still in development. Please check back later!")</p>
+<header class="post-head" lang="tr">
+  <h1>Varsayım yerine ölçüm: küçük bir coding agent yazarken yanlış çıkan yedi varsayım</h1>
+  <p class="dek">Devam eden bir projeden ara not.</p>
+</header>
 
-    <!-- Sosyal medya ikonları ve linkleri -->
-    <div class="social-icons">
-        <a href="https://github.com/imertekin" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="https://twitter.com/im_ertekin" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.instagram.com/im_ertekin.py/" target="_blank"><i class="fab fa-instagram"></i></a>
-        <!-- İstenilen sosyal medya ikonları ve linklerini ekleyebilirsiniz -->
-    </div>
+<dl class="survey-strip">
+  <div><dt><span class="ui" lang="tr">Tarih</span><span class="ui" lang="en">Date</span></dt><dd>2026-09</dd></div>
+  <div><dt><span class="ui" lang="tr">Durum</span><span class="ui" lang="en">Status</span></dt><dd><svg class="status measured" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path class="fill" d="M7 1.8A5.2 5.2 0 0 1 7 12.2Z"/></svg> <span class="ui" lang="tr">devam ediyor</span><span class="ui" lang="en">ongoing</span></dd></div>
+  <div><dt><span class="ui" lang="tr">Sürüm</span><span class="ui" lang="en">Version</span></dt><dd>0.1</dd></div>
+  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">TR</span></dd></div>
+  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
+</dl>
+
+<p class="ongoing"><span class="ui" lang="tr">Bu bir ara not. Proje devam ediyor; “harness mi, model mi?” sorusunun cevabı geldiğinde son bölüm güncellenecek ve değişiklik kaydına işlenecek.</span><span class="ui" lang="en">This is an interim note. The project is ongoing; the last section will be updated once the “harness or model?” question is answered.</span></p>
+
+<section class="abstract" lang="tr">
+  <h2>Kısaca</h2>
+  <p>Framework kullanmadan, sıfırdan küçük bir coding agent yazıyorum. Amacım bir ürün çıkarmak değil; &ldquo;agent&rdquo; dediğimiz şeyin gerçekte ne olduğunu kendi elimle kurarak öğrenmek. Yol boyunca makul görünen varsayımlarımın önemli bir kısmı ölçüme dayanamadı. Bu yazıda bunlardan yedisini anlatıyorum, ve hepsinin ortak dersi aynı çıktı: <strong>tahmin etme, ölç.</strong></p>
+  <p class="kw"><b><span class="ui" lang="tr">Anahtar kelimeler</span><span class="ui" lang="en">Keywords</span>:</b> coding agent · harness · tool calling · <span class="ui" lang="tr">tekrarlanabilir ölçüm</span><span class="ui" lang="en">reproducible measurement</span> · trace · memory</p>
+</section>
+
+<article class="article" lang="tr">
+<div class="prose">
+<h2>Proje ne?</h2>
+<p>Agentic coding üzerine okurken en sık karşılaştığım cümle şuydu: <strong>Agent = Model + Harness.</strong> Model, metin alıp metin üreten LLM. Harness ise onun etrafındaki her şey: modele hangi tool&rsquo;ların tarif edildiği, context&rsquo;in nasıl kurulduğu, state&rsquo;in nerede tutulduğu, döngünün ne zaman durduğu. Model hiçbir şey çalıştırmaz, sadece <em>ister</em>. Dosyayı okuyan, testi koşan, sonucu geri veren kod harness&rsquo;ta.</p>
+<span class="fn"><b>Not ·</b> Bu deneyin çıkış noktası SWE-agent ekibinin <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> çalışması <a class="cite" href="#r1">[1]</a>: küçük ve okunabilir bir agent döngüsünün ne kadar ileri gidebildiğini göstermesi <a class="cite" href="#r2">[2]</a>.</span>
+<p>Bu cümleyi okumak ile anlamak arasında fark olduğunu düşündüm ve harness&rsquo;ı kendim yazmaya karar verdim. Birkaç kural koydum:</p>
+<ul>
+<li><strong>Agent framework&rsquo;ü yok.</strong> LangGraph veya Google ADK gibi araçlara, neden var olduklarını kendi eksikliklerimden görünce bakacağım.</li>
+<li><strong>LLM SDK&rsquo;sı yok.</strong> Sağlayıcıyla ham HTTP üzerinden konuşuyorum; tek runtime bağımlılığı <code>httpx</code>.</li>
+<li><strong>Model:</strong> Gemini Flash-Lite, ücretsiz katman. Yerel GPU&rsquo;m şu an kullanılabilir değildi ve bu projeyi bloklamamalıydı.</li>
+<li><strong>Hedef repo:</strong> <a href="https://github.com/python-poetry/tomlkit">tomlkit</a>, sabit bir commit&rsquo;e pinlenmiş. Sıfır runtime bağımlılığı, 1.052 test, ~1,3 saniyede koşuyor.</li>
+<li><strong>Her şey kayıt altında.</strong> Her model çağrısı, her tool çağrısı, her sonuç satır satır bir JSONL trace&rsquo;e yazılıyor ve sonradan kayıpsız okunabiliyor.</li>
+</ul>
+<p>Çalışma şeklim de deneyin bir parçası: kodu Claude Code yazıyor, ben okuyup üzerine gidiyorum; her adımın tasarım sorularını ve kararlarını ayrı bir Claude oturumunda hazırlıyorum. Aşağıdaki yanlış tahminlerin bir kısmı benim, bir kısmı bu iki asistanın. İlginç olan, üç tarafın da aynı <em>tür</em> hatayı yapması.</p>
+<p>Bu çalışma düzeni, ileride agent&rsquo;a eklemeyi planladığım <strong>Project Historian</strong> fikrinin elle yapılan erken bir hâli sayılabilir. Kararlar koddan önce ayrı bir oturumda yazılıyor, duran kararlar bir tabloda tutuluyor ve her adım bir durum belgesiyle bir sonrakine devrediliyor. Tam bir uygulaması değil. Ama aşağıdaki derslerin bir kısmı, bu düzenin nerede tuttuğunu ve nerede tutmadığını gösteriyor.</p>
+<h2><span class="no">1</span>&ldquo;Dokümantasyonu okuyup provider&rsquo;ı yazarım&rdquo;</h2>
+<p>İlk iş olarak Gemini API&rsquo;sine istek atan sınıfı yazacaktım. Yazmadan önce ham istekler atıp protokolün gerçekte ne döndürdüğünü ölçtüm. Dokümantasyondan yazsaydım dört <strong>sessiz</strong> hatayla başlayacaktım:</p>
+<ul>
+<li><strong><code>thoughtsTokenCount</code> Flash-Lite&rsquo;ta sıfır değil, hiç yok.</strong> <code>usage["thoughtsTokenCount"]</code> diye okuyan kod ilk çağrıda <code>KeyError</code> verirdi.</li>
+<li><strong>Düşünme token&rsquo;ları <code>candidatesTokenCount</code>&rsquo;a dahil değil, ama <code>totalTokenCount</code>&rsquo;a dahil.</strong> Çıktı token&rsquo;larını 3–4 kat eksik sayardım, ve bu projede maliyet ana metriklerden biri.</li>
+<li><strong>Tool çağrısı içeren bir cevapta bile <code>finishReason</code> <code>"STOP"</code>.</strong> &ldquo;Model tool mu istedi&rdquo; sorusunu <code>finishReason</code>&rsquo;a bakarak cevaplayan bir döngü hiçbir tool çağrısını görmezdi.</li>
+<li><strong><code>thoughtSignature</code>.</strong> Modelin iç muhakemesinin opak bir imzası, tool çağrısıyla aynı yapının içinde geliyor. Okunamıyor, üretilemiyor, doğrulanamıyor; sadece bir sonraki istekte aynen geri gönderilebiliyor. Cevabı temiz bir iç formata çevirip sonra yeniden kuran kod bu alanı sessizce düşürürdü.</li>
+</ul>
+<p>Ölçümden sonra yazılan sınıf, gerçek API&rsquo;yle ilk temasında sıfır sürprizle çalıştı. Yolda bir şey daha öğrendim: tool calling bir modelin &ldquo;yeteneği&rdquo; değil. İstekteki <code>tools</code> bloğuyla açılan bir sözleşme, ve o sözleşmenin zarfı sağlayıcıdan sağlayıcıya değişiyor. Gemini <code>functionCall</code> döndürüyor, OpenAI <code>tool_calls</code>, Anthropic <code>tool_use</code>. Aynı açık modeli ham servis ettiğinizde ise etiketleri kendiniz parse ediyorsunuz. Format ağırlıklardan değil, servis katmanından geliyor.</p>
+<h2><span class="no">2</span>&ldquo;Bir değişikliğin etkisini tek koşuyla görürüm&rdquo;</h2>
+<p>Agent gerçek bir kod tabanı hakkındaki bir soruyu doğru cevaplamayı başardıktan sonra, system prompt&rsquo;taki bir cümlenin davranışı ne kadar etkilediğini görmek istedim. Cümleyi çıkarıp aynı görevi yeniden koştum. Aynı görev, neredeyse aynı kurulum, dört koşu:</p>
+<div class="table-wrap"><table class="data">
+<thead>
+<tr>
+<th>koşu</th>
+<th>turn</th>
+<th>token</th>
+<th>sonuç</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>baseline</td>
+<td>10</td>
+<td>43.843</td>
+<td>tam doğru</td>
+</tr>
+<tr>
+<td>ablation 1</td>
+<td>10</td>
+<td>41.144</td>
+<td><strong>cevapsız</strong>, turn sınırına takıldı</td>
+</tr>
+<tr>
+<td>ablation 2</td>
+<td>5</td>
+<td>17.900</td>
+<td>kısmi</td>
+</tr>
+<tr>
+<td>ablation 3</td>
+<td>5</td>
+<td>14.557</td>
+<td>kısmi</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>2,8 kat maliyet farkı, dörtte biri cevapsız.</strong> Sadece baseline ile ablation 2&rsquo;yi karşılaştırsaydım, o cümlenin maliyeti 2,4 kat artırdığı sonucuna varırdım. Bu verinin söylediği tek şey, n=1&rsquo;lik bir karşılaştırmanın hiçbir şey söylemediği.</p>
+<p>Sebebi basit: LLM deterministik değil ve <strong>agent bu rastgeleliği yutmuyor, büyütüyor.</strong> Birinci turn&rsquo;deki küçük bir fark, onuncu turn&rsquo;de bambaşka bir yol demek. Sonradan yazma görevlerinde de ölçtüm: üç koşunun üçünün de başarılı olduğu bir görevde yayılım 2,6 kat çıktı.</p>
+<p>Aynı tablodan ikinci bir tuzak da çıktı: <strong>&ldquo;bitti&rdquo; başarı demek değil.</strong> İki koşu cevap vererek bitti ama üç doğru konumdan yalnızca birini buldu. Ucuz koşular ucuzdu çünkü daha az iş yaptılar. Koşulsuz bir &ldquo;token / episode&rdquo; sıralaması, tam doğru cevabı sonuncu yapardı.</p>
+<p>Bu tablo planın geri kalanını değiştirdi. Her kol için çok sayıda koşu, dereceli sonuç (cevapsız / kısmi / tam), sonuç kalitesine koşullu maliyet, ve ana ölçüm olarak <strong>test ile doğrulanan bug-fix görevleri</strong> geldi.</p>
+<h2><span class="no">3</span>&ldquo;Yazdığım bir karar, uygulanmış bir karardır&rdquo;</h2>
+<p>Model cevabını temsil eden veri yapısında <code>retries</code> ve <code>retry_wait_ms</code> alanları vardı. Karar netti: her çağrının kaç kez yeniden denendiği trace&rsquo;e yazılacaktı. Ama trace&rsquo;i yazan kod bu iki alanı hiç yazmıyordu. Trace&rsquo;i okuyan araç da onları <code>.get(..., 0)</code> ile okuyordu, yani ekranda &ldquo;0 retry&rdquo; görünüyordu.</p>
+<p><strong>Ölçümün yokluğu bir ölçüm gibi görünüyordu.</strong> Hatayı gizleyen şey, &ldquo;güvenli&rdquo; olsun diye yazılmış savunmacı bir satırdı.</p>
+<p>Bu örüntü defalarca tekrarladı. &ldquo;Bildirilmeyen bir değer sıfır değildir&rdquo; ilkesi bir dosyada yazılıydı, başka bir dosyada ihlal ediliyordu. Agent&rsquo;ın repoyu her görevden sonra temiz duruma döndürmesini sağlayan kod <code>finally</code> içinde değildi; ilk crash pinlenmiş repoyu değiştirilmiş halde bıraktı. Aynı kod, görev bittiğinde agent&rsquo;ın yaptığı değişikliği de siliyordu. Bir bug-fix episode&rsquo;unun en bilgilendirici çıktısı buydu, ve bir kez yalnızca şans eseri kurtuldu. Kendi raporundaki cümleyle: <em>&ldquo;guardrail vardı, yarısı yoktu.&rdquo;</em></p>
+<p>Düzeltmesi basit oldu. Projenin duran kararlarını tuttuğum tabloya <strong>&ldquo;bu karar nerede zorlanıyor&rdquo;</strong> diye bir sütun ekledim. İçine bir test adı ya da kod satırı yazılamayan her satır, yarım kalmış bir karar demek.</p>
+<h2><span class="no">4</span>&ldquo;Kaydettiğim bir ders, öğrenilmiş bir derstir&rdquo;</h2>
+<p>Testlerde gerçek API cevaplarını kaydedip isteğin hash&rsquo;iyle eşleştiriyorum (bu kayıtlara <em>cassette</em> deniyor). Neredeyse her adımda &ldquo;bu değişiklik kayıtları geçersiz kılacak&rdquo; diye tahmin edildi, ve kılmadı. Aynı yanlış tahmin, iki kez düzeltildikten sonra <strong>üçüncü kez</strong> yapıldı.</p>
+<p>Düzeltme bir yerde yazılıydı: öğrenme günlüğünde. Ama o dosya bir sonraki adımın planı yazılırken okunmuyordu. Kayıt vardı; getirilmedi.</p>
+<p>Başka bir vakada kural her oturumda okunan dosyadaydı. Getiriliyordu, ama kodda yarım uygulanıyordu. Bu da başka bir kapıda başarısızlık.</p>
+<p>İkisini yan yana koyunca bir taksonomi çıktı:</p>
+<figure>
+<svg class="diag" viewBox="0 0 640 150" role="img" aria-label="Memory için üç kapı: saklandı mı, getirildi mi, uygulandı mı">
+<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0 8 4 0 8Z"/></marker></defs>
+<rect class="box" x="4" y="20" width="170" height="50"/><text x="18" y="42">1 · Saklandı mı?</text><text class="sub" x="18" y="60">bilgi bir yere yazıldı</text>
+<rect class="box" x="234" y="20" width="170" height="50"/><text x="248" y="42">2 · Getirildi mi?</text><text class="sub" x="248" y="60">gerektiğinde okundu</text>
+<rect class="box" x="464" y="20" width="172" height="50"/><text x="478" y="42">3 · Uygulandı mı?</text><text class="sub" x="478" y="60">davranış değişti</text>
+<path class="arrow" marker-end="url(#ah)" d="M174 45H232"/><path class="arrow" marker-end="url(#ah)" d="M404 45H462"/>
+<path class="leak" d="M319 70V100"/><text class="loss" x="236" y="116">düzeltme öğrenme günlüğündeydi,</text><text class="loss" x="236" y="130">plan yazılırken okunmadı</text>
+<path class="leak" d="M550 70V100"/><text class="loss" x="466" y="116">kural her oturumda okunuyordu,</text><text class="loss" x="466" y="130">kodda yarım uygulandı</text>
+</svg>
+<figcaption>Şekil 1 — Her kapı ayrı ayrı başarısız olabiliyor. Yalnızca ilk kapıyı ölçen bir memory deneyi, işe yaramayan bir sistemi “çalışıyor” diye raporlar.</figcaption>
+</figure>
+<p>Her kapı ayrı ayrı başarısız olabiliyor. Bu önemli, çünkü projenin ikinci yarısı agent&rsquo;a memory eklemek. <strong>Yalnızca ilk kapıyı ölçen bir memory deneyi (&ldquo;bunu kaydetti mi?&rdquo;), işe yaramayan bir sistemi &ldquo;çalışıyor&rdquo; diye raporlar.</strong> Doğru soru şu: agent&rsquo;ın makul olarak soracağı bir sorgu bu bilgiyi getirir miydi, ve getirdiğinde davranış değişti mi?</p>
+<p>Kendim için pratik çözüm, her adımda yeniden ürettiğim tek durum belgesine &ldquo;bilinen yanlış inançlar&rdquo; diye bir bölüm eklemek oldu. Düzeltmeyi, gerçekten okunan yere taşıdım.</p>
+<h2><span class="no">5</span>&ldquo;İyi bir özet, kaynağın yerini tutar&rdquo;</h2>
+<p>Yukarıdaki dört koşuluk tabloda ablation 2 &ldquo;kısmi&rdquo; diye işaretliydi. Bu etiket birkaç tartışma boyunca sorgulanmadan taşındı ve &ldquo;yanlış cevap&rdquo; gibi okunmaya başladı. Bir noktada &ldquo;ama bu aynı çıktı değil mi?&rdquo; diye sordum. Cevaplara tek tek bakınca durum netleşti: ablation 2 <strong>doğruydu, sadece dardı.</strong> Yorum satırlarının korunmasından sorumlu <code>Trivia</code> sınıfını doğru dosya ve satırla buldu; <code>Comment</code> sınıfını ve parser&rsquo;daki ilgili fonksiyonu kaçırdı.</p>
+<p>Etiket, bir özet kaynağı açmaktan daha ucuz olduğu için hayatta kaldı. Oysa kaynak tek bir komut uzaklıktaydı; trace&rsquo;leri kayıpsız okumak için yazdığım araç tam olarak bunun içindi.</p>
+<p>Buradan çıkardığım ders şu: <strong>tehlikeli olan kötü özet değil, iyi özet.</strong> İyi özet çoğu zaman doğrudur, o yüzden güvenilir, o yüzden kaynağın yerine geçer. Aynı olay bana bir şey daha gösterdi: 160 episode&rsquo;u tutarlı notlandırması gereken bir insan, bir metrik değildir. Bu, test ile doğrulanan görevlere geçmenin üçüncü gerekçesi oldu.</p>
+<p>Memory deneyi için de bir tahmin çıkardım: memory kolunda <code>read_file</code> / <code>search_code</code> çağrılarının azalması, bir doğruluk ölçümüyle eşleşene kadar <strong>verimlilik değil, uyarı işaretidir.</strong></p>
+<h2><span class="no">6</span>&ldquo;Agent&rsquo;ın ilk sorunu kötü düzenleme olacak&rdquo;</h2>
+<p>Agent&rsquo;a yazma yetenekleri ekledim: bir dosyada birebir metin değiştiren <code>edit_file</code>, testleri koşup başarısız test isimlerini döndüren <code>run_tests</code>, salt-okunur git komutları, allowlist&rsquo;li bir shell. Görev tipi de değişti. tomlkit&rsquo;in geçmişinde hem kaynağı hem testi değiştiren commit&rsquo;lerden seçip kaynak değişikliğini geri alıyorum, testi bırakıyorum ve agent&rsquo;a &ldquo;bu testi geçir&rdquo; diyorum.</p>
+<p>Koşmadan önce <code>edit_file</code> için beş hata modu tahmin ettim: boşluk/girinti uyuşmazlığı, birden fazla eşleşme, var olmayan bir metnin uydurulması ve benzerleri. Sonra üç görevi üçer kez koştum:</p>
+<div class="table-wrap"><table class="data">
+<thead>
+<tr>
+<th>görev</th>
+<th>3 koşu</th>
+<th>turn</th>
+<th>düzenleme</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kolay</td>
+<td>geçti · geçti · geçti</td>
+<td>11 / 12 / 18</td>
+<td>1 / 1 / 1</td>
+</tr>
+<tr>
+<td>orta</td>
+<td>çöktü · sınır · sınır</td>
+<td>23 / 25 / 25</td>
+<td><strong>0 / 0 / 0</strong></td>
+</tr>
+<tr>
+<td>zor</td>
+<td>sınır · çöktü · sınır</td>
+<td>25 / 22 / 25</td>
+<td><strong>0 / 0 / 0</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Kolay görevde yol her seferinde aynıydı ve mantıklıydı: testi koş, başarısız testin adını al, testi bul, kaynağı bul, oku, tek düzenleme yap, testi tekrar koş, <code>git diff</code> ile kendi değişikliğini kontrol et.</p>
+<p>Diğer altı episode&rsquo;da ise <strong>agent 22–25 turn boyunca okudu, aradı ve bir kez bile düzenleme yapmadı.</strong> Tahmin ettiğim beş hata modunun hiçbiri gerçekleşemezdi, çünkü ortada düzenleme yoktu. Sorduğum soru yanlıştı. Asıl soru &ldquo;doğru mu düzenliyor?&rdquo; değil, <strong>&ldquo;düzenlemeye karar veriyor mu?&rdquo;</strong> idi. Bu da 4. maddedeki hatanın aynısı: bir sonraki kapıyı ölçmek için tasarım yapıp, ondan önceki kapının var olup olmadığını kontrol etmemek.</p>
+<p>İki ucuz açıklamayı birer koşuyla test ettim:</p>
+<ul>
+<li><strong>Yer mi kalmadı?</strong> Turn sınırını 25&rsquo;ten 40&rsquo;a çıkardım. Fazladan 15 turn, aynı ara-oku-ara-oku salınımının 15 turn&rsquo;ü daha oldu. Projenin en pahalı episode&rsquo;u buydu (366.359 token), ve yine sıfır düzenleme.</li>
+<li><strong>Bütçesini bilmiyor mu?</strong> Her turn&rsquo;de context&rsquo;e &ldquo;turn 7/25&rdquo; gibi bir satır ekledim. Hatalı fonksiyonu 7. turn&rsquo;de buldu ve kalan 18 turn&rsquo;ü aramaya devam ederek geçirdi.</li>
+</ul>
+<p>Sonra trace&rsquo;leri tek tek okudum. Altı başarısızlığın <strong>dördünde agent hatalı fonksiyonu bulmuş ve okumuştu, ama düzenlemedi.</strong> Biri o fonksiyonu 4. turn&rsquo;de ekranına aldı ve 21 turn daha aradı. Kalan ikisi aynı görevdi: testin adı &ldquo;dotted inline table&rdquo; diyordu, agent 25 turn parser&rsquo;da kaldı, bug ise <code>Container.append</code> içindeydi.</p>
+<p>Görevlere verdiğim zorluk etiketleri de çöktü. Etiketleri kaynak değişikliğinin büyüklüğüne göre vermiştim (4, 9 ve 24 satır). Kolay/kolay-değil sınırında tuttu, orta ile zor arasında hiçbir şey öngörmedi. &ldquo;Başarısız test adından hatalı fonksiyona kaç adım var?&rdquo; ölçüsü de yanlış sırayı verdi. Şu an elimdeki hipotez şu: ayıran şey, <strong>testin dilinin doğru modülü gösterip göstermediği.</strong> Üç görevlik bir gözlem bu; bulgu değil, yanlışlanabilir bir hipotez.</p>
+<h2><span class="no">7</span>&ldquo;Ölçüm aletim güvenilir&rdquo;</h2>
+<p>Görevler arasında repo temizlenirken Claude Code bir şey fark etti: Python&rsquo;un bytecode cache&rsquo;i (<code>.pyc</code>), kaynak dosyanın güncel olup olmadığını <strong>saniye çözünürlüklü değişiklik zamanı ve byte boyutu</strong> ile kontrol ediyor. <code>a - b</code> ifadesi aynı saniye içinde <code>a + b</code> yapılırsa ikisi de değişmiyor, eski bytecode koşuyor, ve agent kendi <em>doğru</em> düzeltmesinin işe yaramadığını görüyor. Dışarıdan bakınca bu, &ldquo;bug&rsquo;ı düzeltemeyen agent&rdquo;tan ayırt edilemez.</p>
+<p>Mekanizmayı ayrıca ölçtüm:</p>
+<pre><code>dar döngüde doğal yarış          → 200 denemenin 198'inde eski bytecode koştu
+PYTHONDONTWRITEBYTECODE=1        → HÂLÂ eski bytecode
+__pycache__ silindikten sonra    → doğru sonuç
+</code></pre>
+<p>İlk akla gelen düzeltme işe yaramıyor. <code>PYTHONDONTWRITEBYTECODE=1</code> yalnızca yeni <code>.pyc</code> <em>yazılmasını</em> engelliyor, var olan eski dosyanın <em>okunmasını</em> engellemiyor. Doğru düzeltme, her görevden önce <code>__pycache__</code> dizinlerini silmek.</p>
+<p>Hikâyenin ikinci yarısı da aynı derecede öğretici oldu. İlk tepki &ldquo;o zaman topladığımız bütün sayılar kirli&rdquo; idi. Silip yeniden koşmadan önce trace&rsquo;lerdeki zaman damgalarına baktık: düzenlemeler, repo sıfırlandıktan 29, 41 ve 201 saniye sonra yapılmıştı; kalan altı episode&rsquo;da hiç düzenleme yoktu. Veri temizdi. <strong>Veriyi çöpe atmadan önce de ölçmek gerekiyor.</strong></p>
+<h2>Açık soru: harness mi, model mi?</h2>
+<p>İki ucuz açıklama elendi. Geriye iki aday kaldı:</p>
+<ol>
+<li><strong>Harness hiçbir adımda karar istemiyor.</strong> Döngü agent&rsquo;ın sonsuza kadar arayıp okumasına izin veriyor. Her tek çağrı kendi içinde makul, ve hiçbir aşama ondan bir hipoteze bağlanmasını istemiyor.</li>
+<li><strong>Model bu görevi yapamıyor.</strong> Flash-Lite küçük ve ucuz bir model.</li>
+</ol>
+<p>İkisi de aynı veriyle uyumlu, ve şu ana kadar koşulan on bir episode&rsquo;un hepsi <strong>aynı modelde</strong> koştu. Tek modelle bu ikisini ayırt etmek mümkün değil. Bir sonraki adım bu yüzden tek bir soru soruyor: aynı görev, aynı harness, daha güçlü bir model. Projenin başından beri model katmanını bir arayüzün arkasında tutmamın sebebi tam olarak bu tür bir sorunun gelecek olmasıydı.</p>
+<p>İki cevap da işe yarar. Güçlü model de düzenlemezse, &ldquo;harness&rsquo;ta karar noktası yoksa model ne olursa olsun karar vermiyor&rdquo; sonucunu iki modelle ölçmüş olurum. Düzenlerse, deneyin ilk kararı model seçimi olur. Task&rsquo;ların üçte ikisini hiç çözemeyen bir modelle memory&rsquo;nin etkisini ölçmek mümkün değil, çünkü ölçülecek bir aralık kalmıyor.</p>
+<p>Bariz bir düzeltme de var: system prompt&rsquo;a &ldquo;önce hipotez kur, sonra düzenle, sonra test et&rdquo; yazmak. Muhtemelen işe yarar, ve tam da bu yüzden şimdilik yapmıyorum. O zaman ölçtüğüm şey agent değil prompt olur. Bu ayrı bir karar ve ayrı bir deney kolu olacak.</p>
+<h2>Sırada ne var?</h2>
+<p>Bu adımdan sonra agent&rsquo;a memory ve <strong>Project Historian</strong> dediğim bir bileşen ekleyeceğim. Historian, projede alınan kararları ve geçmişi görevler arasında taşıyan bir katman. Bu fikrin önceden yapılmış benzer çalışmaları var; kendi katkım fikrin kendisi değil, onu çalışan bir agent üzerinde ölçmek. Sonra aynı görevlerde memory&rsquo;siz ve memory&rsquo;li agent&rsquo;ı karşılaştıracağım.</p>
+<ol>
+<li>ve 4. maddedeki hataları, Historian&rsquo;ı kendi çalışma şeklime elle uygularken yaşadım: karar yazılıydı ama zorlanmıyordu; ders kayıtlıydı ama getirilmiyordu. Agent&rsquo;a eklenecek Historian&rsquo;ın ölçmesi gereken şey de tam olarak bu iki kapı.</li>
+</ol>
+<p>Bu yazıdaki bulguların bir kısmı zaten o deneyin girdisi oldu. Örneğin &ldquo;bu repoda test adları bug&rsquo;ın yerini yanlış gösteriyor&rdquo; bilgisi, tam olarak bir memory sisteminin taşıması gereken türden bir proje bilgisi. Yukarıdaki üç kapılık taksonomi de o deneyin nasıl değerlendirileceğini belirliyor.</p>
+<h2>Şimdiye kadar öğrendiklerim</h2>
+<ul class="learned">
+<li><strong>Sistem davranışı hakkındaki makul öngörüler bu projede sık sık yanlış çıktı.</strong> Bir oran veremem. Yanlışlar bedel ödettiği için kaydedildi, doğrular çoğu zaman yazılmadı, yani elimdeki örneklem temiz değil. Ama yön net: tek güvenilir filtre, ölçümü koşmak.</li>
+<li><strong>Agent, modelin belirsizliğini büyütüyor.</strong> Tek koşuluk bir karşılaştırma bir şey söylemez.</li>
+<li><strong>Projenin en değerli kodu agent değil, trace.</strong> Yukarıdaki derslerin neredeyse hepsi, &ldquo;ne oldu?&rdquo; sorusuna tahminle değil kayıtla cevap verebildiğim için mümkün oldu.</li>
+<li><strong>Guardrail&rsquo;ler koşudan önce kurulmalı, sonra değil.</strong> Ve kurulduğunu değil, zorlandığını kontrol etmek gerekiyor.</li>
+<li><strong>Memory&rsquo;nin zor kısmı saklamak değil, getirmek ve uygulamak.</strong> Bunu önce kendi çalışma şeklimde öğrendim.</li>
+</ul>
+<p>Proje devam ediyor. Harness mi model mi sorusunun cevabı geldiğinde bu yazının son bölümünü güncelleyeceğim.</p>
 </div>
 
+<section class="refs" id="kaynaklar">
+  <h2><span class="ui" lang="tr">Kaynaklar</span><span class="ui" lang="en">References</span></h2>
+  <ol>
+    <li id="r1">SWE-agent <span class="ui" lang="tr">ekibi</span><span class="ui" lang="en">team</span>. <i>mini-swe-agent.</i> GitHub. <a href="https://github.com/SWE-agent/mini-swe-agent">github.com/SWE-agent/mini-swe-agent</a></li>
+    <li id="r2">Yang, J., Jimenez, C. E., Wettig, A., Lieret, K., Yao, S., Narasimhan, K., &amp; Press, O. (2024). SWE-agent: Agent-computer interfaces enable automated software engineering. <i>Advances in Neural Information Processing Systems 37 (NeurIPS 2024).</i> <a href="https://arxiv.org/abs/2405.15793">arXiv:2405.15793</a></li>
+    <li id="r3">python-poetry. <i>tomlkit.</i> GitHub. <a href="https://github.com/python-poetry/tomlkit">github.com/python-poetry/tomlkit</a></li>
+    <li id="r4"><span class="ui" lang="tr">Bu deneyin deposu, trace’leri ve learning log’u. Yayınlandığında bağlantı eklenecek.</span><span class="ui" lang="en">This experiment’s repository, traces and learning log. Link added once public.</span></li>
+  </ol>
+</section>
+</article>
+
+<section class="citebox" id="cite">
+  <h2><span class="ui" lang="tr">Atıf</span><span class="ui" lang="en">Cite this</span></h2>
+  <p>Ertekin, İ. M. (2026). <i>Varsayım yerine ölçüm: Küçük bir coding agent yazarken yanlış çıkan yedi varsayım</i> (Ara not, sürüm 0.1). https://imertekin.com/yazilar/varsayim-yerine-olcum</p>
+  <pre id="bib">@misc{ertekin2026olcum,
+  author       = {Ertekin, {\.I}lkay Murat},
+  title        = {Varsay{\i}m Yerine {\"O}l{\c{c}}{\"u}m: K{\"u}{\c{c}}{\"u}k Bir Coding Agent Yazarken Yanl{\i}{\c{s}} {\c{C}}{\i}kan Yedi Varsay{\i}m},
+  year         = {2026},
+  howpublished = {\url{https://imertekin.com/yazilar/varsayim-yerine-olcum}},
+  note         = {Ara not, devam eden {\c{c}}al{\i}{\c{s}}ma, s{\"u}r{\"u}m 0.1}
+}</pre>
+  <button type="button" data-copy="bib" data-label="BibTeX kopyala">BibTeX kopyala</button>
+</section>
+
+<div class="post-foot">
+  <section>
+    <h2><span class="ui" lang="tr">Değişiklik kaydı</span><span class="ui" lang="en">Changelog</span></h2>
+    <ol class="revlog">
+      <li><time>2026-09</time><span><span class="ui" lang="tr">v0.1 · İlk ara not yayında</span><span class="ui" lang="en">v0.1 · First interim note published</span></span></li>
+      <li><time>—</time><span><span class="ui" lang="tr">Bekleniyor · “Harness mi, model mi?” sonucu</span><span class="ui" lang="en">Pending · “Harness or model?” result</span></span></li>
+    </ol>
+  </section>
+  <section>
+    <h2><span class="ui" lang="tr">İlgili</span><span class="ui" lang="en">Related</span></h2>
+    <ul class="related">
+      <li><a href="/#calismalar"><span class="ui" lang="tr">Coding agent harness deneyi</span><span class="ui" lang="en">Coding agent harness experiment</span></a><span class="badge"><span class="ui" lang="tr">deney</span><span class="ui" lang="en">exp.</span></span></li>
+      <li><a href="/#calismalar">Precedent — Project Historian</a><span class="badge"><span class="ui" lang="tr">açık kaynak</span><span class="ui" lang="en">OSS</span></span></li>
+    </ul>
+  </section>
+</div>
+<footer class="margin-foot">
+  <div>
+    <h4>İlkay Murat Ertekin</h4>
+    <p>Software Engineer · <span class="ui" lang="tr">agentic sistemler</span><span class="ui" lang="en">agentic systems</span></p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Son güncelleme</span><span class="ui" lang="en">Last updated</span></h4>
+    <p>2026-09-28</p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Bağlantılar</span><span class="ui" lang="en">Elsewhere</span></h4>
+    <p><a href="https://github.com/imertekin">GitHub</a> · <a href="https://orcid.org/0000-0002-1011-0284">ORCID</a> · <a href="https://twitter.com/im_ertekin">X</a><br><a href="mailto:iertekinx@gmail.com">iertekinx@gmail.com</a></p>
+  </div>
+</footer></div>
+<script>
+(() => {
+  const r = document.documentElement;
+  const langBtn = document.getElementById('langBtn');
+  const themeBtn = document.getElementById('themeBtn');
+  const setUI = (l) => {
+    r.dataset.ui = l; r.lang = l;
+    langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
+  };
+  langBtn.addEventListener('click', () => setUI(r.dataset.ui === 'tr' ? 'en' : 'tr'));
+  const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const paint = () => {
+    const d = isDark();
+    themeBtn.querySelector('[lang=tr]').textContent = d ? 'Gündüz' : 'Gece';
+    themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
+  };
+  themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
+  setUI(r.dataset.ui || 'tr'); paint();
+})();
+</script><script>
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const el = document.getElementById(b.dataset.copy);
+  try { await navigator.clipboard.writeText(el.innerText); b.textContent = '✓'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(el); getSelection().removeAllRanges(); getSelection().addRange(r); }
+  setTimeout(() => b.textContent = b.dataset.label, 1400);
+}));
+</script>
 </body>
 </html>

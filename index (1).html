@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="tr" data-ui="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İlkay Murat Ertekin</title>
+<meta name="description" content="İlkay Murat Ertekin — Software Engineer. Agentic sistemler, harness tasarımı ve değerlendirme üzerine teknik notlar ve deneyler.">
+<link rel="canonical" href="https://imertekin.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.6' fill='none' stroke='%23a93d27' stroke-width='1.6'/%3E%3Cpath d='M7 1.4A5.6 5.6 0 0 1 7 12.6Z' fill='%23a93d27'/%3E%3C/svg%3E">
+<meta property="og:title" content="İlkay Murat Ertekin">
+<meta property="og:description" content="İlkay Murat Ertekin — Software Engineer. Agentic sistemler, harness tasarımı ve değerlendirme üzerine teknik notlar ve deneyler.">
+<meta property="og:url" content="https://imertekin.com/">
+<meta property="og:type" content="website">
+<meta name="author" content="İlkay Murat Ertekin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>/* ————— Tokens ————— */
+:root {
+  --paper: #f3efe4;
+  --paper-2: #ebe5d5;
+  --ink: #1c2320;
+  --ink-2: #49524c;
+  --ink-3: #7b8079;
+  --rule: #d5cbb4;
+  --contour: #a97c4a;
+  --water: #2b6781;
+  --survey: #a93d27;
+  --grid: rgba(43, 103, 129, .07);
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 38rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+    --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+  --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+  color-scheme: dark;
+}
+
+/* ————— Base ————— */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.6 var(--serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--water); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+::selection { background: color-mix(in srgb, var(--contour) 35%, transparent); }
+
+/* bilingual UI: every UI string exists twice */
+:root[data-ui="tr"] [lang="en"].ui, :root[data-ui="en"] [lang="tr"].ui { display: none !important; }
+
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
+
+.mono, .label {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+.label {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ink-3);
+}
+
+/* ————— Sheet header ————— */
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .78rem;
+}
+.sheet-id { color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+.sheet-id b { font-weight: 600; letter-spacing: .08em; }
+.sheet-id span { color: var(--ink-3); }
+.nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; }
+.toggles { display: flex; gap: 6px; }
+.toggles button {
+  font: inherit; color: var(--ink-2); background: none; cursor: pointer;
+  border: 1px solid var(--rule); padding: 3px 8px; border-radius: 2px;
+}
+.toggles button:hover { color: var(--ink); border-color: var(--ink-3); }
+.toggles b { color: var(--ink); font-weight: 600; }
+@media (max-width: 719px) {
+  .sheet-head { flex-wrap: wrap; }
+  .nav { order: 3; width: 100%; gap: 16px; }
+  .sheet-id span { display: none; }
+}
+
+.draft-note {
+  font-family: var(--mono); font-size: .72rem; color: var(--survey);
+  border: 1px dashed currentColor; padding: 6px 10px; margin: 16px 0 0; display: inline-block;
+}
+
+/* ————— Map frame (neatline with graduated border) ————— */
+.mapframe {
+  position: relative;
+  margin: 28px 0 0;
+  padding: 7px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) top / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) bottom / 100% 5px no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) left / 5px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) right / 5px 100% no-repeat;
+  outline: 1px solid var(--ink);
+}
+.mapframe-inner {
+  position: relative;
+  border: 1px solid var(--ink);
+  aspect-ratio: 2.4 / 1;
+  min-height: 260px;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.topo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.topo path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .55; }
+.topo path.idx { stroke-width: 1.8; opacity: .8; }
+
+.map-label {
+  position: absolute; left: 6%; top: 50%; transform: translateY(-50%);
+  max-width: 62%;
+}
+.map-label h1 {
+  margin: 0;
+  font: 500 clamp(2rem, 5.2vw, 4rem)/1.02 var(--serif);
+  letter-spacing: -.01em;
+  text-shadow: 0 0 8px var(--paper), 0 0 2px var(--paper);
+}
+.map-label p {
+  margin: 12px 0 0; font-family: var(--mono); font-size: .78rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-2);
+  text-shadow: 0 0 6px var(--paper);
+}
+.trig { position: absolute; font-family: var(--mono); font-size: .7rem; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.trig svg { width: 14px; height: 14px; }
+.coord { position: absolute; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); background: var(--paper); padding: 0 4px; }
+.coord.tl { top: -1px; left: 12px; transform: translateY(-50%); }
+.coord.br { bottom: -1px; right: 12px; transform: translateY(50%); }
+@media (max-width: 719px) {
+  .mapframe-inner { aspect-ratio: auto; height: 300px; }
+  .map-label { left: 20px; right: 20px; max-width: none; top: auto; bottom: 28px; transform: none; }
+}
+
+/* ————— Home layout ————— */
+.intro {
+  display: grid; gap: 32px; margin: 40px 0 8px;
+}
+.intro p { margin: 0 0 1em; max-width: var(--measure); font-size: 1.25rem; line-height: 1.55; }
+.intro p.motto {
+  font-style: italic; color: var(--ink-2); font-size: 1.1rem;
+  border-left: 2px solid var(--contour); padding-left: 16px;
+}
+@media (min-width: 900px) { .intro { grid-template-columns: minmax(0, 1fr) 17rem; } }
+
+.legend {
+  border: 1px solid var(--ink); padding: 14px 16px 12px; align-self: start; background: var(--paper);
+  font-family: var(--mono); font-size: .75rem;
+}
+.legend h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.legend dl { margin: 0; display: grid; grid-template-columns: 28px 1fr; gap: 8px 10px; align-items: center; }
+.legend dt { display: flex; justify-content: center; }
+.legend dd { margin: 0; color: var(--ink-2); }
+.legend dd b { color: var(--ink); font-weight: 600; }
+.legend hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--rule); margin: 4px 0; width: 100%; }
+
+.status { width: 14px; height: 14px; flex: none; }
+.status circle { fill: none; stroke: var(--survey); stroke-width: 1.4; }
+.status .fill { fill: var(--survey); stroke: none; }
+.status circle.fill { stroke: var(--survey); }
+.status .dash { stroke-dasharray: 2.6 2.2; }
+
+.badge { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; border: 1px solid var(--ink-3); color: var(--ink-2); padding: 0 4px; border-radius: 2px; }
+
+.scalebar { display: inline-flex; height: 6px; border: 1px solid var(--ink); vertical-align: middle; }
+.scalebar i { display: block; width: 8px; height: 100%; }
+.scalebar i:nth-child(odd) { background: var(--ink); }
+
+section.block { margin: 64px 0 0; }
+.block-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px;
+}
+.block-head h2 { margin: 0; font: 500 1.6rem/1.2 var(--serif); }
+.block-head a { font-family: var(--mono); font-size: .75rem; }
+
+/* post list */
+.posts { list-style: none; margin: 0; padding: 0; }
+.posts li {
+  display: grid; grid-template-columns: 22px 6.5rem minmax(0, 1fr) auto; gap: 4px 14px;
+  padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
+}
+.posts .status { transform: translateY(2px); }
+.posts time { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.posts h3 { margin: 0; font: 500 1.28rem/1.3 var(--serif); }
+.posts h3 a { color: var(--ink); text-decoration: none; }
+.posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.posts p { grid-column: 3; margin: 2px 0 0; color: var(--ink-2); font-size: 1rem; max-width: 36rem; }
+.posts .meta { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); white-space: nowrap; }
+@media (max-width: 719px) {
+  .posts li { grid-template-columns: 22px minmax(0, 1fr); }
+  .posts time { grid-column: 2; order: -1; }
+  .posts .status { grid-row: 1 / span 2; }
+  .posts h3, .posts p, .posts .meta { grid-column: 2; }
+}
+
+/* active sheets (sheet index grid) */
+.sheets { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); border-left: 1px solid var(--ink); border-top: 1px solid var(--ink); margin-top: 20px; }
+.sheet { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 14px 16px 18px; position: relative; }
+.sheet .no { font-family: var(--mono); font-size: .68rem; color: var(--ink-3); letter-spacing: .1em; }
+.sheet h3 { margin: 6px 0 4px; font: 500 1.2rem/1.25 var(--serif); }
+.sheet p { margin: 0; font-size: .98rem; color: var(--ink-2); }
+.sheet .state { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: .66rem; color: var(--survey); }
+
+/* route */
+.route { list-style: none; margin: 24px 0 0; padding: 0 0 0 28px; position: relative; max-width: 44rem; }
+.route::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 34px; border-left: 2px dashed var(--survey); }
+.route li { position: relative; padding: 0 0 22px; }
+.route li::before {
+  content: ""; position: absolute; left: -26px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--survey);
+}
+.route li:last-child::before { background: var(--survey); }
+.route b { font-weight: 500; font-size: 1.15rem; }
+.route span { display: block; color: var(--ink-2); font-size: 1rem; }
+
+/* ————— Map-margin footer ————— */
+.margin-foot {
+  margin: 96px 0 0; border-top: 1px solid var(--ink); padding: 18px 0 40px;
+  display: grid; gap: 20px 32px; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-2);
+}
+.margin-foot h4 { margin: 0 0 6px; font: 600 .66rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.margin-foot p { margin: 0; line-height: 1.7; }
+.margin-foot a { color: var(--ink-2); }
+.foot-scale { display: flex; flex-direction: column; gap: 6px; }
+.foot-scale .scalebar i { width: 22px; }
+.foot-scale .ticks { display: flex; font-size: .62rem; color: var(--ink-3); }
+.foot-scale .ticks span { width: 22px; }
+.north { width: 22px; height: 34px; }
+.north path { fill: var(--ink); }
+.north text { fill: var(--ink); font: 600 9px var(--mono); }
+
+/* ————— Article ————— */
+.crumbs { margin: 36px 0 0; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.crumbs a { color: var(--ink-2); }
+.post-head { margin: 18px 0 0; max-width: 46rem; }
+.post-head h1 { margin: 0; font: 500 clamp(2rem, 4.6vw, 3.3rem)/1.08 var(--serif); letter-spacing: -.012em; }
+.post-head .dek { margin: 16px 0 0; font-size: 1.3rem; line-height: 1.45; color: var(--ink-2); font-style: italic; }
+
+.survey-strip {
+  margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  font-family: var(--mono); font-size: .74rem;
+}
+.survey-strip div { padding: 10px 12px 10px 0; }
+.survey-strip div + div { padding-left: 12px; border-left: 1px solid var(--rule); }
+.survey-strip dt { color: var(--ink-3); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
+.survey-strip dd { margin: 0; display: flex; align-items: center; gap: 6px; }
+@media (max-width: 719px) {
+  .survey-strip { grid-template-columns: 1fr 1fr; }
+  .survey-strip div, .survey-strip div + div { padding: 10px 0; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .survey-strip div:nth-child(even) { padding-left: 12px; border-left: 1px solid var(--rule); }
+}
+
+.article { margin: 40px 0 0; }
+.prose { max-width: var(--measure); }
+@media (min-width: 1040px) { .article { padding-right: 17rem; } .prose { max-width: 40rem; } }
+.prose > p:first-child::first-letter { font-size: 3.4em; float: left; line-height: .9; padding: .06em .1em 0 0; font-weight: 500; color: var(--contour); }
+.prose p { margin: 0 0 1.2em; hyphens: auto; }
+.prose h2 { font: 500 1.55rem/1.25 var(--serif); margin: 2em 0 .6em; display: flex; gap: 12px; align-items: baseline; }
+.prose h2 .no { font-family: var(--mono); font-size: .75rem; color: var(--survey); font-weight: 500; }
+.prose blockquote { margin: 1.6em 0; padding: 0 0 0 20px; border-left: 2px solid var(--contour); font-style: italic; color: var(--ink-2); }
+.prose code { font-family: var(--mono); font-size: .86em; background: var(--paper-2); padding: .08em .3em; border-radius: 2px; }
+.prose pre {
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6; background: var(--paper-2); border-left: 2px solid var(--water);
+  padding: 14px 16px; overflow-x: auto; margin: 1.6em 0;
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+.prose pre .c { color: var(--ink-3); }
+.prose pre .s { color: var(--survey); }
+
+/* field notes (sidenotes) */
+.fn-ref { font-family: var(--mono); font-size: .66em; vertical-align: super; color: var(--survey); line-height: 0; }
+.fn {
+  display: block; font-family: var(--mono); font-size: .74rem; line-height: 1.55; color: var(--ink-2);
+  margin: -.4em 0 1.4em; padding: 8px 12px; border-left: 2px solid var(--survey);
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 1.55em;
+}
+.fn b { color: var(--survey); font-weight: 600; }
+@media (min-width: 1040px) {
+  .fn {
+    float: right; clear: right; width: 14.5rem; margin: .2em -17rem 1rem 0;
+    border-left: 0; border-top: 1px solid var(--survey); padding: 6px 0 0; background: none;
+  }
+}
+
+figure { margin: 2em 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-top: 8px; }
+.diag text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.diag .sub { fill: var(--ink-3); font-size: 10px; }
+.diag .loss { fill: var(--survey); font-size: 10px; }
+.diag .box { fill: var(--paper); stroke: var(--ink); stroke-width: 1; }
+.diag .arrow { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.diag .leak { stroke: var(--survey); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.diag .ah { fill: var(--ink-2); }
+
+/* post footer */
+.post-foot { margin: 72px 0 0; display: grid; gap: 40px; }
+@media (min-width: 900px) { .post-foot { grid-template-columns: 1fr 1fr; } }
+.post-foot h2 { margin: 0 0 12px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.revlog { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: .75rem; }
+.revlog li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.revlog time { color: var(--ink-3); }
+
+.adjacent { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); }
+.adjacent > a, .adjacent > span {
+  display: block; min-height: 6.2rem; padding: 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-size: .9rem; line-height: 1.3; color: var(--ink); text-decoration: none;
+}
+.adjacent > :nth-child(3n) { border-right: 0; }
+.adjacent > :nth-last-child(-n+3) { border-bottom: 0; }
+.adjacent small { display: block; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); margin-bottom: 4px; letter-spacing: .06em; }
+.adjacent > a:hover { background: var(--paper-2); }
+.adjacent .here { background: var(--ink); color: var(--paper); }
+.adjacent .here small { color: var(--paper); opacity: .7; }
+.adjacent .empty { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--grid) 6px 7px); }
+@media (max-width: 480px) { .adjacent > a, .adjacent > span { font-size: .78rem; min-height: 5.4rem; padding: 8px; } }
+
+/* ————— Hero (software-first, contour only as quiet texture) ————— */
+.hero { position: relative; padding: 72px 0 56px; border-bottom: 1px solid var(--rule); overflow: hidden; }
+.hero .topo {
+  left: auto; right: -4%; width: 62%; height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+          mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+.hero .topo path { opacity: .28; }
+.hero .topo path.idx { opacity: .42; }
+.hero-text { position: relative; max-width: 40rem; }
+.hero h1 { margin: 0; font: 500 clamp(2.4rem, 6vw, 4.2rem)/1.02 var(--serif); letter-spacing: -.015em; }
+.hero .role { margin: 14px 0 0; font-family: var(--mono); font-size: .82rem; color: var(--ink-2); }
+.hero .role b { color: var(--survey); font-weight: 500; }
+.hero .lede { margin: 28px 0 0; font-size: 1.25rem; line-height: 1.55; max-width: 36rem; }
+.hero .lede + .lede { margin-top: 14px; }
+@media (max-width: 719px) { .hero { padding: 48px 0 40px; } .hero .topo { width: 100%; right: -30%; } }
+
+.key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 2px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+
+.related { list-style: none; margin: 0; padding: 0; }
+.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 1.02rem; }
+.related a { color: var(--ink); text-decoration: none; }
+.related a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.prevnext { display: flex; justify-content: space-between; margin: 16px 0 0; font-family: var(--mono); font-size: .75rem; }
+.sheet h3 { margin-top: 0; padding-right: 5rem; }
+
+/* ————— Academic layer ————— */
+.links-row { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 22px 0 0; font-family: var(--mono); font-size: .76rem; }
+.links-row a { color: var(--ink-2); }
+.links-row a:first-child { color: var(--ink); font-weight: 600; }
+
+.interests { margin: 26px 0 0; max-width: 38rem; }
+.interests h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.interests ul { margin: 0; padding: 0; list-style: none; }
+.interests li { padding: 5px 0 5px 28px; position: relative; font-size: 1.05rem; }
+.interests li::before { content: "—"; position: absolute; left: 0; color: var(--survey); }
+
+.pubs { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: pub; }
+.pubs li { display: grid; grid-template-columns: 5.5rem minmax(0,1fr); gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.pubs .kind { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--survey); padding-top: 4px; }
+.pubs .ref { font-size: 1.05rem; line-height: 1.5; }
+.pubs .ref b { font-weight: 500; }
+.pubs .ref i { color: var(--ink-2); }
+.pubs .acts { grid-column: 2; display: flex; gap: 12px; font-family: var(--mono); font-size: .72rem; }
+.pubs .acts a { color: var(--water); }
+@media (max-width: 719px) { .pubs li { grid-template-columns: 1fr; } .pubs .acts { grid-column: 1; } }
+
+.cv { display: grid; gap: 32px; margin-top: 20px; }
+@media (min-width: 820px) { .cv { grid-template-columns: 1fr 1fr; } }
+.cv h3 { margin: 0 0 6px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.cv ol { list-style: none; margin: 0; padding: 0; }
+.cv li { display: grid; grid-template-columns: 6.5rem minmax(0,1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.cv .yr { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); padding-top: 4px; }
+.cv b { font-weight: 500; display: block; }
+.cv span.d { color: var(--ink-2); font-size: .98rem; }
+.ph { background: color-mix(in srgb, var(--survey) 14%, transparent); padding: 0 .2em; border-radius: 2px; }
+
+.abstract { margin: 32px 0 0; max-width: 42rem; padding: 18px 20px; border: 1px solid var(--ink); }
+.abstract h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.abstract p { margin: 0; font-size: 1.02rem; line-height: 1.55; }
+.abstract .kw { margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+.abstract .kw b { color: var(--ink); font-weight: 600; }
+
+.eq { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 1.6em 0; font-size: 1.15rem; }
+.eq .frac { display: inline-flex; flex-direction: column; align-items: center; }
+.eq .frac span:first-child { border-bottom: 1px solid var(--ink); padding: 0 6px 2px; }
+.eq .frac span:last-child { padding-top: 2px; }
+.eq .n { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-left: auto; }
+.cite { font-family: var(--mono); font-size: .78em; color: var(--water); text-decoration: none; }
+
+.refs { max-width: var(--measure); margin: 3em 0 0; }
+.refs h2 { font: 500 1.3rem/1.25 var(--serif); margin: 0 0 .6em; }
+.refs ol { margin: 0; padding-left: 2.2em; font-size: .95rem; line-height: 1.5; color: var(--ink-2); }
+.refs li { padding: 4px 0; }
+.refs li::marker { font-family: var(--mono); font-size: .8em; color: var(--ink-3); }
+
+.citebox { margin: 72px 0 0; border-top: 1px solid var(--ink); padding-top: 16px; }
+.citebox h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.citebox p { margin: 0 0 12px; font-size: 1rem; max-width: 46rem; }
+.citebox pre { font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: 12px 14px; margin: 0; overflow-x: auto; position: relative; }
+.citebox button { font: .72rem var(--mono); color: var(--ink-2); background: none; border: 1px solid var(--rule); padding: 3px 8px; cursor: pointer; margin-top: 8px; }
+.citebox button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ————— v4: work entries, observations, planned list ————— */
+.work { margin-top: 4px; }
+.work article { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 8px 24px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+.work .side { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 6px; }
+.work .side .st { color: var(--survey); text-transform: uppercase; letter-spacing: .1em; }
+.work h3 { margin: 0; font: 500 1.35rem/1.25 var(--serif); }
+.work h3 small { font: 400 .8rem var(--mono); color: var(--ink-3); margin-left: 8px; }
+.work p { margin: 8px 0 0; max-width: 42rem; font-size: 1.04rem; }
+.work .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.work .tags > span { font-family: var(--mono); font-size: .68rem; border: 1px solid var(--rule); padding: 1px 6px; color: var(--ink-2); }
+.work details { margin-top: 12px; max-width: 42rem; }
+.work summary { cursor: pointer; font-family: var(--mono); font-size: .74rem; color: var(--water); }
+.work details ul { margin: 10px 0 0; padding-left: 1.1em; font-size: .98rem; color: var(--ink-2); }
+.work details li { padding: 3px 0; }
+.work .principles { font-family: var(--mono); font-size: .76rem; color: var(--ink); margin-top: 12px; }
+@media (max-width: 719px) { .work article { grid-template-columns: 1fr; } .work .side { flex-direction: row; gap: 14px; } }
+
+.planned { list-style: none; margin: 8px 0 0; padding: 0; columns: 2 22rem; column-gap: 40px; }
+.planned li { break-inside: avoid; padding: 10px 0 10px 22px; border-bottom: 1px solid var(--rule); position: relative; font-size: 1.02rem; }
+.planned li svg { position: absolute; left: 0; top: 15px; }
+.sub-head { margin: 36px 0 0; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+
+.obs { width: 100%; border-collapse: collapse; margin: 1.6em 0; font-size: .92rem; }
+.obs th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 10px 8px 0; }
+.obs td { vertical-align: top; padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); line-height: 1.45; }
+.obs td:first-child { font-family: var(--mono); font-size: .72rem; color: var(--survey); width: 2.2rem; }
+.obs td:nth-child(2) { color: var(--ink-2); }
+.table-wrap { overflow-x: auto; }
+.skills { margin-top: 28px; display: grid; gap: 10px; }
+.skills div { display: grid; grid-template-columns: 12rem minmax(0,1fr); gap: 12px; font-size: 1rem; }
+.skills b { font: 600 .68rem/1.6 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 719px) { .skills div { grid-template-columns: 1fr; gap: 2px; } }
+
+.cv.noyr li { grid-template-columns: 1fr; }
+
+/* ————— v7: data tables, ongoing notice, learned list ————— */
+.data { width: 100%; border-collapse: collapse; margin: 1.4em 0 1.6em; font-size: .92rem; }
+.data th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 14px 8px 0; }
+.data td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.data td:first-child { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); }
+.ongoing { margin: 20px 0 0; max-width: 42rem; font-family: var(--mono); font-size: .76rem; line-height: 1.6; color: var(--ink-2); border-left: 2px solid var(--survey); padding: 4px 0 4px 12px; }
+.prose ul { padding-left: 1.2em; }
+.prose li { margin: .35em 0; }
+.prose ul.learned { list-style: none; padding: 0; border-top: 1px solid var(--ink); }
+.prose ul.learned li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.prose ol { padding-left: 1.4em; }
+
+.work .card-link { margin: 10px 0 0; font-family: var(--mono); font-size: .76rem; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="sheet-head">
+  <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
+  <nav class="nav" aria-label="Ana menü"><a href="/#calismalar" aria-current="page"><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work</span></a><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a><a href="/#cv"><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></a></nav>
+  <div class="toggles">
+    <button type="button" id="langBtn" aria-label="Dil / Language"><b>TR</b> / EN</button>
+    <button type="button" id="themeBtn"><span class="ui" lang="tr">Gece</span><span class="ui" lang="en">Night</span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="topo" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="idx" d="M0 588 L25 593 L45 591 L60 585 L68 575 L72 550 L62 500 L80 460 L83 435 L78 410 L66 395 L50 387 L15 379 L0 372"/><path class="c" d="M198 595 L190 588 L161 575 L155 565 L155 555 L165 520 L167 495 L164 470 L145 420 L150 375 L146 355 L130 335 L94 315 L84 305 L64 255 L38 210 L30 185 L32 155 L50 105 L51 85 L47 55 L48 45 L60 30 L95 13 L108 0"/><path class="c" d="M270 595 L257 555 L225 517 L218 500 L217 480 L228 435 L223 410 L171 325 L155 310 L125 288 L110 270 L98 245 L78 185 L80 155 L97 90 L110 70 L150 32 L167 0"/><path class="c" d="M491 0 L508 20 L525 26 L545 22 L579 0"/><path class="c" d="M310 595 L302 570 L295 513 L277 470 L265 420 L258 400 L221 350 L193 305 L142 260 L133 245 L128 225 L119 145 L120 125 L124 110 L135 90 L170 54 L197 15 L212 0"/><path class="c" d="M436 0 L450 12 L485 51 L505 61 L525 63 L545 61 L560 54 L601 20 L631 0"/><path class="c" d="M1195 501 L1177 525 L1130 567 L1106 585 L1085 595"/><path class="c" d="M352 595 L344 580 L339 565 L337 515 L333 495 L300 435 L280 376 L248 330 L222 285 L210 272 L180 248 L169 235 L162 215 L155 165 L154 135 L159 115 L195 71 L219 35 L230 23 L245 13 L286 0"/><path class="c" d="M350 0 L390 10 L415 23 L430 37 L455 73 L470 84 L490 90 L520 93 L550 90 L574 80 L625 30 L668 0"/><path class="c" d="M1195 243 L1183 260 L1178 280 L1194 365 L1195 410 L1192 455 L1188 475 L1180 495 L1170 510 L1151 530 L1100 572 L1080 581 L1060 587 L1020 590 L865 583 L840 586 L819 595"/><path class="idx" d="M395 595 L372 550 L353 475 L324 415 L315 360 L310 344 L250 262 L206 225 L192 205 L186 170 L188 150 L194 135 L224 95 L245 61 L255 50 L275 40 L305 37 L355 40 L384 50 L399 65 L421 105 L435 118 L450 126 L485 134 L520 131 L560 117 L585 103 L600 89 L640 43 L699 0"/><path class="idx" d="M1195 220 L1170 245 L1164 255 L1160 270 L1162 290 L1176 335 L1181 365 L1181 410 L1177 460 L1164 495 L1135 527 L1090 562 L1055 575 L1005 577 L840 562 L820 566 L805 572 L794 580 L781 595"/><path class="c" d="M430 595 L397 540 L387 515 L373 455 L357 405 L352 345 L345 321 L335 306 L305 276 L275 235 L230 200 L221 180 L225 158 L281 85 L300 74 L330 72 L345 76 L360 85 L370 97 L390 135 L410 153 L470 187 L485 190 L505 187 L525 177 L600 116 L642 65 L660 47 L726 0"/><path class="c" d="M1195 202 L1160 231 L1150 245 L1146 255 L1146 285 L1164 340 L1169 365 L1168 435 L1163 465 L1155 485 L1140 505 L1120 525 L1095 545 L1075 556 L1055 563 L1030 566 L950 561 L855 543 L820 545 L800 551 L783 560 L770 572 L752 595"/><path class="c" d="M460 595 L419 535 L404 500 L401 475 L399 420 L388 355 L390 330 L395 316 L405 304 L445 278 L481 240 L525 214 L540 202 L577 160 L615 123 L652 75 L671 55 L720 19 L754 0"/><path class="c" d="M955 0 L1000 8 L1035 11 L1110 2 L1140 2 L1170 9 L1195 24"/><path class="c" d="M1195 184 L1144 225 L1137 235 L1131 250 L1130 265 L1132 285 L1157 360 L1159 415 L1155 450 L1147 475 L1134 495 L1115 515 L1090 534 L1070 546 L1045 554 L1020 556 L985 555 L945 549 L860 525 L820 526 L791 535 L770 546 L754 560 L724 595"/><path class="c" d="M492 595 L475 580 L460 560 L435 520 L426 495 L424 470 L430 415 L429 365 L435 345 L445 334 L477 310 L509 265 L555 222 L588 175 L625 133 L675 68 L700 47 L740 20 L765 8 L791 0"/><path class="c" d="M892 0 L985 20 L1025 26 L1055 25 L1115 14 L1145 15 L1175 25 L1195 42"/><path class="c" d="M1195 164 L1175 184 L1131 215 L1123 225 L1117 240 L1117 275 L1146 360 L1150 410 L1146 445 L1137 470 L1124 490 L1105 510 L1080 528 L1060 539 L1035 545 L1010 547 L975 545 L945 539 L865 510 L840 508 L815 511 L780 521 L752 535 L735 550 L710 580 L690 595"/><path class="c" d="M546 595 L515 585 L495 571 L478 550 L457 510 L450 490 L449 470 L460 399 L465 385 L475 370 L516 330 L540 285 L575 236 L608 175 L671 90 L700 61 L740 33 L770 17 L800 9 L835 6 L880 11 L1000 37 L1025 41 L1055 40 L1120 27 L1145 28 L1160 32 L1175 41 L1185 51 L1195 67"/><path class="c" d="M1195 137 L1175 165 L1160 177 L1120 201 L1110 211 L1103 225 L1100 245 L1103 270 L1112 300 L1136 360 L1140 385 L1141 410 L1137 440 L1129 465 L1115 486 L1090 509 L1066 525 L1045 533 L1020 538 L995 538 L945 529 L885 501 L865 495 L845 493 L818 495 L777 505 L745 517 L724 530 L695 562 L678 575 L650 587 L614 595"/><path class="idx" d="M605 571 L570 574 L545 572 L525 565 L510 553 L495 530 L480 490 L475 460 L478 430 L484 410 L492 395 L530 357 L545 335 L590 255 L620 185 L675 102 L700 75 L735 48 L765 31 L795 20 L825 16 L850 17 L885 23 L1015 56 L1045 56 L1105 43 L1130 41 L1153 45 L1170 56 L1182 75 L1187 95 L1185 115 L1178 135 L1168 150 L1155 162 L1100 192 L1089 205 L1085 220 L1085 240 L1090 270 L1100 300 L1125 360 L1132 400 L1130 430 L1123 455 L1111 475 L1095 493 L1073 510 L1050 522 L1025 528 L995 530 L949 520 L870 483 L845 479 L820 480 L756 495 L725 505 L705 516 L675 544 L660 555 L635 565 L605 571"/><path class="c" d="M615 545 L590 549 L565 549 L550 545 L535 535 L522 515 L508 480 L503 455 L503 435 L514 410 L545 377 L560 355 L605 265 L625 210 L638 185 L683 110 L709 80 L740 57 L770 40 L795 31 L825 27 L860 29 L910 40 L1015 74 L1045 73 L1120 57 L1140 59 L1157 70 L1166 85 L1168 100 L1166 115 L1160 130 L1140 150 L1085 176 L1075 187 L1069 205 L1068 230 L1074 260 L1088 300 L1115 360 L1124 400 L1122 425 L1115 450 L1104 470 L1085 490 L1063 505 L1040 516 L1015 521 L990 521 L950 511 L895 481 L870 471 L845 466 L820 467 L705 494 L684 505 L645 534 L615 545"/><path class="c" d="M610 521 L580 521 L560 510 L549 495 L541 475 L538 455 L539 440 L545 425 L564 400 L572 385 L591 330 L617 275 L648 195 L690 118 L704 100 L720 84 L750 62 L780 46 L805 39 L830 37 L870 41 L920 53 L952 65 L1000 89 L1020 95 L1045 95 L1105 79 L1125 80 L1135 85 L1141 95 L1142 105 L1135 123 L1120 135 L1085 148 L1070 157 L1060 170 L1053 195 L1052 225 L1059 255 L1076 300 L1107 365 L1115 400 L1114 425 L1108 445 L1097 465 L1077 485 L1055 500 L1035 508 L1015 512 L990 512 L970 508 L950 501 L900 472 L875 460 L850 454 L825 454 L690 481 L667 490 L630 514 L610 521"/><path class="c" d="M1030 501 L1000 504 L970 499 L949 490 L885 452 L865 445 L845 442 L815 444 L745 458 L660 468 L615 477 L605 476 L599 470 L597 460 L602 425 L601 365 L612 320 L652 215 L695 130 L718 100 L750 75 L780 58 L810 49 L845 47 L885 53 L920 63 L950 77 L1019 120 L1035 135 L1039 150 L1037 210 L1042 245 L1057 285 L1099 370 L1105 390 L1107 410 L1101 440 L1085 465 L1060 487 L1030 501"/><path class="c" d="M1010 495 L990 495 L965 487 L895 445 L860 432 L825 431 L745 448 L695 450 L670 447 L655 441 L645 433 L635 420 L623 385 L620 350 L626 320 L653 245 L711 125 L733 100 L765 77 L795 63 L825 57 L860 58 L895 65 L925 75 L951 90 L995 125 L1013 145 L1021 170 L1025 230 L1030 255 L1043 285 L1090 370 L1096 390 L1098 410 L1091 440 L1073 465 L1045 485 L1010 495"/><path class="idx" d="M1015 485 L992 485 L970 479 L900 435 L865 421 L830 420 L750 437 L715 440 L695 437 L675 431 L661 420 L652 410 L639 380 L635 350 L640 320 L656 265 L672 225 L717 135 L735 112 L760 93 L790 77 L820 68 L850 66 L885 71 L915 81 L940 95 L976 125 L997 150 L1008 180 L1013 240 L1020 265 L1077 365 L1085 385 L1089 405 L1085 431 L1070 455 L1045 475 L1015 485"/><path class="c" d="M1010 475 L990 474 L970 467 L905 424 L875 411 L840 409 L755 427 L720 429 L700 426 L686 420 L664 400 L653 375 L649 345 L654 310 L667 265 L679 235 L725 143 L742 120 L765 102 L795 86 L820 78 L850 76 L880 79 L905 87 L930 100 L960 125 L981 150 L990 165 L996 185 L1001 245 L1008 270 L1018 290 L1066 365 L1079 400 L1077 425 L1062 450 L1040 466 L1010 475"/><path class="c" d="M1025 461 L1000 463 L980 458 L960 447 L905 407 L880 397 L845 397 L770 416 L735 420 L715 418 L700 413 L687 405 L678 395 L666 370 L662 345 L664 315 L673 275 L687 240 L730 155 L745 133 L764 115 L790 100 L820 89 L845 85 L875 88 L900 95 L920 105 L944 125 L967 150 L976 165 L984 185 L989 250 L995 275 L1006 295 L1051 360 L1067 395 L1067 415 L1060 435 L1045 450 L1025 461"/><path class="c" d="M1025 446 L1005 450 L980 443 L961 430 L915 393 L890 382 L860 382 L780 405 L745 410 L715 407 L701 400 L690 390 L679 370 L673 345 L674 315 L681 280 L695 245 L736 165 L748 145 L765 128 L790 111 L815 101 L840 96 L865 96 L886 100 L909 110 L929 125 L948 145 L965 170 L972 190 L977 260 L984 285 L996 305 L1040 364 L1054 395 L1055 410 L1050 425 L1040 438 L1025 446"/><path class="c" d="M1015 430 L1000 430 L980 422 L925 373 L912 365 L900 362 L870 365 L800 391 L760 400 L740 401 L725 398 L710 391 L700 382 L690 365 L684 340 L685 310 L691 280 L703 250 L745 169 L758 150 L773 135 L790 123 L815 112 L840 106 L860 105 L880 109 L900 117 L919 130 L938 150 L951 170 L961 195 L965 270 L971 295 L982 315 L1020 360 L1036 390 L1038 405 L1035 415 L1026 425 L1015 430"/><path class="idx" d="M765 390 L745 391 L725 386 L710 375 L701 360 L695 340 L695 315 L700 285 L709 260 L756 170 L767 155 L783 140 L810 125 L840 117 L865 117 L890 124 L910 138 L927 155 L940 175 L948 195 L952 225 L950 330 L945 335 L910 337 L885 343 L810 378 L765 390"/><path class="idx" d="M995 388 L985 385 L975 375 L969 365 L968 355 L975 355 L990 367 L998 380 L995 388"/><path class="c" d="M770 380 L750 381 L735 378 L723 370 L712 355 L706 335 L705 315 L709 290 L716 270 L762 180 L785 152 L810 137 L835 129 L860 128 L880 133 L895 142 L910 155 L925 175 L934 195 L938 215 L939 240 L935 270 L929 290 L923 300 L912 310 L870 332 L825 360 L795 374 L770 380"/><path class="c" d="M770 370 L755 370 L740 366 L730 359 L721 345 L717 330 L717 310 L721 290 L729 270 L773 185 L794 160 L815 147 L835 142 L855 141 L875 146 L900 165 L911 180 L920 200 L924 220 L925 240 L916 275 L900 295 L821 350 L795 364 L770 370"/><path class="c" d="M785 356 L770 359 L755 357 L745 353 L737 345 L732 335 L729 320 L730 305 L736 285 L763 235 L782 195 L796 175 L810 165 L830 157 L850 156 L865 159 L887 175 L905 205 L910 235 L904 260 L895 275 L885 285 L850 310 L815 340 L785 356"/><path class="c" d="M785 341 L765 342 L755 338 L750 332 L745 315 L750 293 L776 250 L794 205 L805 190 L815 181 L830 175 L845 174 L855 177 L874 190 L885 207 L891 230 L887 250 L873 270 L840 295 L804 330 L785 341"/><path class="idx" d="M840 256 L830 259 L820 259 L814 245 L815 230 L820 215 L825 209 L835 205 L845 206 L851 210 L860 227 L855 245 L840 256"/></svg>
+  <div class="hero-text">
+    <h1>İlkay Murat Ertekin</h1>
+    <p class="role">Software Engineer <b>·</b> <span class="ui" lang="tr">agentic sistemler, harness ve değerlendirme</span><span class="ui" lang="en">agentic systems, harnesses &amp; evaluation</span></p>
+    <p class="lede ui" lang="tr">Backend ve bulut sistemleri geliştiriyorum; son dönemde odağımı AI engineering’e, özellikle agentic sistemlere çeviriyorum. Beni ilgilendiren, modelleri kullanan yazılımın nasıl tasarlanacağı: hangi kararı modelin, hangisini harness’ın vermesi gerektiği ve bu sistemlerin nasıl ölçüleceği.</p>
+    <p class="lede ui" lang="en">I build backend and cloud systems, and I’m now moving my focus to AI engineering, specifically agentic systems. What interests me is the software around the model: which decisions belong to the model and which to the harness, and how to measure systems like these.</p>
+    <p class="lede ui" lang="tr">Burada deneylerimi, ölçümlerimi ve açık kalan soruları teknik not olarak paylaşıyorum. Bunlar bitmiş araştırma sonuçları değil; varsayım yerine ölçmeye çalışan bir mühendisin notları.</p>
+    <p class="lede ui" lang="en">This is where I publish experiments, measurements and open questions as technical notes. They aren’t finished research; they’re the notes of an engineer trying to measure instead of assume.</p>
+    <p class="links-row"><a href="https://github.com/imertekin">GitHub</a><a href="https://orcid.org/0000-0002-1011-0284">ORCID</a><a href="https://twitter.com/im_ertekin">X</a><a href="mailto:iertekinx@gmail.com"><span class="ui" lang="tr">E-posta</span><span class="ui" lang="en">Email</span></a></p>
+  </div>
+</section>
+
+<div class="interests">
+  <h2><span class="ui" lang="tr">İlgi alanları</span><span class="ui" lang="en">Interests</span></h2>
+  <ul>
+    <li><span class="ui" lang="tr">Agent harness tasarımı ve model–harness sorumluluk sınırı</span><span class="ui" lang="en">Agent harness design and the model–harness boundary</span></li>
+    <li><span class="ui" lang="tr">Tool use / function calling ve sağlayıcılar arası davranış farkları</span><span class="ui" lang="en">Tool use, function calling and behaviour differences across providers</span></li>
+    <li><span class="ui" lang="tr">Orkestrasyon, context engineering ve memory</span><span class="ui" lang="en">Orchestration, context engineering and memory</span></li>
+    <li><span class="ui" lang="tr">Değerlendirme: eval harness’ları ve tekrarlanabilir deneyler</span><span class="ui" lang="en">Evaluation: eval harnesses and reproducible experiments</span></li>
+    <li><span class="ui" lang="tr">Gözlemlenebilirlik ve hata biçimleri</span><span class="ui" lang="en">Observability and failure modes</span></li>
+  </ul>
+</div>
+
+<section class="block" id="calismalar">
+  <div class="block-head"><h2><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work in progress</span></h2><span class="label"><span class="ui" lang="tr">açık kaynak ve kişisel deneyler</span><span class="ui" lang="en">open source &amp; personal experiments</span></span></div>
+  <div class="work">
+    <article>
+      <div class="side"><span class="st"><span class="ui" lang="tr">Hazırlanıyor</span><span class="ui" lang="en">In preparation</span></span><span><span class="ui" lang="tr">açık kaynak</span><span class="ui" lang="en">open source</span></span><span><span class="ui" lang="tr">bağlantı yakında</span><span class="ui" lang="en">link soon</span></span></div>
+      <div>
+        <h3>Precedent <small>Project Historian</small></h3>
+        <p class="ui" lang="tr">Yazılım geliştirmede kararların koddan önce açıkça yazılması, saklanması ve sonraki insan ya da agent çalışmalarında kullanılabilmesi üzerine bir yaklaşım: Project Historian. Precedent bu yaklaşımın implementasyonu.</p>
+        <p class="ui" lang="en">Project Historian is an approach to software development where decisions are written down before the code, kept, and reused by later human or agent work. Precedent is its implementation.</p>
+        <p class="principles"><span class="ui" lang="tr">Kararı koddan önce yaz · Scope’u açık ve küçük tut · Diff’i oku</span><span class="ui" lang="en">Write the decision before the code · Keep scope explicit and small · Read the diff</span></p>
+        <p class="card-link"><a href="/yazilar/varsayim-yerine-olcum/"><span class="ui" lang="tr">Yaklaşımın elle uygulanmış erken hâli: ara nottaki çalışma düzeni →</span><span class="ui" lang="en">An early, manual form of the approach: the workflow in the interim note →</span></a></p>
+        <div class="tags"><span>Command Center</span><span>Decision Draft</span><span>Decision Routing</span><span>Decision Lifecycle</span></div>
+      </div>
+    </article>
+    <article>
+      <div class="side"><span class="st"><span class="ui" lang="tr">Geliştiriliyor</span><span class="ui" lang="en">In progress</span></span><span><span class="ui" lang="tr">kişisel deney</span><span class="ui" lang="en">personal experiment</span></span><span><span class="ui" lang="tr">bağlantı yakında</span><span class="ui" lang="en">link soon</span></span></div>
+      <div>
+        <h3><span class="ui" lang="tr">Coding agent harness deneyi</span><span class="ui" lang="en">Coding agent harness experiment</span></h3>
+        <p class="ui" lang="tr">Hazır bir agent framework’ü kullanmadan küçük bir coding agent’ın temel parçalarını kendim yazıyorum. Amaç; model, harness, araçlar, state, trace, memory ve değerlendirme arasındaki sınırları uygulamada görmek. Yaklaşım basit: önce varsayım yapmak yerine davranışı ölçmek.</p>
+        <p class="ui" lang="tr" style="font-size:.95rem;color:var(--ink-2)">SWE-agent ekibinin <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a> çalışmasından ilham alıyor: küçük ve okunabilir bir agent’ın ne kadar ileri gidebildiğini göstermesi bu deneyin çıkış noktası oldu.</p>
+        <p class="ui" lang="en">I’m writing the core pieces of a small coding agent myself, without an agent framework, to see in practice where the boundaries lie between model, harness, tools, state, traces, memory and evaluation. The rule is simple: measure behaviour before assuming it.</p>
+        <p class="ui" lang="en" style="font-size:.95rem;color:var(--ink-2)">Inspired by the SWE-agent team’s <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a>, which showed how far a small, readable agent can go.</p>
+        <div class="tags"><span><span class="ui" lang="tr">ortak model sözleşmesi</span><span class="ui" lang="en">shared model contract</span></span><span>Gemini provider</span><span><span class="ui" lang="tr">deterministik mock</span><span class="ui" lang="en">deterministic mock</span></span><span>cassette / replay</span><span>agent loop</span><span><span class="ui" lang="tr">context / state</span><span class="ui" lang="en">context / state</span></span><span>tool registry</span><span>read_file · list_files · search_code</span><span>JSONL trace</span><span>NullMemory baseline</span><span>edit_file · run_tests</span><span><span class="ui" lang="tr">salt-okunur git</span><span class="ui" lang="en">read-only git</span></span><span><span class="ui" lang="tr">allowlist’li shell</span><span class="ui" lang="en">allowlisted shell</span></span><span><span class="ui" lang="tr">hedef: tomlkit</span><span class="ui" lang="en">target: tomlkit</span></span></div>
+        <p class="card-link"><a href="/yazilar/varsayim-yerine-olcum/"><span class="ui" lang="tr">Ara not: Varsayım yerine ölçüm — yanlış çıkan yedi varsayım →</span><span class="ui" lang="en">Interim note: Measure, don’t assume — seven assumptions that turned out wrong →</span></a></p>
+        <details>
+          <summary><span class="ui" lang="tr">Yanlış çıkan yedi varsayım</span><span class="ui" lang="en">Seven assumptions that turned out wrong</span></summary>
+          <ul class="ui" lang="tr">
+            <li>“Dokümantasyonu okuyup provider’ı yazarım.”</li>
+            <li>“Bir değişikliğin etkisini tek koşuyla görürüm.”</li>
+            <li>“Yazdığım bir karar, uygulanmış bir karardır.”</li>
+            <li>“Kaydettiğim bir ders, öğrenilmiş bir derstir.”</li>
+            <li>“İyi bir özet, kaynağın yerini tutar.”</li>
+            <li>“Agent’ın ilk sorunu kötü düzenleme olacak.”</li>
+            <li>“Ölçüm aletim güvenilir.”</li>
+          </ul>
+          <ul class="ui" lang="en">
+            <li>“I can write the provider from the docs.”</li>
+            <li>“One run shows the effect of a change.”</li>
+            <li>“A decision I wrote down is a decision implemented.”</li>
+            <li>“A lesson I recorded is a lesson learned.”</li>
+            <li>“A good summary can stand in for the source.”</li>
+            <li>“The agent’s first problem will be bad edits.”</li>
+            <li>“My measuring instrument is reliable.”</li>
+          </ul>
+          <p style="font-family:var(--mono);font-size:.74rem"><a href="/yazilar/varsayim-yerine-olcum/"><span class="ui" lang="tr">Ara not: Varsayım yerine ölçüm →</span><span class="ui" lang="en">Interim note: Measure, don’t assume →</span></a></p>
+        </details>
+        <p style="font-family:var(--mono);font-size:.72rem;color:var(--ink-3)"><span class="ui" lang="tr">Açık soru: harness mi, model mi? Sırada aynı görevler daha güçlü bir modelle; ardından memory ve Project Historian.</span><span class="ui" lang="en">Open question: harness or model? Next: the same tasks with a stronger model, then memory and Project Historian.</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="yazilar">
+  <div class="block-head"><h2><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></h2><span class="label"><span class="ui" lang="tr">teknik notlar ve deneyler</span><span class="ui" lang="en">technical notes &amp; experiments</span></span></div>
+  <div class="key">
+    <span><svg class="status done" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="fill"/></svg><span class="ui" lang="tr">kararlı</span><span class="ui" lang="en">stable</span></span>
+    <span><svg class="status measured" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path class="fill" d="M7 1.8A5.2 5.2 0 0 1 7 12.2Z"/></svg><span class="ui" lang="tr">devam ediyor</span><span class="ui" lang="en">ongoing</span></span>
+    <span><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">planlanan</span><span class="ui" lang="en">planned</span></span>
+    <span><span class="scalebar" aria-hidden="true"><i></i></span> ≈ 2 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></span>
+  </div>
+  <ol class="posts">
+<li><svg class="status measured" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path class="fill" d="M7 1.8A5.2 5.2 0 0 1 7 12.2Z"/></svg><time datetime="2026-09">2026-09</time>
+<h3><a href="/yazilar/varsayim-yerine-olcum/" lang="tr">Varsayım yerine ölçüm: küçük bir coding agent yazarken yanlış çıkan yedi varsayım</a></h3>
+<span class="meta"><span class="badge">TR</span><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+<p lang="tr"><span class="label" style="font-size:.62rem"><span class="ui" lang="tr">ara not · devam ediyor</span><span class="ui" lang="en">interim note · ongoing</span></span> · Framework kullanmadan küçük bir coding agent yazarken makul görünen ama ölçüme dayanamayan yedi varsayım.</p></li>
+  </ol>
+  <p class="sub-head"><span class="ui" lang="tr">Üzerinde çalıştığım sorular</span><span class="ui" lang="en">Questions I’m working on</span></p>
+  <ul class="planned"><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Bir LLM tool çağrısını gerçekte nasıl üretir?</span><span class="ui" lang="en">How does an LLM actually produce a tool call?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Model ile harness arasındaki karar sınırı nerede olmalı?</span><span class="ui" lang="en">Where should the decision boundary between model and harness sit?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Bir coding agent ne zaman gerçekten “bitti” sayılmalı?</span><span class="ui" lang="en">When is a coding agent actually “done”?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Agent’ın sıkıştığını harness anlayabilir mi?</span><span class="ui" lang="en">Can the harness tell when an agent is stuck?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Gemini, OpenAI ve Anthropic tool-calling sözleşmelerinin mimariye etkisi</span><span class="ui" lang="en">How Gemini, OpenAI and Anthropic tool-calling contracts shape architecture</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Agent memory gerçekten ne zaman gerekli?</span><span class="ui" lang="en">When does an agent actually need memory?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Multi-agent mimarisi ne zaman gereksiz karmaşıklıktır?</span><span class="ui" lang="en">When is a multi-agent architecture needless complexity?</span></li><li><svg class="status scout" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="dash"/></svg><span class="ui" lang="tr">Agent değerlendirmesinde harness’ın kendisine ne kadar güvenebiliriz?</span><span class="ui" lang="en">How far can we trust the harness in agent evaluation?</span></li></ul>
+</section>
+
+<section class="block" id="cv">
+  <div class="block-head"><h2><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></h2><span></span></div>
+  <div class="cv noyr">
+    <div>
+      <h3><span class="ui" lang="tr">Deneyim</span><span class="ui" lang="en">Experience</span></h3>
+      <ol>
+        <li><span><b>Software Engineer</b><span class="d"><span class="ui" lang="tr">Çağrı merkezi yazılımı. Backend ve bulut sistemleri: Python, Django/FastAPI, Redis, GCP (Cloud Run, BigQuery).</span><span class="ui" lang="en">Call-center software. Backend and cloud systems: Python, Django/FastAPI, Redis, GCP (Cloud Run, BigQuery).</span></span></span></li>
+      </ol>
+      <div class="skills">
+        <div><b><span class="ui" lang="tr">Backend ve bulut</span><span class="ui" lang="en">Backend &amp; cloud</span></b><span>Python · Django · FastAPI · Redis · GCP · Cloud Run · BigQuery</span></div>
+        <div><b><span class="ui" lang="tr">Agentic sistemler</span><span class="ui" lang="en">Agentic systems</span></b><span><span class="ui" lang="tr">function calling · agent loop · trace / replay · eval harness (kişisel çalışmalar)</span><span class="ui" lang="en">function calling · agent loop · trace / replay · eval harness (personal work)</span></span></div>
+      </div>
+    </div>
+    <div>
+      <h3><span class="ui" lang="tr">Eğitim</span><span class="ui" lang="en">Education</span></h3>
+      <ol>
+        <li><span><b><span class="ui" lang="tr">Yüksek Lisans, Geomatik Mühendisliği</span><span class="ui" lang="en">M.Sc., Geomatics Engineering</span></b><span class="d"><span class="ui" lang="tr">Gebze Teknik Üniversitesi</span><span class="ui" lang="en">Gebze Technical University</span><br><span class="ui" lang="tr">Tez</span><span class="ui" lang="en">Thesis</span>: <i>Panoramik kameraların kalibrasyonu ve fotogrametrik entegrasyonu</i></span></span></li>
+        <li><span><b><span class="ui" lang="tr">Lisans, Geomatik Mühendisliği</span><span class="ui" lang="en">B.Sc., Geomatics Engineering</span></b><span class="d"><span class="ui" lang="tr">Çanakkale Onsekiz Mart Üniversitesi</span><span class="ui" lang="en">Çanakkale Onsekiz Mart University</span></span></span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+<footer class="margin-foot">
+  <div>
+    <h4>İlkay Murat Ertekin</h4>
+    <p>Software Engineer · <span class="ui" lang="tr">agentic sistemler</span><span class="ui" lang="en">agentic systems</span></p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Son güncelleme</span><span class="ui" lang="en">Last updated</span></h4>
+    <p>2026-09-28</p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Bağlantılar</span><span class="ui" lang="en">Elsewhere</span></h4>
+    <p><a href="https://github.com/imertekin">GitHub</a> · <a href="https://orcid.org/0000-0002-1011-0284">ORCID</a> · <a href="https://twitter.com/im_ertekin">X</a><br><a href="mailto:iertekinx@gmail.com">iertekinx@gmail.com</a></p>
+  </div>
+</footer></div>
+<script>
+(() => {
+  const r = document.documentElement;
+  const langBtn = document.getElementById('langBtn');
+  const themeBtn = document.getElementById('themeBtn');
+  const setUI = (l) => {
+    r.dataset.ui = l; r.lang = l;
+    langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
+  };
+  langBtn.addEventListener('click', () => setUI(r.dataset.ui === 'tr' ? 'en' : 'tr'));
+  const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const paint = () => {
+    const d = isDark();
+    themeBtn.querySelector('[lang=tr]').textContent = d ? 'Gündüz' : 'Gece';
+    themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
+  };
+  themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
+  setUI(r.dataset.ui || 'tr'); paint();
+})();
+</script>
+</body>
+</html>
