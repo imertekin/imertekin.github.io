@@ -629,7 +629,12 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
     r.dataset.ui = l; r.lang = l;
     langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
   };
-  langBtn.addEventListener('click', () => setUI(r.dataset.ui === 'tr' ? 'en' : 'tr'));
+  langBtn.addEventListener('click', () => {
+    const next = r.dataset.ui === 'tr' ? 'en' : 'tr';
+    const alt = next === 'en' ? r.dataset.altEn : r.dataset.altTr;
+    if (alt) { location.href = alt; return; }
+    setUI(next);
+  });
   const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   const paint = () => {
     const d = isDark();

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-ui="en">
+<html lang="en" data-ui="en" data-alt-tr="/yazilar/varsayim-yerine-olcum/">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -748,7 +748,12 @@ after deleting __pycache__        → correct result
     r.dataset.ui = l; r.lang = l;
     langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
   };
-  langBtn.addEventListener('click', () => setUI(r.dataset.ui === 'tr' ? 'en' : 'tr'));
+  langBtn.addEventListener('click', () => {
+    const next = r.dataset.ui === 'tr' ? 'en' : 'tr';
+    const alt = next === 'en' ? r.dataset.altEn : r.dataset.altTr;
+    if (alt) { location.href = alt; return; }
+    setUI(next);
+  });
   const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   const paint = () => {
     const d = isDark();
