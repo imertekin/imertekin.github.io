@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en" data-ui="en" data-alt-tr="/yazilar/proje-tarihcisi/">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I turned my AI planning agent into the project’s historian — İlkay Murat Ertekin</title>
+<meta name="description" content="Decision loss, not session loss: a small, deliberately unglamorous way to make sure a decision reaches the place it’s needed next. On Precedent and the Project Historian role.">
+<link rel="canonical" href="https://imertekin.com/writing/project-historian/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.6' fill='none' stroke='%23a93d27' stroke-width='1.6'/%3E%3Cpath d='M7 1.4A5.6 5.6 0 0 1 7 12.6Z' fill='%23a93d27'/%3E%3C/svg%3E">
+<meta property="og:title" content="I turned my AI planning agent into the project’s historian — İlkay Murat Ertekin">
+<meta property="og:description" content="Decision loss, not session loss: a small, deliberately unglamorous way to make sure a decision reaches the place it’s needed next. On Precedent and the Project Historian role.">
+<meta property="og:url" content="https://imertekin.com/writing/project-historian/">
+<meta property="og:type" content="website">
+<meta name="author" content="İlkay Murat Ertekin">
+<link rel="alternate" hreflang="tr" href="https://imertekin.com/yazilar/proje-tarihcisi/">
+<link rel="alternate" hreflang="en" href="https://imertekin.com/writing/project-historian/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>/* ————— Tokens ————— */
+:root {
+  --paper: #f3efe4;
+  --paper-2: #ebe5d5;
+  --ink: #1c2320;
+  --ink-2: #49524c;
+  --ink-3: #7b8079;
+  --rule: #d5cbb4;
+  --contour: #a97c4a;
+  --water: #2b6781;
+  --survey: #a93d27;
+  --grid: rgba(43, 103, 129, .07);
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 38rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+    --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+  --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+  color-scheme: dark;
+}
+
+/* ————— Base ————— */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.6 var(--serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--water); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+::selection { background: color-mix(in srgb, var(--contour) 35%, transparent); }
+
+/* bilingual UI: every UI string exists twice */
+:root[data-ui="tr"] [lang="en"].ui, :root[data-ui="en"] [lang="tr"].ui { display: none !important; }
+
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
+
+.mono, .label {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+.label {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ink-3);
+}
+
+/* ————— Sheet header ————— */
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .78rem;
+}
+.sheet-id { color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+.sheet-id b { font-weight: 600; letter-spacing: .08em; }
+.sheet-id span { color: var(--ink-3); }
+.nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; }
+.toggles { display: flex; gap: 6px; }
+.toggles button {
+  font: inherit; color: var(--ink-2); background: none; cursor: pointer;
+  border: 1px solid var(--rule); padding: 3px 8px; border-radius: 2px;
+}
+.toggles button:hover { color: var(--ink); border-color: var(--ink-3); }
+.toggles b { color: var(--ink); font-weight: 600; }
+@media (max-width: 719px) {
+  .sheet-head { flex-wrap: wrap; }
+  .nav { order: 3; width: 100%; gap: 16px; }
+  .sheet-id span { display: none; }
+}
+
+.draft-note {
+  font-family: var(--mono); font-size: .72rem; color: var(--survey);
+  border: 1px dashed currentColor; padding: 6px 10px; margin: 16px 0 0; display: inline-block;
+}
+
+/* ————— Map frame (neatline with graduated border) ————— */
+.mapframe {
+  position: relative;
+  margin: 28px 0 0;
+  padding: 7px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) top / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) bottom / 100% 5px no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) left / 5px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) right / 5px 100% no-repeat;
+  outline: 1px solid var(--ink);
+}
+.mapframe-inner {
+  position: relative;
+  border: 1px solid var(--ink);
+  aspect-ratio: 2.4 / 1;
+  min-height: 260px;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.topo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.topo path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .55; }
+.topo path.idx { stroke-width: 1.8; opacity: .8; }
+
+.map-label {
+  position: absolute; left: 6%; top: 50%; transform: translateY(-50%);
+  max-width: 62%;
+}
+.map-label h1 {
+  margin: 0;
+  font: 500 clamp(2rem, 5.2vw, 4rem)/1.02 var(--serif);
+  letter-spacing: -.01em;
+  text-shadow: 0 0 8px var(--paper), 0 0 2px var(--paper);
+}
+.map-label p {
+  margin: 12px 0 0; font-family: var(--mono); font-size: .78rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-2);
+  text-shadow: 0 0 6px var(--paper);
+}
+.trig { position: absolute; font-family: var(--mono); font-size: .7rem; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.trig svg { width: 14px; height: 14px; }
+.coord { position: absolute; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); background: var(--paper); padding: 0 4px; }
+.coord.tl { top: -1px; left: 12px; transform: translateY(-50%); }
+.coord.br { bottom: -1px; right: 12px; transform: translateY(50%); }
+@media (max-width: 719px) {
+  .mapframe-inner { aspect-ratio: auto; height: 300px; }
+  .map-label { left: 20px; right: 20px; max-width: none; top: auto; bottom: 28px; transform: none; }
+}
+
+/* ————— Home layout ————— */
+.intro {
+  display: grid; gap: 32px; margin: 40px 0 8px;
+}
+.intro p { margin: 0 0 1em; max-width: var(--measure); font-size: 1.25rem; line-height: 1.55; }
+.intro p.motto {
+  font-style: italic; color: var(--ink-2); font-size: 1.1rem;
+  border-left: 2px solid var(--contour); padding-left: 16px;
+}
+@media (min-width: 900px) { .intro { grid-template-columns: minmax(0, 1fr) 17rem; } }
+
+.legend {
+  border: 1px solid var(--ink); padding: 14px 16px 12px; align-self: start; background: var(--paper);
+  font-family: var(--mono); font-size: .75rem;
+}
+.legend h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.legend dl { margin: 0; display: grid; grid-template-columns: 28px 1fr; gap: 8px 10px; align-items: center; }
+.legend dt { display: flex; justify-content: center; }
+.legend dd { margin: 0; color: var(--ink-2); }
+.legend dd b { color: var(--ink); font-weight: 600; }
+.legend hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--rule); margin: 4px 0; width: 100%; }
+
+.status { width: 14px; height: 14px; flex: none; }
+.status circle { fill: none; stroke: var(--survey); stroke-width: 1.4; }
+.status .fill { fill: var(--survey); stroke: none; }
+.status circle.fill { stroke: var(--survey); }
+.status .dash { stroke-dasharray: 2.6 2.2; }
+
+.badge { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; border: 1px solid var(--ink-3); color: var(--ink-2); padding: 0 4px; border-radius: 2px; }
+
+.scalebar { display: inline-flex; height: 6px; border: 1px solid var(--ink); vertical-align: middle; }
+.scalebar i { display: block; width: 8px; height: 100%; }
+.scalebar i:nth-child(odd) { background: var(--ink); }
+
+section.block { margin: 64px 0 0; }
+.block-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px;
+}
+.block-head h2 { margin: 0; font: 500 1.6rem/1.2 var(--serif); }
+.block-head a { font-family: var(--mono); font-size: .75rem; }
+
+/* post list */
+.posts { list-style: none; margin: 0; padding: 0; }
+.posts li {
+  display: grid; grid-template-columns: 22px 6.5rem minmax(0, 1fr) auto; gap: 4px 14px;
+  padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
+}
+.posts .status { transform: translateY(2px); }
+.posts time { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.posts h3 { margin: 0; font: 500 1.28rem/1.3 var(--serif); }
+.posts h3 a { color: var(--ink); text-decoration: none; }
+.posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.posts p { grid-column: 3; margin: 2px 0 0; color: var(--ink-2); font-size: 1rem; max-width: 36rem; }
+.posts .meta { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); white-space: nowrap; }
+@media (max-width: 719px) {
+  .posts li { grid-template-columns: 22px minmax(0, 1fr); }
+  .posts time { grid-column: 2; order: -1; }
+  .posts .status { grid-row: 1 / span 2; }
+  .posts h3, .posts p, .posts .meta { grid-column: 2; }
+}
+
+/* active sheets (sheet index grid) */
+.sheets { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); border-left: 1px solid var(--ink); border-top: 1px solid var(--ink); margin-top: 20px; }
+.sheet { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 14px 16px 18px; position: relative; }
+.sheet .no { font-family: var(--mono); font-size: .68rem; color: var(--ink-3); letter-spacing: .1em; }
+.sheet h3 { margin: 6px 0 4px; font: 500 1.2rem/1.25 var(--serif); }
+.sheet p { margin: 0; font-size: .98rem; color: var(--ink-2); }
+.sheet .state { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: .66rem; color: var(--survey); }
+
+/* route */
+.route { list-style: none; margin: 24px 0 0; padding: 0 0 0 28px; position: relative; max-width: 44rem; }
+.route::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 34px; border-left: 2px dashed var(--survey); }
+.route li { position: relative; padding: 0 0 22px; }
+.route li::before {
+  content: ""; position: absolute; left: -26px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--survey);
+}
+.route li:last-child::before { background: var(--survey); }
+.route b { font-weight: 500; font-size: 1.15rem; }
+.route span { display: block; color: var(--ink-2); font-size: 1rem; }
+
+/* ————— Map-margin footer ————— */
+.margin-foot {
+  margin: 96px 0 0; border-top: 1px solid var(--ink); padding: 18px 0 40px;
+  display: grid; gap: 20px 32px; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-2);
+}
+.margin-foot h4 { margin: 0 0 6px; font: 600 .66rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.margin-foot p { margin: 0; line-height: 1.7; }
+.margin-foot a { color: var(--ink-2); }
+.foot-scale { display: flex; flex-direction: column; gap: 6px; }
+.foot-scale .scalebar i { width: 22px; }
+.foot-scale .ticks { display: flex; font-size: .62rem; color: var(--ink-3); }
+.foot-scale .ticks span { width: 22px; }
+.north { width: 22px; height: 34px; }
+.north path { fill: var(--ink); }
+.north text { fill: var(--ink); font: 600 9px var(--mono); }
+
+/* ————— Article ————— */
+.crumbs { margin: 36px 0 0; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.crumbs a { color: var(--ink-2); }
+.post-head { margin: 18px 0 0; max-width: 46rem; }
+.post-head h1 { margin: 0; font: 500 clamp(2rem, 4.6vw, 3.3rem)/1.08 var(--serif); letter-spacing: -.012em; }
+.post-head .dek { margin: 16px 0 0; font-size: 1.3rem; line-height: 1.45; color: var(--ink-2); font-style: italic; }
+
+.survey-strip {
+  margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  font-family: var(--mono); font-size: .74rem;
+}
+.survey-strip div { padding: 10px 12px 10px 0; }
+.survey-strip div + div { padding-left: 12px; border-left: 1px solid var(--rule); }
+.survey-strip dt { color: var(--ink-3); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
+.survey-strip dd { margin: 0; display: flex; align-items: center; gap: 6px; }
+@media (max-width: 719px) {
+  .survey-strip { grid-template-columns: 1fr 1fr; }
+  .survey-strip div, .survey-strip div + div { padding: 10px 0; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .survey-strip div:nth-child(even) { padding-left: 12px; border-left: 1px solid var(--rule); }
+}
+
+.article { margin: 40px 0 0; }
+.prose { max-width: var(--measure); }
+@media (min-width: 1040px) { .article { padding-right: 17rem; } .prose { max-width: 40rem; } }
+.prose > p:first-child::first-letter { font-size: 3.4em; float: left; line-height: .9; padding: .06em .1em 0 0; font-weight: 500; color: var(--contour); }
+.prose p { margin: 0 0 1.2em; hyphens: auto; }
+.prose h2 { font: 500 1.55rem/1.25 var(--serif); margin: 2em 0 .6em; display: flex; gap: 12px; align-items: baseline; }
+.prose h2 .no { font-family: var(--mono); font-size: .75rem; color: var(--survey); font-weight: 500; }
+.prose blockquote { margin: 1.6em 0; padding: 0 0 0 20px; border-left: 2px solid var(--contour); font-style: italic; color: var(--ink-2); }
+.prose code { font-family: var(--mono); font-size: .86em; background: var(--paper-2); padding: .08em .3em; border-radius: 2px; }
+.prose pre {
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6; background: var(--paper-2); border-left: 2px solid var(--water);
+  padding: 14px 16px; overflow-x: auto; margin: 1.6em 0;
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+.prose pre .c { color: var(--ink-3); }
+.prose pre .s { color: var(--survey); }
+
+/* field notes (sidenotes) */
+.fn-ref { font-family: var(--mono); font-size: .66em; vertical-align: super; color: var(--survey); line-height: 0; }
+.fn {
+  display: block; font-family: var(--mono); font-size: .74rem; line-height: 1.55; color: var(--ink-2);
+  margin: -.4em 0 1.4em; padding: 8px 12px; border-left: 2px solid var(--survey);
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 1.55em;
+}
+.fn b { color: var(--survey); font-weight: 600; }
+@media (min-width: 1040px) {
+  .fn {
+    float: right; clear: right; width: 14.5rem; margin: .2em -17rem 1rem 0;
+    border-left: 0; border-top: 1px solid var(--survey); padding: 6px 0 0; background: none;
+  }
+}
+
+figure { margin: 2em 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-top: 8px; }
+.diag text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.diag .sub { fill: var(--ink-3); font-size: 10px; }
+.diag .loss { fill: var(--survey); font-size: 10px; }
+.diag .box { fill: var(--paper); stroke: var(--ink); stroke-width: 1; }
+.diag .arrow { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.diag .leak { stroke: var(--survey); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.diag .ah { fill: var(--ink-2); }
+
+/* post footer */
+.post-foot { margin: 72px 0 0; display: grid; gap: 40px; }
+@media (min-width: 900px) { .post-foot { grid-template-columns: 1fr 1fr; } }
+.post-foot h2 { margin: 0 0 12px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.revlog { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: .75rem; }
+.revlog li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.revlog time { color: var(--ink-3); }
+
+.adjacent { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); }
+.adjacent > a, .adjacent > span {
+  display: block; min-height: 6.2rem; padding: 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-size: .9rem; line-height: 1.3; color: var(--ink); text-decoration: none;
+}
+.adjacent > :nth-child(3n) { border-right: 0; }
+.adjacent > :nth-last-child(-n+3) { border-bottom: 0; }
+.adjacent small { display: block; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); margin-bottom: 4px; letter-spacing: .06em; }
+.adjacent > a:hover { background: var(--paper-2); }
+.adjacent .here { background: var(--ink); color: var(--paper); }
+.adjacent .here small { color: var(--paper); opacity: .7; }
+.adjacent .empty { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--grid) 6px 7px); }
+@media (max-width: 480px) { .adjacent > a, .adjacent > span { font-size: .78rem; min-height: 5.4rem; padding: 8px; } }
+
+/* ————— Hero (software-first, contour only as quiet texture) ————— */
+.hero { position: relative; padding: 72px 0 56px; border-bottom: 1px solid var(--rule); overflow: hidden; }
+.hero .topo {
+  left: auto; right: -4%; width: 62%; height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+          mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+.hero .topo path { opacity: .28; }
+.hero .topo path.idx { opacity: .42; }
+.hero-text { position: relative; max-width: 40rem; }
+.hero h1 { margin: 0; font: 500 clamp(2.4rem, 6vw, 4.2rem)/1.02 var(--serif); letter-spacing: -.015em; }
+.hero .role { margin: 14px 0 0; font-family: var(--mono); font-size: .82rem; color: var(--ink-2); }
+.hero .role b { color: var(--survey); font-weight: 500; }
+.hero .lede { margin: 28px 0 0; font-size: 1.25rem; line-height: 1.55; max-width: 36rem; }
+.hero .lede + .lede { margin-top: 14px; }
+@media (max-width: 719px) { .hero { padding: 48px 0 40px; } .hero .topo { width: 100%; right: -30%; } }
+
+.key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 2px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+
+.related { list-style: none; margin: 0; padding: 0; }
+.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 1.02rem; }
+.related a { color: var(--ink); text-decoration: none; }
+.related a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.prevnext { display: flex; justify-content: space-between; margin: 16px 0 0; font-family: var(--mono); font-size: .75rem; }
+.sheet h3 { margin-top: 0; padding-right: 5rem; }
+
+/* ————— Academic layer ————— */
+.links-row { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 22px 0 0; font-family: var(--mono); font-size: .76rem; }
+.links-row a { color: var(--ink-2); }
+.links-row a:first-child { color: var(--ink); font-weight: 600; }
+
+.interests { margin: 26px 0 0; max-width: 38rem; }
+.interests h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.interests ul { margin: 0; padding: 0; list-style: none; }
+.interests li { padding: 5px 0 5px 28px; position: relative; font-size: 1.05rem; }
+.interests li::before { content: "—"; position: absolute; left: 0; color: var(--survey); }
+
+.pubs { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: pub; }
+.pubs li { display: grid; grid-template-columns: 5.5rem minmax(0,1fr); gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.pubs .kind { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--survey); padding-top: 4px; }
+.pubs .ref { font-size: 1.05rem; line-height: 1.5; }
+.pubs .ref b { font-weight: 500; }
+.pubs .ref i { color: var(--ink-2); }
+.pubs .acts { grid-column: 2; display: flex; gap: 12px; font-family: var(--mono); font-size: .72rem; }
+.pubs .acts a { color: var(--water); }
+@media (max-width: 719px) { .pubs li { grid-template-columns: 1fr; } .pubs .acts { grid-column: 1; } }
+
+.cv { display: grid; gap: 32px; margin-top: 20px; }
+@media (min-width: 820px) { .cv { grid-template-columns: 1fr 1fr; } }
+.cv h3 { margin: 0 0 6px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.cv ol { list-style: none; margin: 0; padding: 0; }
+.cv li { display: grid; grid-template-columns: 6.5rem minmax(0,1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.cv .yr { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); padding-top: 4px; }
+.cv b { font-weight: 500; display: block; }
+.cv span.d { color: var(--ink-2); font-size: .98rem; }
+.ph { background: color-mix(in srgb, var(--survey) 14%, transparent); padding: 0 .2em; border-radius: 2px; }
+
+.abstract { margin: 32px 0 0; max-width: 42rem; padding: 18px 20px; border: 1px solid var(--ink); }
+.abstract h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.abstract p { margin: 0; font-size: 1.02rem; line-height: 1.55; }
+.abstract .kw { margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+.abstract .kw b { color: var(--ink); font-weight: 600; }
+
+.eq { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 1.6em 0; font-size: 1.15rem; }
+.eq .frac { display: inline-flex; flex-direction: column; align-items: center; }
+.eq .frac span:first-child { border-bottom: 1px solid var(--ink); padding: 0 6px 2px; }
+.eq .frac span:last-child { padding-top: 2px; }
+.eq .n { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-left: auto; }
+.cite { font-family: var(--mono); font-size: .78em; color: var(--water); text-decoration: none; }
+
+.refs { max-width: var(--measure); margin: 3em 0 0; }
+.refs h2 { font: 500 1.3rem/1.25 var(--serif); margin: 0 0 .6em; }
+.refs ol { margin: 0; padding-left: 2.2em; font-size: .95rem; line-height: 1.5; color: var(--ink-2); }
+.refs li { padding: 4px 0; }
+.refs li::marker { font-family: var(--mono); font-size: .8em; color: var(--ink-3); }
+
+.citebox { margin: 72px 0 0; border-top: 1px solid var(--ink); padding-top: 16px; }
+.citebox h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.citebox p { margin: 0 0 12px; font-size: 1rem; max-width: 46rem; }
+.citebox pre { font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: 12px 14px; margin: 0; overflow-x: auto; position: relative; }
+.citebox button { font: .72rem var(--mono); color: var(--ink-2); background: none; border: 1px solid var(--rule); padding: 3px 8px; cursor: pointer; margin-top: 8px; }
+.citebox button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ————— v4: work entries, observations, planned list ————— */
+.work { margin-top: 4px; }
+.work article { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 8px 24px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+.work .side { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 6px; }
+.work .side .st { color: var(--survey); text-transform: uppercase; letter-spacing: .1em; }
+.work h3 { margin: 0; font: 500 1.35rem/1.25 var(--serif); }
+.work h3 small { font: 400 .8rem var(--mono); color: var(--ink-3); margin-left: 8px; }
+.work p { margin: 8px 0 0; max-width: 42rem; font-size: 1.04rem; }
+.work .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.work .tags > span { font-family: var(--mono); font-size: .68rem; border: 1px solid var(--rule); padding: 1px 6px; color: var(--ink-2); }
+.work details { margin-top: 12px; max-width: 42rem; }
+.work summary { cursor: pointer; font-family: var(--mono); font-size: .74rem; color: var(--water); }
+.work details ul { margin: 10px 0 0; padding-left: 1.1em; font-size: .98rem; color: var(--ink-2); }
+.work details li { padding: 3px 0; }
+.work .principles { font-family: var(--mono); font-size: .76rem; color: var(--ink); margin-top: 12px; }
+@media (max-width: 719px) { .work article { grid-template-columns: 1fr; } .work .side { flex-direction: row; gap: 14px; } }
+
+.planned { list-style: none; margin: 8px 0 0; padding: 0; columns: 2 22rem; column-gap: 40px; }
+.planned li { break-inside: avoid; padding: 10px 0 10px 22px; border-bottom: 1px solid var(--rule); position: relative; font-size: 1.02rem; }
+.planned li svg { position: absolute; left: 0; top: 15px; }
+.sub-head { margin: 36px 0 0; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+
+.obs { width: 100%; border-collapse: collapse; margin: 1.6em 0; font-size: .92rem; }
+.obs th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 10px 8px 0; }
+.obs td { vertical-align: top; padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); line-height: 1.45; }
+.obs td:first-child { font-family: var(--mono); font-size: .72rem; color: var(--survey); width: 2.2rem; }
+.obs td:nth-child(2) { color: var(--ink-2); }
+.table-wrap { overflow-x: auto; }
+.skills { margin-top: 28px; display: grid; gap: 10px; }
+.skills div { display: grid; grid-template-columns: 12rem minmax(0,1fr); gap: 12px; font-size: 1rem; }
+.skills b { font: 600 .68rem/1.6 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 719px) { .skills div { grid-template-columns: 1fr; gap: 2px; } }
+
+.cv.noyr li { grid-template-columns: 1fr; }
+
+/* ————— v7: data tables, ongoing notice, learned list ————— */
+.data { width: 100%; border-collapse: collapse; margin: 1.4em 0 1.6em; font-size: .92rem; }
+.data th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 14px 8px 0; }
+.data td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.data td:first-child { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); }
+.ongoing { margin: 20px 0 0; max-width: 42rem; font-family: var(--mono); font-size: .76rem; line-height: 1.6; color: var(--ink-2); border-left: 2px solid var(--survey); padding: 4px 0 4px 12px; }
+.prose ul { padding-left: 1.2em; }
+.prose li { margin: .35em 0; }
+.prose ul.learned { list-style: none; padding: 0; border-top: 1px solid var(--ink); }
+.prose ul.learned li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.prose ol { padding-left: 1.4em; }
+
+.work .card-link { margin: 10px 0 0; font-family: var(--mono); font-size: .76rem; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="sheet-head">
+  <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
+  <nav class="nav" aria-label="Ana menü"><a href="/#calismalar"><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work</span></a><a href="/#yazilar" aria-current="page"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a><a href="/#cv"><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></a></nav>
+  <div class="toggles">
+    <button type="button" id="langBtn" aria-label="Dil / Language"><b>TR</b> / EN</button>
+    <button type="button" id="themeBtn"><span class="ui" lang="tr">Gece</span><span class="ui" lang="en">Night</span></button>
+  </div>
+</header>
+<nav class="crumbs"><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a> / <span class="ui" lang="tr">Makale</span><span class="ui" lang="en">Essay</span></nav>
+
+<header class="post-head" lang="en">
+  <h1>I Turned My AI Planning Agent Into the Project&rsquo;s Historian — And Made It Keep Receipts on Itself, Too</h1>
+  <p class="dek">This isn&rsquo;t an AI memory system. It&rsquo;s about making sure a decision, once made, actually reaches the place it&rsquo;s needed next — a problem that will outlast whatever memory architecture is fashionable this year.</p>
+</header>
+
+<dl class="survey-strip">
+  <div><dt><span class="ui" lang="tr">Tarih</span><span class="ui" lang="en">Date</span></dt><dd>2026-09</dd></div>
+  <div><dt><span class="ui" lang="tr">Durum</span><span class="ui" lang="en">Status</span></dt><dd><svg class="status done" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="fill"/></svg> <span class="ui" lang="tr">kararlı</span><span class="ui" lang="en">stable</span></dd></div>
+  <div><dt><span class="ui" lang="tr">Sürüm</span><span class="ui" lang="en">Version</span></dt><dd>1.0</dd></div>
+  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">EN</span> <a href="/yazilar/proje-tarihcisi/" hreflang="tr">TR →</a></dd></div>
+  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
+</dl>
+
+<p class="ongoing">The canonical, most current description of the methodology is the <a href="https://github.com/imertekin/precedent">Precedent README</a>; where this essay and the README differ, the README wins.</p>
+
+<article class="article" lang="en">
+<div class="prose">
+<p>Three weeks into a project, I asked my own AI assistant why we&rsquo;d picked a particular data model. It didn&rsquo;t know. I didn&rsquo;t know either. We&rsquo;d talked it through in a chat session that had long since scrolled into the void, made the call, moved on, and never written it down anywhere either of us — human or agent — would think to look again.</p>
+<p>That&rsquo;s a small thing to lose. It&rsquo;s also exactly the kind of small thing that, multiplied across a few dozen decisions over a few months, turns a project into a place where nobody can explain why anything is the way it is. Everyone who&rsquo;s worked on a codebase for more than a year has felt this. What&rsquo;s new is that now an AI agent is making some of these calls too, in a chat window that disappears, at 2am, without asking anyone.</p>
+<p>So I built a small, deliberately unglamorous fix. It&rsquo;s called <a href="https://github.com/imertekin/precedent"><strong>Precedent</strong></a>, and the core idea fits in one sentence: an AI agent doesn&rsquo;t get to hand off runnable work until the decision behind it is written down where the next session — human or agent — can find it.</p>
+<p>The agent that talks to me, clarifies scope, and writes the brief isn&rsquo;t just planning anymore. It&rsquo;s acting as the project&rsquo;s historian.</p>
+<h2>Two kinds of forgetting</h2>
+<p>Working with AI agents across sessions, you lose context in two distinct ways.</p>
+<p>The first is <strong>session loss</strong> — you open a new chat and have to re-explain the project from scratch. This one gets a lot of attention. It&rsquo;s why &ldquo;memory&rdquo; features and long-context models get so much airtime.</p>
+<p>The second is quieter and, I&rsquo;d argue, more expensive: <strong>decision loss</strong>. Nobody — not the human, not the agent — remembers <em>why</em> something was built a certain way. Not the fact that a decision was made, but the reasoning behind it, the alternative that got rejected, the constraint that made it necessary. This is the stuff that determines whether you can safely change something six months later, and it&rsquo;s exactly the stuff that evaporates first.</p>
+<p>There are two broad ways to fight this. One is automatic: run a memory system that embeds and retrieves everything, so the agent can pull up &ldquo;similar past situations&rdquo; on demand. The other is manual: keep a small number of hand-curated documents that a human actually wrote and actually trusts. I went with the second, and it&rsquo;s worth being honest about why — it&rsquo;s not because it&rsquo;s better in general, it&rsquo;s because it fits my scale. A handful of projects, decisions made slowly and on purpose, one or two people involved. If you&rsquo;re running dozens of parallel experiments with high-frequency, low-stakes decisions, an automatic system will probably beat this. This is a tool for a specific kind of shop, not a universal answer.</p>
+<p>But I want to flag something here, because it changes how you should read the rest of this: I don&rsquo;t think this is actually a memory problem, and framing it that way undersells it. Memory is about retrieval — pulling up what happened. What I kept running into wasn&rsquo;t a retrieval failure, it was a <em>routing</em> failure: a decision got made, and then never reliably reached the place or the moment where it was needed next. Models will keep changing. Context windows will keep growing. Whatever we&rsquo;re calling &ldquo;agent memory&rdquo; in five years will look nothing like today&rsquo;s embeddings-and-vector-stores approach. None of that touches the actual question — why did we decide this — which will need an answer just as much in ten years as it does now. That&rsquo;s the part worth building a habit around, independent of the tooling underneath it.</p>
+<h2>What it actually does</h2>
+<p>Every project gets a small set of files:</p>
+<pre><code>&lt;project&gt;/
+  AGENTS.md                ← project brief, under 200 lines
+  docs/
+    PRD.md                  ← what we're building
+    TECH_SPEC.md             ← how
+    DECISIONS.md             ← why (the decision log)
+    DECISIONS_DRAFT.md       ← inbox for unprocessed notes
+    BACKLOG.md               ← when, in what order
+  briefs/
+    DESIGN_BRIEF.md          ← only if design work is involved
+</code></pre>
+<p>None of this is novel by itself. <code>DECISIONS.md</code> is an Architecture Decision Record, a format Michael Nygard wrote up in 2011 and that&rsquo;s been quietly standard in serious engineering orgs ever since. <code>AGENTS.md</code> is an actual open standard now — released by OpenAI in August 2025, quickly adopted by Cursor, Factory, Google&rsquo;s Jules, and most other major coding agents, and donated to the Linux Foundation&rsquo;s Agentic AI Foundation in December 2025. The PRD-then-spec-then-backlog ordering is close to what GitHub&rsquo;s own Spec-Kit recommends for AI-assisted development. I didn&rsquo;t invent any of these pieces. What I built is the specific way they connect.</p>
+<p>Each <code>DECISIONS.md</code> entry also carries more than the classic four fields. A status that moves through a real lifecycle — proposed, accepted, implemented, validated, or rejected, deprecated, superseded — instead of a flat yes/no. And an importance rating, so a decision to use a UUID instead of an auto-incrementing ID doesn&rsquo;t sit in the log with the same visual weight as a decision that turns the whole backend event-driven. That distinction sounds cosmetic until you&rsquo;re the one scrolling past forty entries trying to figure out which ten actually mattered.</p>
+<p>That connection has two parts, and the second one is the part I actually care about.</p>
+<figure>
+<svg class="diag" viewBox="0 0 640 250" role="img" aria-label="The Precedent loop: planning agent, decision log, coding agent, inbox">
+<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0 8 4 0 8Z"/></marker></defs>
+<rect class="box" x="4" y="70" width="170" height="62"/><text x="18" y="94">Planning agent</text><text class="sub" x="18" y="114">Project Historian</text>
+<rect class="box" x="235" y="10" width="170" height="54"/><text x="249" y="33">docs/DECISIONS.md</text><text class="sub" x="249" y="51">ADR · the why</text>
+<rect class="box" x="466" y="70" width="170" height="62"/><text x="480" y="94">Coding agent</text><text class="sub" x="480" y="114">writes the code</text>
+<rect class="box" x="235" y="180" width="170" height="54"/><text x="249" y="203">DECISIONS_DRAFT.md</text><text class="sub" x="249" y="221">inbox</text>
+<path class="arrow" marker-end="url(#ah)" d="M120 70V37H233"/>
+<path class="arrow" marker-end="url(#ah)" d="M405 37H551V68"/>
+<path class="arrow" marker-end="url(#ah)" d="M551 132V207H407"/>
+<path class="arrow" marker-end="url(#ah)" d="M235 207H89V134"/>
+<text class="sub" x="126" y="31">1 · records</text>
+<text class="loss" x="420" y="28">2 · gate: hand off only if recorded</text>
+<text class="sub" x="543" y="168" text-anchor="end">3 · drops a deviation note</text>
+<text class="sub" x="12" y="246">4 · triage: Accepted · Rejected · Ignored</text>
+<rect class="box" x="245" y="98" width="150" height="46" stroke-dasharray="4 3"/><text x="258" y="117">Review trigger</text><text class="sub" x="258" y="134">default: next phase</text>
+<path class="arrow" marker-end="url(#ah)" stroke-dasharray="3 3" d="M320 98V66"/>
+</svg>
+<figcaption>Figure 1 — The Precedent loop. Decisions flow to code only through the record (the gate); deviations flow back through the inbox and get triaged at the next session; each decision’s review trigger sends it back for revalidation.</figcaption>
+</figure>
+<p><strong>Part one is the gate.</strong> The planning agent — the one that talks to me, clarifies scope, writes the brief — will not generate a runnable prompt for the coding agent until the relevant decision already exists in <code>docs/</code>. Not &ldquo;should&rdquo; write it down. Can&rsquo;t hand off work without it. I want to be precise about what &ldquo;can&rsquo;t&rdquo; means here, because it&rsquo;s the honest version of a claim I&rsquo;d otherwise overstate: the gate is a standing instruction, enforced at the prompt level, so it&rsquo;s exactly as reliable as the agent reading and following its brief — same as everything else in this system. What separates it from a rule someone has to remember is <em>where it sits</em>: it&rsquo;s defined as a precondition of producing the handoff, not as a separate step on a checklist. There&rsquo;s no moment where anyone has to remember to check; a handoff without the record behind it is, by definition, not a finished handoff.</p>
+<p><strong>Part two is the part everyone gets wrong, including me the first time.</strong> A one-way gate isn&rsquo;t enough. Code doesn&rsquo;t stay obedient to the plan — it can&rsquo;t, because the plan is always incomplete. A library doesn&rsquo;t do what you expected, a constraint shows up that nobody saw coming, and the agent implementing the feature makes a small, sensible call that never travels back to the document that&rsquo;s supposed to be the source of truth. Six months later that document is wrong, and worse, nobody knows it&rsquo;s wrong.</p>
+<p>So there&rsquo;s a second file, <code>DECISIONS_DRAFT.md</code>, that exists for exactly one purpose: catching those small, in-the-moment calls before they vanish. Not everything that lands there survives — triage has three outcomes, not two. A note either gets promoted to a full decision record, or gets declined with a one-line reason that stays in the log, or — if it&rsquo;s genuine noise — gets cleared without a trace. The middle outcome is the one that matters: a <em>declined</em> decision still leaves a record, but the log doesn&rsquo;t turn into a landfill of every passing remark either. Here&rsquo;s what that looks like in practice.</p>
+<h2>A walk-through</h2>
+<p><em>An illustrative scenario, simplified to show the mechanics.</em></p>
+<p><strong>Session 1.</strong> I ask the planning agent to set up a new project — a small internal tool for tracking something. We go back and forth on scope, it writes a PRD, and we log the first real decision: we&rsquo;re using a particular external API as the data source, even though it&rsquo;s rate-limited, because the volume is small enough that it won&rsquo;t matter. That goes into <code>DECISIONS.md</code> as ADR-001, with the reasoning attached.</p>
+<p><strong>Later that week.</strong> The coding agent is implementing the integration and discovers the API&rsquo;s rate limit is enforced per-IP, not per-key — something nobody checked. It works around this with a small caching layer that wasn&rsquo;t in the spec. Instead of silently doing this and moving on, it drops one line into <code>DECISIONS_DRAFT.md</code>: <em>&ldquo;2026-07-14 — API rate-limits by IP not key, added a 10-minute cache layer to stay under it.&rdquo;</em> No formatting, no ceremony. Just a note.</p>
+<p><strong>Session 2</strong>, a few days later, back in the planning agent. The project&rsquo;s brief — the file that gets loaded at the start of any session touching this project — carries a standing rule for whichever agent is reading it as the planning side: check the inbox first. It finds that note, decides it&rsquo;s actually significant (it constrains future scaling, not just a cosmetic detail), and promotes it to ADR-002 in proper form. The inbox gets cleared. Worth being honest about the mechanism here: this isn&rsquo;t magic, it&rsquo;s one line of standing instruction in a file that reloads every session — which is exactly as reliable as the agent actually reading and following it.</p>
+<p><strong>A month later</strong>, the project moves from its MVP phase into the next one. That transition is a built-in checkpoint: before moving forward, we do a quick pass over the ADRs made so far and ask whether the assumptions still hold. ADR-002 gets marked Validated — the cache layer held, the assumption behind it is confirmed. ADR-001&rsquo;s &ldquo;volume is small enough&rdquo; gets flagged instead — it&rsquo;s grown 4x, worth another look — its status stays open while everything else moves forward.</p>
+<p>Nothing about this required me to remember to ask, or the agent to remember to mention it unprompted at some arbitrary later date. The structure did the work.</p>
+<h2>The role, not the artifact</h2>
+<p>Everything above is a reasonably direct application of things the industry already knows — decision logs aren&rsquo;t new. What took me longer to see is that the artifact was never really the point. The planning agent running all of this isn&rsquo;t just planning. It&rsquo;s acting as the project&rsquo;s historian.</p>
+<p>A historian&rsquo;s job isn&rsquo;t just &ldquo;write things down.&rdquo; It&rsquo;s preserving decisions well enough that their reasoning survives, not just the fact that something was decided (the ADR format, with a real status lifecycle instead of a flat yes/no). It&rsquo;s remembering the project itself, cheaply, without re-explaining it every session (the brief that reloads each time). It&rsquo;s managing a messy, ongoing history rather than a clean final one (the inbox, and the fact that a declined note leaves a trace instead of disappearing). It&rsquo;s reviewing — actually going back and checking whether an old decision still holds, on a schedule tied to the decision itself rather than a calendar nobody follows.</p>
+<p>And then there&rsquo;s the part that made me want to write this up at all, the part that&rsquo;s smaller and, I think, more interesting than everything above: <strong>the skill that runs this whole thing keeps a decision log about its own design.</strong></p>
+<p>When I added the inbox mechanism, I didn&rsquo;t just update the instructions — I wrote an ADR explaining why, what the alternative was, and what trade-off I was accepting. When I later caught a naming mistake (I&rsquo;d called the project brief <code>AGENT.md</code>, not the actual standard <code>AGENTS.md</code>), that correction got its own entry too. The tool that teaches &ldquo;write down why you decided things&rdquo; applies that rule to itself, recursively, with the same discipline it asks of everything else.</p>
+<p>This sounds like a small flex, but it solves a real problem: methodologies drift, and usually nobody can say when or why. A year from now, if a rule in this system looks strange, the answer isn&rsquo;t buried in a Slack thread or a half-remembered conversation. It&rsquo;s in a file, in the same repo, in the same format as every other decision.</p>
+<h2>What I&rsquo;d tell you to be skeptical of</h2>
+<p>I&rsquo;d rather undersell this than oversell it, so here&rsquo;s what I don&rsquo;t have confidence in yet.</p>
+<p>One thing before the specific risks: this system intentionally optimizes for explainability over speed. If your context rewards moving fast with less friction more than it rewards being able to explain a choice six months later, some of what follows will read as overhead, not safety.</p>
+<p><strong>Decision logs get abandoned.</strong> Practitioners report this often enough that it&rsquo;s hard to treat as an edge case: teams adopt ADRs enthusiastically and quietly stop maintaining them within months. To be fair about the evidence, it&rsquo;s mostly practitioner experience; the academic work on how ADRs actually fare in practice is still thin (<a href="https://doi.org/10.1007/978-3-031-70797-1_22">an ECSA 2024 action research study</a> makes exactly that point). The commonly cited reasons are things like: the maintenance burden lands on whoever has the least context, or trivial decisions pile up next to load-bearing ones until nobody trusts the log anymore. The one-way gate targets the record living outside the actual workflow; the importance rating on every entry targets trivial decisions drowning out load-bearing ones. The maintenance burden landing on whoever has the least context — that one I still don&rsquo;t have a good answer for.</p>
+<p><strong>The inbox can be poisoned.</strong> If a one-off, unimportant deviation gets promoted into a permanent decision, the agent learns the wrong lesson and keeps re-learning it. Curation helps — a human or the planning agent deciding what&rsquo;s actually worth keeping — but it&rsquo;s a mitigation, not a guarantee.</p>
+<p><strong>I haven&rsquo;t tested this past small scale.</strong> This is built for a handful of projects with infrequent, deliberate decisions. I genuinely don&rsquo;t know where it breaks if you throw a large team or a high-velocity, many-small-decisions environment at it. My guess is it breaks somewhere, and an automatic memory system takes over from there — but that&rsquo;s a guess, not something I&rsquo;ve verified.</p>
+<h2>Since I first wrote this</h2>
+<p>Two things happened after the first draft, and both belong in the record.</p>
+<p><strong>A review trigger fired.</strong> The README had a paragraph saying Claude Code doesn&rsquo;t read <code>AGENTS.md</code> natively, so <code>project-init</code> created a one-line <code>CLAUDE.md</code> that imports it. That paragraph carried its own review trigger: Claude Code shipping native support. In September 2026 it did, in v2.1.277, as a fallback that applies when no <code>CLAUDE.md</code> exists. Nobody had to remember to check; the condition was written right next to the claim. The paragraph and the skill were updated, and the change has its own entry in the skill&rsquo;s decision log. That&rsquo;s the review mechanism doing what it&rsquo;s for, on the tool itself.</p>
+<p><strong>I started measuring it.</strong> Everything above is a practice, not a result. I&rsquo;m now building a small coding agent from scratch to test these ideas on something that actually runs, and the first interim note is out: <a href="/writing/measure-dont-assume/">Measure, don&rsquo;t assume</a>. Two of its findings land directly on this article. A decision I had written down wasn&rsquo;t enforced anywhere in the code, which is why the decision table in that project now has a &ldquo;where is this decision enforced?&rdquo; column. And a lesson I had recorded wasn&rsquo;t retrieved when it was needed. That gave me a sharper way to say what &ldquo;routing&rdquo; means: a decision has to be <em>stored</em>, then <em>retrieved</em> at the right moment, then <em>applied</em>, and each of those gates can fail on its own. Precedent handles the first gate well. The other two are what the experiment is for.</p>
+<h2>Take the piece that&rsquo;s missing, skip the rest</h2>
+<p>One more thing worth saying plainly: none of these pieces require each other. If all you take from this is the one-way gate — don&rsquo;t let an agent hand off runnable work until the decision behind it exists somewhere durable — that&rsquo;s useful entirely on its own, in whatever stack you&rsquo;re already running. Same with the inbox, or tying revalidation to your own natural checkpoints instead of a calendar. Or just the idea itself — that one agent, not both, owns the project&rsquo;s history — is worth carrying into whatever setup you already have, even without any of the specific file formats here. This isn&rsquo;t a methodology to adopt wholesale, with a name and a manifesto. It&rsquo;s closer to a small set of habits. Take the one that&rsquo;s missing from what you&rsquo;ve already got, and leave the rest.</p>
+<h2>Why bother writing this down</h2>
+<p>None of this makes AI agents smarter. It makes the <em>record</em> better, which is a duller but more durable kind of improvement. The agent isn&rsquo;t going to reason better about your architecture because you gave it a decision log. But six months from now, when someone — human or agent — asks why the system does something strange, there will be an answer that isn&rsquo;t &ldquo;nobody remembers.&rdquo;</p>
+<p>That&rsquo;s a low bar. It&rsquo;s also one that most projects, AI-assisted or not, quietly fail to clear.</p>
+</div>
+
+<section class="refs" id="refs">
+  <h2><span class="ui" lang="tr">Kaynaklar</span><span class="ui" lang="en">References</span></h2>
+  <ol>
+    <li>Nygard, M. (2011). Documenting architecture decisions. <a href="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">cognitect.com</a></li>
+    <li>Linux Foundation (2025, December 9). Formation of the Agentic AI Foundation (AAIF), anchored by MCP, goose and AGENTS.md. <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">linuxfoundation.org</a></li>
+    <li>GitHub. <i>Spec Kit.</i> <a href="https://github.com/github/spec-kit">github.com/github/spec-kit</a></li>
+    <li><i>Architecture Decision Records in Practice: An Action Research Study.</i> ECSA 2024. <a href="https://doi.org/10.1007/978-3-031-70797-1_22">doi:10.1007/978-3-031-70797-1_22</a></li>
+    <li>Anthropic. <i>How Claude remembers your project</i> (AGENTS.md). Claude Code docs. <a href="https://code.claude.com/docs/en/memory#agents-md">code.claude.com</a></li>
+    <li>Ertekin, İ. M. <i>Precedent</i> (README, skill and decision log). <a href="https://github.com/imertekin/precedent">github.com/imertekin/precedent</a></li>
+  </ol>
+</section>
+</article>
+
+<section class="citebox" id="cite">
+  <h2><span class="ui" lang="tr">Atıf</span><span class="ui" lang="en">Cite this</span></h2>
+  <p>Ertekin, İ. M. (2026). <i>I turned my AI planning agent into the project’s historian — and made it keep receipts on itself, too</i>. https://imertekin.com/writing/project-historian/</p>
+  <pre id="bib">@misc{ertekin2026historian,
+  author       = {Ertekin, {\.I}lkay Murat},
+  title        = {I turned my AI planning agent into the project's historian — and made it keep receipts on itself, too},
+  year         = {2026},
+  howpublished = {\url{https://imertekin.com/writing/project-historian/}},
+  note         = {Essay. Methodology and skill: https://github.com/imertekin/precedent}
+}</pre>
+  <button type="button" data-copy="bib" data-label="BibTeX">BibTeX</button>
+</section>
+
+<div class="post-foot">
+  <section>
+    <h2><span class="ui" lang="tr">Değişiklik kaydı</span><span class="ui" lang="en">Changelog</span></h2>
+    <ol class="revlog">
+      <li><time>2026-09</time><span><span class="ui" lang="tr">v1.0 · imertekin.com’da yayında; “İlk yazdığımdan beri” bölümüyle</span><span class="ui" lang="en">v1.0 · Published on imertekin.com, with the “Since I first wrote this” section</span></span></li>
+    </ol>
+  </section>
+  <section>
+    <h2><span class="ui" lang="tr">İlgili</span><span class="ui" lang="en">Related</span></h2>
+    <ul class="related"><li><a href="/writing/measure-dont-assume/">Measure, don’t assume (interim note)</a><span class="badge">EN</span></li><li><a href="/yazilar/proje-tarihcisi/">Planlama ajanımı projenin tarihçisi yaptım (Türkçe)</a><span class="badge">TR</span></li><li><a href="https://github.com/imertekin/precedent">Precedent — GitHub</a><span class="badge">OSS</span></li></ul>
+  </section>
+</div>
+<footer class="margin-foot">
+  <div>
+    <h4>İlkay Murat Ertekin</h4>
+    <p>Software Engineer · <span class="ui" lang="tr">agentic sistemler</span><span class="ui" lang="en">agentic systems</span></p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Son güncelleme</span><span class="ui" lang="en">Last updated</span></h4>
+    <p>2026-09-28</p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Bağlantılar</span><span class="ui" lang="en">Elsewhere</span></h4>
+    <p><a href="https://github.com/imertekin">GitHub</a> · <a href="https://orcid.org/0000-0002-1011-0284">ORCID</a> · <a href="https://twitter.com/im_ertekin">X</a><br><a href="mailto:iertekinx@gmail.com">iertekinx@gmail.com</a></p>
+  </div>
+</footer></div>
+<script>
+(() => {
+  const r = document.documentElement;
+  const langBtn = document.getElementById('langBtn');
+  const themeBtn = document.getElementById('themeBtn');
+  const setUI = (l) => {
+    r.dataset.ui = l; r.lang = l;
+    langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
+  };
+  langBtn.addEventListener('click', () => {
+    const next = r.dataset.ui === 'tr' ? 'en' : 'tr';
+    const alt = next === 'en' ? r.dataset.altEn : r.dataset.altTr;
+    if (alt) { location.href = alt; return; }
+    setUI(next);
+  });
+  const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const paint = () => {
+    const d = isDark();
+    themeBtn.querySelector('[lang=tr]').textContent = d ? 'Gündüz' : 'Gece';
+    themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
+  };
+  themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
+  setUI(r.dataset.ui || 'en'); paint();
+})();
+</script><script>
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const el = document.getElementById(b.dataset.copy);
+  try { await navigator.clipboard.writeText(el.innerText); b.textContent = '✓'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(el); getSelection().removeAllRanges(); getSelection().addRange(r); }
+  setTimeout(() => b.textContent = b.dataset.label, 1400);
+}));
+</script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="tr" data-ui="tr" data-alt-en="/writing/project-historian/">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planlama ajanımı projenin tarihçisi yaptım — İlkay Murat Ertekin</title>
+<meta name="description" content="Oturum kaybı değil, karar kaybı: bir kararın ihtiyaç duyulduğu yere ulaşmasını sağlayan küçük, gösterişsiz bir yöntem. Precedent ve Project Historian rolü üzerine.">
+<link rel="canonical" href="https://imertekin.com/yazilar/proje-tarihcisi/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.6' fill='none' stroke='%23a93d27' stroke-width='1.6'/%3E%3Cpath d='M7 1.4A5.6 5.6 0 0 1 7 12.6Z' fill='%23a93d27'/%3E%3C/svg%3E">
+<meta property="og:title" content="Planlama ajanımı projenin tarihçisi yaptım — İlkay Murat Ertekin">
+<meta property="og:description" content="Oturum kaybı değil, karar kaybı: bir kararın ihtiyaç duyulduğu yere ulaşmasını sağlayan küçük, gösterişsiz bir yöntem. Precedent ve Project Historian rolü üzerine.">
+<meta property="og:url" content="https://imertekin.com/yazilar/proje-tarihcisi/">
+<meta property="og:type" content="website">
+<meta name="author" content="İlkay Murat Ertekin">
+<link rel="alternate" hreflang="tr" href="https://imertekin.com/yazilar/proje-tarihcisi/">
+<link rel="alternate" hreflang="en" href="https://imertekin.com/writing/project-historian/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>/* ————— Tokens ————— */
+:root {
+  --paper: #f3efe4;
+  --paper-2: #ebe5d5;
+  --ink: #1c2320;
+  --ink-2: #49524c;
+  --ink-3: #7b8079;
+  --rule: #d5cbb4;
+  --contour: #a97c4a;
+  --water: #2b6781;
+  --survey: #a93d27;
+  --grid: rgba(43, 103, 129, .07);
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 38rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+    --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #121716; --paper-2: #192120; --ink: #e5e0d2; --ink-2: #b0b3a8; --ink-3: #7d837a;
+  --rule: #2d3632; --contour: #8f6c46; --water: #86b9d0; --survey: #e07b61; --grid: rgba(134, 185, 208, .06);
+  color-scheme: dark;
+}
+
+/* ————— Base ————— */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.6 var(--serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--water); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { text-decoration-thickness: 2px; }
+::selection { background: color-mix(in srgb, var(--contour) 35%, transparent); }
+
+/* bilingual UI: every UI string exists twice */
+:root[data-ui="tr"] [lang="en"].ui, :root[data-ui="en"] [lang="tr"].ui { display: none !important; }
+
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
+
+.mono, .label {
+  font-family: var(--mono);
+  font-size: .75rem;
+  letter-spacing: .02em;
+}
+.label {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ink-3);
+}
+
+/* ————— Sheet header ————— */
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .78rem;
+}
+.sheet-id { color: var(--ink); text-decoration: none; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+.sheet-id b { font-weight: 600; letter-spacing: .08em; }
+.sheet-id span { color: var(--ink-3); }
+.nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a:hover, .nav a[aria-current] { color: var(--ink); text-decoration: underline; }
+.toggles { display: flex; gap: 6px; }
+.toggles button {
+  font: inherit; color: var(--ink-2); background: none; cursor: pointer;
+  border: 1px solid var(--rule); padding: 3px 8px; border-radius: 2px;
+}
+.toggles button:hover { color: var(--ink); border-color: var(--ink-3); }
+.toggles b { color: var(--ink); font-weight: 600; }
+@media (max-width: 719px) {
+  .sheet-head { flex-wrap: wrap; }
+  .nav { order: 3; width: 100%; gap: 16px; }
+  .sheet-id span { display: none; }
+}
+
+.draft-note {
+  font-family: var(--mono); font-size: .72rem; color: var(--survey);
+  border: 1px dashed currentColor; padding: 6px 10px; margin: 16px 0 0; display: inline-block;
+}
+
+/* ————— Map frame (neatline with graduated border) ————— */
+.mapframe {
+  position: relative;
+  margin: 28px 0 0;
+  padding: 7px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) top / 100% 5px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 40px, var(--paper) 40px 80px) bottom / 100% 5px no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) left / 5px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ink) 0 40px, var(--paper) 40px 80px) right / 5px 100% no-repeat;
+  outline: 1px solid var(--ink);
+}
+.mapframe-inner {
+  position: relative;
+  border: 1px solid var(--ink);
+  aspect-ratio: 2.4 / 1;
+  min-height: 260px;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.topo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.topo path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .55; }
+.topo path.idx { stroke-width: 1.8; opacity: .8; }
+
+.map-label {
+  position: absolute; left: 6%; top: 50%; transform: translateY(-50%);
+  max-width: 62%;
+}
+.map-label h1 {
+  margin: 0;
+  font: 500 clamp(2rem, 5.2vw, 4rem)/1.02 var(--serif);
+  letter-spacing: -.01em;
+  text-shadow: 0 0 8px var(--paper), 0 0 2px var(--paper);
+}
+.map-label p {
+  margin: 12px 0 0; font-family: var(--mono); font-size: .78rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-2);
+  text-shadow: 0 0 6px var(--paper);
+}
+.trig { position: absolute; font-family: var(--mono); font-size: .7rem; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.trig svg { width: 14px; height: 14px; }
+.coord { position: absolute; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); background: var(--paper); padding: 0 4px; }
+.coord.tl { top: -1px; left: 12px; transform: translateY(-50%); }
+.coord.br { bottom: -1px; right: 12px; transform: translateY(50%); }
+@media (max-width: 719px) {
+  .mapframe-inner { aspect-ratio: auto; height: 300px; }
+  .map-label { left: 20px; right: 20px; max-width: none; top: auto; bottom: 28px; transform: none; }
+}
+
+/* ————— Home layout ————— */
+.intro {
+  display: grid; gap: 32px; margin: 40px 0 8px;
+}
+.intro p { margin: 0 0 1em; max-width: var(--measure); font-size: 1.25rem; line-height: 1.55; }
+.intro p.motto {
+  font-style: italic; color: var(--ink-2); font-size: 1.1rem;
+  border-left: 2px solid var(--contour); padding-left: 16px;
+}
+@media (min-width: 900px) { .intro { grid-template-columns: minmax(0, 1fr) 17rem; } }
+
+.legend {
+  border: 1px solid var(--ink); padding: 14px 16px 12px; align-self: start; background: var(--paper);
+  font-family: var(--mono); font-size: .75rem;
+}
+.legend h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.legend dl { margin: 0; display: grid; grid-template-columns: 28px 1fr; gap: 8px 10px; align-items: center; }
+.legend dt { display: flex; justify-content: center; }
+.legend dd { margin: 0; color: var(--ink-2); }
+.legend dd b { color: var(--ink); font-weight: 600; }
+.legend hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--rule); margin: 4px 0; width: 100%; }
+
+.status { width: 14px; height: 14px; flex: none; }
+.status circle { fill: none; stroke: var(--survey); stroke-width: 1.4; }
+.status .fill { fill: var(--survey); stroke: none; }
+.status circle.fill { stroke: var(--survey); }
+.status .dash { stroke-dasharray: 2.6 2.2; }
+
+.badge { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; border: 1px solid var(--ink-3); color: var(--ink-2); padding: 0 4px; border-radius: 2px; }
+
+.scalebar { display: inline-flex; height: 6px; border: 1px solid var(--ink); vertical-align: middle; }
+.scalebar i { display: block; width: 8px; height: 100%; }
+.scalebar i:nth-child(odd) { background: var(--ink); }
+
+section.block { margin: 64px 0 0; }
+.block-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid var(--ink); padding-bottom: 8px; margin-bottom: 4px;
+}
+.block-head h2 { margin: 0; font: 500 1.6rem/1.2 var(--serif); }
+.block-head a { font-family: var(--mono); font-size: .75rem; }
+
+/* post list */
+.posts { list-style: none; margin: 0; padding: 0; }
+.posts li {
+  display: grid; grid-template-columns: 22px 6.5rem minmax(0, 1fr) auto; gap: 4px 14px;
+  padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;
+}
+.posts .status { transform: translateY(2px); }
+.posts time { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.posts h3 { margin: 0; font: 500 1.28rem/1.3 var(--serif); }
+.posts h3 a { color: var(--ink); text-decoration: none; }
+.posts h3 a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.posts p { grid-column: 3; margin: 2px 0 0; color: var(--ink-2); font-size: 1rem; max-width: 36rem; }
+.posts .meta { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); white-space: nowrap; }
+@media (max-width: 719px) {
+  .posts li { grid-template-columns: 22px minmax(0, 1fr); }
+  .posts time { grid-column: 2; order: -1; }
+  .posts .status { grid-row: 1 / span 2; }
+  .posts h3, .posts p, .posts .meta { grid-column: 2; }
+}
+
+/* active sheets (sheet index grid) */
+.sheets { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); border-left: 1px solid var(--ink); border-top: 1px solid var(--ink); margin-top: 20px; }
+.sheet { border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 14px 16px 18px; position: relative; }
+.sheet .no { font-family: var(--mono); font-size: .68rem; color: var(--ink-3); letter-spacing: .1em; }
+.sheet h3 { margin: 6px 0 4px; font: 500 1.2rem/1.25 var(--serif); }
+.sheet p { margin: 0; font-size: .98rem; color: var(--ink-2); }
+.sheet .state { position: absolute; top: 14px; right: 16px; font-family: var(--mono); font-size: .66rem; color: var(--survey); }
+
+/* route */
+.route { list-style: none; margin: 24px 0 0; padding: 0 0 0 28px; position: relative; max-width: 44rem; }
+.route::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 34px; border-left: 2px dashed var(--survey); }
+.route li { position: relative; padding: 0 0 22px; }
+.route li::before {
+  content: ""; position: absolute; left: -26px; top: 7px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--survey);
+}
+.route li:last-child::before { background: var(--survey); }
+.route b { font-weight: 500; font-size: 1.15rem; }
+.route span { display: block; color: var(--ink-2); font-size: 1rem; }
+
+/* ————— Map-margin footer ————— */
+.margin-foot {
+  margin: 96px 0 0; border-top: 1px solid var(--ink); padding: 18px 0 40px;
+  display: grid; gap: 20px 32px; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-2);
+}
+.margin-foot h4 { margin: 0 0 6px; font: 600 .66rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.margin-foot p { margin: 0; line-height: 1.7; }
+.margin-foot a { color: var(--ink-2); }
+.foot-scale { display: flex; flex-direction: column; gap: 6px; }
+.foot-scale .scalebar i { width: 22px; }
+.foot-scale .ticks { display: flex; font-size: .62rem; color: var(--ink-3); }
+.foot-scale .ticks span { width: 22px; }
+.north { width: 22px; height: 34px; }
+.north path { fill: var(--ink); }
+.north text { fill: var(--ink); font: 600 9px var(--mono); }
+
+/* ————— Article ————— */
+.crumbs { margin: 36px 0 0; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.crumbs a { color: var(--ink-2); }
+.post-head { margin: 18px 0 0; max-width: 46rem; }
+.post-head h1 { margin: 0; font: 500 clamp(2rem, 4.6vw, 3.3rem)/1.08 var(--serif); letter-spacing: -.012em; }
+.post-head .dek { margin: 16px 0 0; font-size: 1.3rem; line-height: 1.45; color: var(--ink-2); font-style: italic; }
+
+.survey-strip {
+  margin: 28px 0 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  font-family: var(--mono); font-size: .74rem;
+}
+.survey-strip div { padding: 10px 12px 10px 0; }
+.survey-strip div + div { padding-left: 12px; border-left: 1px solid var(--rule); }
+.survey-strip dt { color: var(--ink-3); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
+.survey-strip dd { margin: 0; display: flex; align-items: center; gap: 6px; }
+@media (max-width: 719px) {
+  .survey-strip { grid-template-columns: 1fr 1fr; }
+  .survey-strip div, .survey-strip div + div { padding: 10px 0; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .survey-strip div:nth-child(even) { padding-left: 12px; border-left: 1px solid var(--rule); }
+}
+
+.article { margin: 40px 0 0; }
+.prose { max-width: var(--measure); }
+@media (min-width: 1040px) { .article { padding-right: 17rem; } .prose { max-width: 40rem; } }
+.prose > p:first-child::first-letter { font-size: 3.4em; float: left; line-height: .9; padding: .06em .1em 0 0; font-weight: 500; color: var(--contour); }
+.prose p { margin: 0 0 1.2em; hyphens: auto; }
+.prose h2 { font: 500 1.55rem/1.25 var(--serif); margin: 2em 0 .6em; display: flex; gap: 12px; align-items: baseline; }
+.prose h2 .no { font-family: var(--mono); font-size: .75rem; color: var(--survey); font-weight: 500; }
+.prose blockquote { margin: 1.6em 0; padding: 0 0 0 20px; border-left: 2px solid var(--contour); font-style: italic; color: var(--ink-2); }
+.prose code { font-family: var(--mono); font-size: .86em; background: var(--paper-2); padding: .08em .3em; border-radius: 2px; }
+.prose pre {
+  font-family: var(--mono); font-size: .8rem; line-height: 1.6; background: var(--paper-2); border-left: 2px solid var(--water);
+  padding: 14px 16px; overflow-x: auto; margin: 1.6em 0;
+}
+.prose pre code { background: none; padding: 0; font-size: inherit; }
+.prose pre .c { color: var(--ink-3); }
+.prose pre .s { color: var(--survey); }
+
+/* field notes (sidenotes) */
+.fn-ref { font-family: var(--mono); font-size: .66em; vertical-align: super; color: var(--survey); line-height: 0; }
+.fn {
+  display: block; font-family: var(--mono); font-size: .74rem; line-height: 1.55; color: var(--ink-2);
+  margin: -.4em 0 1.4em; padding: 8px 12px; border-left: 2px solid var(--survey);
+  background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 1.55em;
+}
+.fn b { color: var(--survey); font-weight: 600; }
+@media (min-width: 1040px) {
+  .fn {
+    float: right; clear: right; width: 14.5rem; margin: .2em -17rem 1rem 0;
+    border-left: 0; border-top: 1px solid var(--survey); padding: 6px 0 0; background: none;
+  }
+}
+
+figure { margin: 2em 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-top: 8px; }
+.diag text { font-family: var(--mono); font-size: 11px; fill: var(--ink); }
+.diag .sub { fill: var(--ink-3); font-size: 10px; }
+.diag .loss { fill: var(--survey); font-size: 10px; }
+.diag .box { fill: var(--paper); stroke: var(--ink); stroke-width: 1; }
+.diag .arrow { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+.diag .leak { stroke: var(--survey); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.diag .ah { fill: var(--ink-2); }
+
+/* post footer */
+.post-foot { margin: 72px 0 0; display: grid; gap: 40px; }
+@media (min-width: 900px) { .post-foot { grid-template-columns: 1fr 1fr; } }
+.post-foot h2 { margin: 0 0 12px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.revlog { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: .75rem; }
+.revlog li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); }
+.revlog time { color: var(--ink-3); }
+
+.adjacent { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); }
+.adjacent > a, .adjacent > span {
+  display: block; min-height: 6.2rem; padding: 10px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  font-size: .9rem; line-height: 1.3; color: var(--ink); text-decoration: none;
+}
+.adjacent > :nth-child(3n) { border-right: 0; }
+.adjacent > :nth-last-child(-n+3) { border-bottom: 0; }
+.adjacent small { display: block; font-family: var(--mono); font-size: .62rem; color: var(--ink-3); margin-bottom: 4px; letter-spacing: .06em; }
+.adjacent > a:hover { background: var(--paper-2); }
+.adjacent .here { background: var(--ink); color: var(--paper); }
+.adjacent .here small { color: var(--paper); opacity: .7; }
+.adjacent .empty { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--grid) 6px 7px); }
+@media (max-width: 480px) { .adjacent > a, .adjacent > span { font-size: .78rem; min-height: 5.4rem; padding: 8px; } }
+
+/* ————— Hero (software-first, contour only as quiet texture) ————— */
+.hero { position: relative; padding: 72px 0 56px; border-bottom: 1px solid var(--rule); overflow: hidden; }
+.hero .topo {
+  left: auto; right: -4%; width: 62%; height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+          mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+.hero .topo path { opacity: .28; }
+.hero .topo path.idx { opacity: .42; }
+.hero-text { position: relative; max-width: 40rem; }
+.hero h1 { margin: 0; font: 500 clamp(2.4rem, 6vw, 4.2rem)/1.02 var(--serif); letter-spacing: -.015em; }
+.hero .role { margin: 14px 0 0; font-family: var(--mono); font-size: .82rem; color: var(--ink-2); }
+.hero .role b { color: var(--survey); font-weight: 500; }
+.hero .lede { margin: 28px 0 0; font-size: 1.25rem; line-height: 1.55; max-width: 36rem; }
+.hero .lede + .lede { margin-top: 14px; }
+@media (max-width: 719px) { .hero { padding: 48px 0 40px; } .hero .topo { width: 100%; right: -30%; } }
+
+.key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 2px; font-family: var(--mono); font-size: .7rem; color: var(--ink-3); }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+
+.related { list-style: none; margin: 0; padding: 0; }
+.related li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 1.02rem; }
+.related a { color: var(--ink); text-decoration: none; }
+.related a:hover { text-decoration: underline; text-decoration-color: var(--contour); }
+.prevnext { display: flex; justify-content: space-between; margin: 16px 0 0; font-family: var(--mono); font-size: .75rem; }
+.sheet h3 { margin-top: 0; padding-right: 5rem; }
+
+/* ————— Academic layer ————— */
+.links-row { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 22px 0 0; font-family: var(--mono); font-size: .76rem; }
+.links-row a { color: var(--ink-2); }
+.links-row a:first-child { color: var(--ink); font-weight: 600; }
+
+.interests { margin: 26px 0 0; max-width: 38rem; }
+.interests h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.interests ul { margin: 0; padding: 0; list-style: none; }
+.interests li { padding: 5px 0 5px 28px; position: relative; font-size: 1.05rem; }
+.interests li::before { content: "—"; position: absolute; left: 0; color: var(--survey); }
+
+.pubs { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: pub; }
+.pubs li { display: grid; grid-template-columns: 5.5rem minmax(0,1fr); gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.pubs .kind { font-family: var(--mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--survey); padding-top: 4px; }
+.pubs .ref { font-size: 1.05rem; line-height: 1.5; }
+.pubs .ref b { font-weight: 500; }
+.pubs .ref i { color: var(--ink-2); }
+.pubs .acts { grid-column: 2; display: flex; gap: 12px; font-family: var(--mono); font-size: .72rem; }
+.pubs .acts a { color: var(--water); }
+@media (max-width: 719px) { .pubs li { grid-template-columns: 1fr; } .pubs .acts { grid-column: 1; } }
+
+.cv { display: grid; gap: 32px; margin-top: 20px; }
+@media (min-width: 820px) { .cv { grid-template-columns: 1fr 1fr; } }
+.cv h3 { margin: 0 0 6px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+.cv ol { list-style: none; margin: 0; padding: 0; }
+.cv li { display: grid; grid-template-columns: 6.5rem minmax(0,1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.cv .yr { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); padding-top: 4px; }
+.cv b { font-weight: 500; display: block; }
+.cv span.d { color: var(--ink-2); font-size: .98rem; }
+.ph { background: color-mix(in srgb, var(--survey) 14%, transparent); padding: 0 .2em; border-radius: 2px; }
+
+.abstract { margin: 32px 0 0; max-width: 42rem; padding: 18px 20px; border: 1px solid var(--ink); }
+.abstract h2 { margin: 0 0 8px; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.abstract p { margin: 0; font-size: 1.02rem; line-height: 1.55; }
+.abstract .kw { margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+.abstract .kw b { color: var(--ink); font-weight: 600; }
+
+.eq { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 1.6em 0; font-size: 1.15rem; }
+.eq .frac { display: inline-flex; flex-direction: column; align-items: center; }
+.eq .frac span:first-child { border-bottom: 1px solid var(--ink); padding: 0 6px 2px; }
+.eq .frac span:last-child { padding-top: 2px; }
+.eq .n { font-family: var(--mono); font-size: .75rem; color: var(--ink-3); margin-left: auto; }
+.cite { font-family: var(--mono); font-size: .78em; color: var(--water); text-decoration: none; }
+
+.refs { max-width: var(--measure); margin: 3em 0 0; }
+.refs h2 { font: 500 1.3rem/1.25 var(--serif); margin: 0 0 .6em; }
+.refs ol { margin: 0; padding-left: 2.2em; font-size: .95rem; line-height: 1.5; color: var(--ink-2); }
+.refs li { padding: 4px 0; }
+.refs li::marker { font-family: var(--mono); font-size: .8em; color: var(--ink-3); }
+
+.citebox { margin: 72px 0 0; border-top: 1px solid var(--ink); padding-top: 16px; }
+.citebox h2 { margin: 0 0 10px; font: 600 .7rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; }
+.citebox p { margin: 0 0 12px; font-size: 1rem; max-width: 46rem; }
+.citebox pre { font-family: var(--mono); font-size: .76rem; background: var(--paper-2); padding: 12px 14px; margin: 0; overflow-x: auto; position: relative; }
+.citebox button { font: .72rem var(--mono); color: var(--ink-2); background: none; border: 1px solid var(--rule); padding: 3px 8px; cursor: pointer; margin-top: 8px; }
+.citebox button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+/* ————— v4: work entries, observations, planned list ————— */
+.work { margin-top: 4px; }
+.work article { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: 8px 24px; padding: 22px 0; border-bottom: 1px solid var(--rule); }
+.work .side { font-family: var(--mono); font-size: .7rem; color: var(--ink-3); display: flex; flex-direction: column; gap: 6px; }
+.work .side .st { color: var(--survey); text-transform: uppercase; letter-spacing: .1em; }
+.work h3 { margin: 0; font: 500 1.35rem/1.25 var(--serif); }
+.work h3 small { font: 400 .8rem var(--mono); color: var(--ink-3); margin-left: 8px; }
+.work p { margin: 8px 0 0; max-width: 42rem; font-size: 1.04rem; }
+.work .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.work .tags > span { font-family: var(--mono); font-size: .68rem; border: 1px solid var(--rule); padding: 1px 6px; color: var(--ink-2); }
+.work details { margin-top: 12px; max-width: 42rem; }
+.work summary { cursor: pointer; font-family: var(--mono); font-size: .74rem; color: var(--water); }
+.work details ul { margin: 10px 0 0; padding-left: 1.1em; font-size: .98rem; color: var(--ink-2); }
+.work details li { padding: 3px 0; }
+.work .principles { font-family: var(--mono); font-size: .76rem; color: var(--ink); margin-top: 12px; }
+@media (max-width: 719px) { .work article { grid-template-columns: 1fr; } .work .side { flex-direction: row; gap: 14px; } }
+
+.planned { list-style: none; margin: 8px 0 0; padding: 0; columns: 2 22rem; column-gap: 40px; }
+.planned li { break-inside: avoid; padding: 10px 0 10px 22px; border-bottom: 1px solid var(--rule); position: relative; font-size: 1.02rem; }
+.planned li svg { position: absolute; left: 0; top: 15px; }
+.sub-head { margin: 36px 0 0; font: 600 .68rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); }
+
+.obs { width: 100%; border-collapse: collapse; margin: 1.6em 0; font-size: .92rem; }
+.obs th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 10px 8px 0; }
+.obs td { vertical-align: top; padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); line-height: 1.45; }
+.obs td:first-child { font-family: var(--mono); font-size: .72rem; color: var(--survey); width: 2.2rem; }
+.obs td:nth-child(2) { color: var(--ink-2); }
+.table-wrap { overflow-x: auto; }
+.skills { margin-top: 28px; display: grid; gap: 10px; }
+.skills div { display: grid; grid-template-columns: 12rem minmax(0,1fr); gap: 12px; font-size: 1rem; }
+.skills b { font: 600 .68rem/1.6 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 719px) { .skills div { grid-template-columns: 1fr; gap: 2px; } }
+
+.cv.noyr li { grid-template-columns: 1fr; }
+
+/* ————— v7: data tables, ongoing notice, learned list ————— */
+.data { width: 100%; border-collapse: collapse; margin: 1.4em 0 1.6em; font-size: .92rem; }
+.data th { text-align: left; font: 600 .64rem/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--ink); padding: 8px 14px 8px 0; }
+.data td { padding: 8px 14px 8px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.data td:first-child { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); }
+.ongoing { margin: 20px 0 0; max-width: 42rem; font-family: var(--mono); font-size: .76rem; line-height: 1.6; color: var(--ink-2); border-left: 2px solid var(--survey); padding: 4px 0 4px 12px; }
+.prose ul { padding-left: 1.2em; }
+.prose li { margin: .35em 0; }
+.prose ul.learned { list-style: none; padding: 0; border-top: 1px solid var(--ink); }
+.prose ul.learned li { padding: 10px 0; border-bottom: 1px solid var(--rule); margin: 0; }
+.prose ol { padding-left: 1.4em; }
+
+.work .card-link { margin: 10px 0 0; font-family: var(--mono); font-size: .76rem; }
+</style>
+</head>
+<body>
+<div class="wrap"><header class="sheet-head">
+  <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
+  <nav class="nav" aria-label="Ana menü"><a href="/#calismalar"><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work</span></a><a href="/#yazilar" aria-current="page"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a><a href="/#cv"><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></a></nav>
+  <div class="toggles">
+    <button type="button" id="langBtn" aria-label="Dil / Language"><b>TR</b> / EN</button>
+    <button type="button" id="themeBtn"><span class="ui" lang="tr">Gece</span><span class="ui" lang="en">Night</span></button>
+  </div>
+</header>
+<nav class="crumbs"><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a> / <span class="ui" lang="tr">Makale</span><span class="ui" lang="en">Essay</span></nav>
+
+<header class="post-head" lang="tr">
+  <h1>Planlama Ajanımı Projenin Tarihçisi Yaptım — Sonra Kendi Kararlarının Makbuzunu da Tutmasını Öğrettim</h1>
+  <p class="dek">Bu bir AI hafıza sistemi değil. Bir kararın, bir kere alındıktan sonra gerçekten ihtiyaç duyulduğu yere ulaşmasıyla ilgili — bu yılın moda hafıza mimarisinden çok daha uzun ömürlü bir problem.</p>
+</header>
+
+<dl class="survey-strip">
+  <div><dt><span class="ui" lang="tr">Tarih</span><span class="ui" lang="en">Date</span></dt><dd>2026-09</dd></div>
+  <div><dt><span class="ui" lang="tr">Durum</span><span class="ui" lang="en">Status</span></dt><dd><svg class="status done" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="fill"/></svg> <span class="ui" lang="tr">kararlı</span><span class="ui" lang="en">stable</span></dd></div>
+  <div><dt><span class="ui" lang="tr">Sürüm</span><span class="ui" lang="en">Version</span></dt><dd>1.0</dd></div>
+  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">TR</span> <a href="/writing/project-historian/" hreflang="en">EN →</a></dd></div>
+  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
+</dl>
+
+<p class="ongoing">Metodolojinin kanonik ve en güncel anlatımı <a href="https://github.com/imertekin/precedent">Precedent README</a>’si; bu yazıyla README ayrıştığında README geçerli.</p>
+
+<article class="article" lang="tr">
+<div class="prose">
+<p>Bir projenin üçüncü haftasında, kendi AI asistanıma belirli bir veri modelini neden seçtiğimizi sordum. Bilmiyordu. Ben de bilmiyordum. Bunu çoktan kaybolmuş bir sohbet oturumunda konuşup karara bağlamış, devam etmiş, ne insan ne de ajan bir daha bakmayı düşüneceği hiçbir yere yazmamıştık.</p>
+<p>Kaybedilecek küçük bir şey bu. Ama tam olarak, birkaç ay içinde birikince bir projeyi &ldquo;kimse hiçbir şeyin neden böyle olduğunu açıklayamıyor&rdquo; haline getiren türden küçük bir şey. Bir yıldan fazla süredir bir kod tabanında çalışmış herkes bunu hissetmiştir. Yeni olan şu: artık bu kararların bir kısmını bir AI ajanı da veriyor, kaybolup gidecek bir sohbet penceresinde, gece yarısı, kimseye sormadan.</p>
+<p>Ben de küçük, gösterişsiz bir çözüm kurdum. Adı <a href="https://github.com/imertekin/precedent"><strong>Precedent</strong></a> (emsal), ve özü tek cümleye sığıyor: bir AI ajanı, arkasındaki kararı bir sonraki oturumun — insan ya da ajan fark etmez — bulabileceği bir yere yazmadan çalıştırılabilir bir iş devralamaz.</p>
+<p>Benimle konuşan, kapsamı netleştiren, brief&rsquo;i yazan ajan artık sadece plan yapmıyor. Projenin tarihçisi olarak görev yapıyor.</p>
+<h2>İki tür unutma</h2>
+<p>AI ajanlarıyla oturumlar boyunca çalışırken bağlamı iki farklı şekilde kaybediyorsunuz.</p>
+<p>Birincisi <strong>oturum kaybı</strong> — yeni bir sohbet açıp projeyi sıfırdan anlatmak zorunda kalmak. Bu, çokça ilgi görüyor zaten. &ldquo;Hafıza&rdquo; özelliklerinin ve uzun context&rsquo;li modellerin bu kadar konuşulmasının sebebi bu.</p>
+<p>İkincisi daha sessiz ve bence daha pahalı: <strong>karar kaybı</strong>. Ne insan ne ajan, bir şeyin <em>neden</em> belirli bir şekilde yapıldığını hatırlamıyor. Kararın alındığı gerçeği değil — arkasındaki gerekçe, elenen alternatif, o kararı zorunlu kılan kısıt. Altı ay sonra bir şeyi güvenle değiştirip değiştiremeyeceğinizi belirleyen tam olarak bu, ve ilk buharlaşan da tam olarak bu.</p>
+<p>Buna karşı iki geniş yaklaşım var. Biri otomatik: her şeyi embedding&rsquo;leyip getiren bir hafıza sistemi çalıştırmak, ajan &ldquo;benzer geçmiş durumları&rdquo; istediğinde çekebilsin diye. Diğeri manuel: bir insanın gerçekten yazdığı, gerçekten güvendiği, az sayıda elle küratörlüğü yapılmış doküman tutmak. Ben ikincisini seçtim, ve neden seçtiğim konusunda dürüst olmakta fayda var — genel olarak daha iyi olduğu için değil, benim ölçeğime uyduğu için. Az sayıda proje, yavaş ve bilerek alınan kararlar, işin içinde bir ya da iki kişi. Yüksek frekanslı, düşük riskli kararlarla dolu onlarca paralel deney yürütüyorsanız, otomatik bir sistem muhtemelen bunu geçer. Bu, evrensel bir cevap değil, belirli bir tür kurulum için bir araç.</p>
+<p>Ama burada bir şeyi işaret etmek istiyorum, çünkü gerisini nasıl okuyacağını değiştiriyor: bunun gerçekte bir hafıza problemi olduğunu düşünmüyorum, ve öyle çerçevelemek onu küçültüyor. Hafıza, retrieval ile ilgili — ne olduğunu geri çekmekle. Benim sürekli çarptığım şey bir retrieval hatası değildi, bir <em>yönlendirme</em> hatasıydı: bir karar alınıyordu, sonra bir daha hiç ihtiyaç duyulduğu yere ya da ana güvenilir şekilde ulaşmıyordu. Modeller değişmeye devam edecek. Context window&rsquo;lar büyümeye devam edecek. Beş yıl sonra &ldquo;ajan hafızası&rdquo; dediğimiz şey bugünün embedding-ve-vektör-deposu yaklaşımına hiç benzemeyecek. Bunların hiçbiri asıl soruya dokunmuyor — bu kararı neden aldık — ki bu soru on yıl sonra da bugün olduğu kadar cevaba ihtiyaç duyacak. Altında yatan araçtan bağımsız olarak, üzerine bir alışkanlık inşa etmeye değer olan kısım bu.</p>
+<h2>Gerçekte ne yapıyor</h2>
+<p>Her proje küçük bir dosya setiyle başlıyor:</p>
+<pre><code>&lt;proje&gt;/
+  AGENTS.md                ← proje briefi, 200 satırın altında
+  docs/
+    PRD.md                  ← ne inşa ediyoruz
+    TECH_SPEC.md             ← nasıl
+    DECISIONS.md             ← neden (karar günlüğü)
+    DECISIONS_DRAFT.md       ← işlenmemiş notlar için inbox
+    BACKLOG.md               ← ne zaman, hangi sırayla
+  briefs/
+    DESIGN_BRIEF.md          ← sadece tasarım işi varsa
+</code></pre>
+<p>Bunların hiçbiri tek başına yeni değil. <code>DECISIONS.md</code>, Michael Nygard&rsquo;ın 2011&rsquo;de yazıya döktüğü ve o zamandan beri ciddi mühendislik kuruluşlarında sessizce standart haline gelmiş bir Architecture Decision Record formatı. <code>AGENTS.md</code> artık gerçek bir açık standart — OpenAI Ağustos 2025&rsquo;te yayınladı, Cursor, Factory, Google&rsquo;ın Jules&rsquo;u ve diğer büyük kod ajanlarının çoğu hızla benimsedi, Aralık 2025&rsquo;te de Linux Foundation bünyesindeki Agentic AI Foundation&rsquo;a devredildi. PRD-sonra-spec-sonra-backlog sıralaması, GitHub&rsquo;ın kendi Spec-Kit&rsquo;inin AI-destekli geliştirme için önerdiğine yakın. Bu parçaların hiçbirini ben icat etmedim. Benim kurduğum şey, bunların birbirine bağlanma biçimi.</p>
+<p>Her <code>DECISIONS.md</code> kaydı da klasik dört alandan fazlasını taşıyor. Düz bir evet/hayır yerine gerçek bir yaşam döngüsünden geçen bir statü — proposed, accepted, implemented, validated, ya da rejected, deprecated, superseded. Ve bir importance (önem) derecesi, öyle ki otomatik artan ID yerine UUID kullanma kararı, tüm backend&rsquo;i event-driven&rsquo;a çeviren bir kararla aynı görsel ağırlıkta günlükte durmasın. Bu ayrım, kırk kayıt arasında hangi on tanesinin gerçekten önemli olduğunu bulmaya çalışana kadar kozmetik gibi görünür.</p>
+<p>Bu bağlantının iki parçası var, ve ikincisi asıl önemsediğim parça.</p>
+<figure>
+<svg class="diag" viewBox="0 0 640 250" role="img" aria-label="Precedent döngüsü: planlama ajanı, karar günlüğü, kod ajanı, inbox">
+<defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0 8 4 0 8Z"/></marker></defs>
+<rect class="box" x="4" y="70" width="170" height="62"/><text x="18" y="94">Planlama ajanı</text><text class="sub" x="18" y="114">Project Historian</text>
+<rect class="box" x="235" y="10" width="170" height="54"/><text x="249" y="33">docs/DECISIONS.md</text><text class="sub" x="249" y="51">ADR · neden</text>
+<rect class="box" x="466" y="70" width="170" height="62"/><text x="480" y="94">Kod ajanı</text><text class="sub" x="480" y="114">kodu yazar</text>
+<rect class="box" x="235" y="180" width="170" height="54"/><text x="249" y="203">DECISIONS_DRAFT.md</text><text class="sub" x="249" y="221">inbox</text>
+<path class="arrow" marker-end="url(#ah)" d="M120 70V37H233"/>
+<path class="arrow" marker-end="url(#ah)" d="M405 37H551V68"/>
+<path class="arrow" marker-end="url(#ah)" d="M551 132V207H407"/>
+<path class="arrow" marker-end="url(#ah)" d="M235 207H89V134"/>
+<text class="sub" x="126" y="31">1 · kaydeder</text>
+<text class="loss" x="420" y="28">2 · kapı: kayıt varsa devret</text>
+<text class="sub" x="543" y="168" text-anchor="end">3 · sapma notu düşer</text>
+<text class="sub" x="12" y="246">4 · triyaj: Accepted · Rejected · Ignored</text>
+<rect class="box" x="245" y="98" width="150" height="46" stroke-dasharray="4 3"/><text x="258" y="117">Review trigger</text><text class="sub" x="258" y="134">varsayılan: sonraki faz</text>
+<path class="arrow" marker-end="url(#ah)" stroke-dasharray="3 3" d="M320 98V66"/>
+</svg>
+<figcaption>Şekil 1 — Precedent döngüsü. Kararlar koda yalnızca kayıt üzerinden akıyor (kapı); sapmalar inbox üzerinden geri dönüyor ve bir sonraki oturumda triyaj ediliyor; her kararın review trigger’ı onu yeniden doğrulamaya gönderiyor.</figcaption>
+</figure>
+<p><strong>Birinci parça kapı.</strong> Benimle konuşan, kapsamı netleştiren, brief&rsquo;i yazan planlama ajanı, ilgili karar zaten <code>docs/</code>&rsquo;ta yaşamadan kod ajanı için çalıştırılabilir bir prompt üretmiyor. &ldquo;Yazmalı&rdquo; değil. Yazmadan işi devredemiyor. Buradaki &ldquo;-emiyor&rdquo;un ne demek olduğunu net söylemem lazım, çünkü aksi halde abartacağım bir iddianın dürüst hali bu: kapı, prompt seviyesinde uygulanan sabit bir talimat; yani ajanın brief&rsquo;ini okuyup ona uyması kadar güvenilir, sistemdeki her şey gibi. Onu birinin hatırlaması gereken bir kuraldan ayıran şey <em>nerede durduğu</em>: devrin ön koşulu olarak tanımlanmış, bir kontrol listesindeki ayrı bir adım olarak değil. Kimsenin kontrol etmeyi hatırlaması gereken bir an yok; arkasında kayıt olmayan bir devir, tanım gereği bitmiş bir devir değil.</p>
+<p><strong>İkinci parça, benim de ilk seferinde yanlış yaptığım kısım.</strong> Tek yönlü bir kapı yeterli değil. Kod, plana itaatkâr kalamaz — kalamaz, çünkü plan her zaman eksiktir. Bir kütüphane beklendiği gibi davranmaz, kimsenin görmediği bir kısıt ortaya çıkar, ve özelliği uygulayan ajan küçük, mantıklı bir karar verir ki bu karar hiçbir zaman &ldquo;tek doğruluk kaynağı&rdquo; olması gereken dokümana geri dönmez. Altı ay sonra o doküman yanlıştır, ve daha kötüsü, kimse yanlış olduğunu bilmez.</p>
+<p>Bu yüzden tam olarak bir amaca hizmet eden ikinci bir dosya var, <code>DECISIONS_DRAFT.md</code>: bu küçük, o anlık kararları kaybolmadan önce yakalamak. Oraya düşen her şey hayatta kalmıyor — triyajın iki değil üç sonucu var. Bir not ya tam bir karar kaydına yükseltiliyor, ya günlükte kalan tek satırlık bir gerekçeyle reddediliyor, ya da gerçekten gürültüyse iz bırakmadan temizleniyor. Önemli olan ortadaki: <em>reddedilen</em> bir karar bile kayıt bırakıyor, ama günlük de geçen her lafın biriktiği bir çöplüğe dönmüyor. Pratikte nasıl göründüğü şöyle.</p>
+<h2>Adım adım bir örnek</h2>
+<p><em>Mekanizmayı göstermek için sadeleştirilmiş, temsili bir senaryo.</em></p>
+<p><strong>1. Oturum.</strong> Planlama ajanından yeni bir proje kurmasını istiyorum — bir şeyi takip eden küçük bir dahili araç. Kapsam üzerine konuşuyoruz, bir PRD yazıyor, ve ilk gerçek kararı kaydediyoruz: hız sınırlaması olan harici bir API&rsquo;yi veri kaynağı olarak kullanacağız, çünkü hacim bunun önemli olmayacağı kadar küçük. Bu, gerekçesiyle birlikte DECISIONS.md&rsquo;ye ADR-001 olarak giriyor.</p>
+<p><strong>Aynı hafta içinde.</strong> Kod ajanı entegrasyonu uygularken, hız sınırının anahtar başına değil IP başına uygulandığını keşfediyor — kimsenin kontrol etmediği bir şey. Spec&rsquo;te olmayan küçük bir cache katmanıyla bunu aşıyor. Bunu sessizce yapıp devam etmek yerine, <code>DECISIONS_DRAFT.md</code>&rsquo;ye tek satır düşüyor: <em>&ldquo;2026-07-14 — API IP başına hız sınırlıyor, anahtar başına değil, sınırın altında kalmak için 10 dakikalık bir cache katmanı eklendi.&rdquo;</em> Format yok, tören yok. Sadece bir not.</p>
+<p><strong>2. Oturum</strong>, birkaç gün sonra, yine planlama ajanında. Projenin briefi — bu projeyle ilgili herhangi bir oturumun başında yüklenen dosya — planlama tarafında kim okuyorsa onun için sabit bir kural taşıyor: önce inbox&rsquo;a bak. O notu buluyor, gerçekten önemli olduğuna karar veriyor (sadece kozmetik bir detay değil, gelecekteki ölçeklenmeyi kısıtlıyor) ve düzgün formatta ADR-002&rsquo;ye yükseltiyor. Inbox temizleniyor. Mekanizma konusunda dürüst olmakta fayda var: bu sihir değil, her oturumda yeniden yüklenen bir dosyadaki tek satırlık sabit bir talimat — ve ajanın onu gerçekten okuyup uyması kadar güvenilir.</p>
+<p><strong>Bir ay sonra</strong>, proje MVP fazından bir sonraki faza geçiyor. Bu geçiş yerleşik bir kontrol noktası: ilerlemeden önce, o ana kadar alınan ADR&rsquo;lere hızlı bir bakış atıp varsayımların hâlâ geçerli olup olmadığını soruyoruz. ADR-002 Validated olarak işaretleniyor — cache katmanı işe yaradı, arkasındaki varsayım doğrulandı. ADR-001&rsquo;in &ldquo;hacim önemsiz kalacak kadar küçük&rdquo; varsayımı işaretleniyor — 4 kat büyümüş, tekrar bakmaya değer — statüsü açık kalıyor, geri kalan her şey ilerliyor.</p>
+<p>Bunların hiçbiri benim sormayı hatırlamamı ya da ajanın rastgele bir tarihte bunu kendiliğinden söylemeyi hatırlamasını gerektirmedi. İşi yapı yaptı.</p>
+<h2>Rol, artefakt değil</h2>
+<p>Yukarıdakilerin hepsi, sektörün zaten bildiği şeylerin makul ölçüde doğrudan bir uygulaması — karar günlükleri yeni değil. Görmemin uzun sürdüğü şey, artefaktın hiçbir zaman asıl mesele olmadığıydı. Bütün bunu çalıştıran planlama ajanı sadece plan yapmıyor. Projenin tarihçisi olarak görev yapıyor.</p>
+<p>Bir tarihçinin işi sadece &ldquo;yazıya dök&rdquo; değil. Kararları, sadece bir şeyin karara bağlandığı gerçeğini değil, gerekçesinin de hayatta kalacağı şekilde korumak (düz bir evet/hayır yerine gerçek bir statü yaşam döngüsü olan ADR formatı). Projenin kendisini, her oturumda yeniden anlatmadan, ucuza hatırlamak (her seferinde yeniden yüklenen brief). Temiz, bitmiş bir tarih yerine dağınık, süregelen bir tarihi yönetmek (inbox, ve reddedilen bir notun kaybolmak yerine iz bırakması). Review yapmak — eski bir kararın hâlâ geçerli olup olmadığını, kimsenin uymadığı bir takvime değil kararın kendisine bağlı bir zamanlamayla gerçekten geri dönüp kontrol etmek.</p>
+<p>Ve sonra, beni bunu yazmaya asıl iten kısım geliyor, yukarıdakilerin hepsinden daha küçük ve bence daha ilginç olan kısım: <strong>bütün bunu çalıştıran skill, kendi tasarımı hakkında bir karar günlüğü tutuyor.</strong></p>
+<p>Inbox mekanizmasını eklediğimde, sadece talimatları güncellemedim — neden, alternatifin ne olduğunu ve hangi ödünleşimi kabul ettiğimi açıklayan bir ADR yazdım. Sonra bir isimlendirme hatası yakaladığımda (proje briefini <code>AGENT.md</code> diye adlandırmışım, gerçek standart olan <code>AGENTS.md</code> değil), o düzeltme de kendi kaydını aldı. &ldquo;Neden karar verdiğini yaz&rdquo; öğreten araç, bu kuralı kendi üzerine, kendinden istediği aynı disiplinle, özyinelemeli olarak uyguluyor.</p>
+<p>Kulağa küçük bir gösteriş gibi geliyor ama gerçek bir sorunu çözüyor: metodolojiler zamanla kayar, ve genelde kimse ne zaman ya da neden kaydığını söyleyemez. Bir yıl sonra bu sistemdeki bir kural garip görünürse, cevap bir Slack thread&rsquo;inde ya da yarım hatırlanan bir konuşmada gömülü değil. Aynı repoda, diğer her kararla aynı formatta, bir dosyada.</p>
+<h2>Şüpheyle yaklaşman gereken yerler</h2>
+<p>Bunu olduğundan fazla değil, az göstermeyi tercih ederim, o yüzden henüz emin olmadığım yerler şunlar.</p>
+<p>Belirli risklerden önce bir şey söylemem lazım: bu sistem bilerek hız yerine açıklanabilirliği optimize ediyor. Eğer senin bağlamın az sürtünmeyle hızlı ilerlemeyi, altı ay sonra bir seçimi açıklayabilmekten daha çok ödüllendiriyorsa, aşağıdakilerin bir kısmı güvenlik değil ek yük gibi okunacak.</p>
+<p><strong>Karar günlükleri terk ediliyor.</strong> Uygulayıcılar bunu o kadar sık anlatıyor ki istisna saymak zor: takımlar ADR&rsquo;leri coşkuyla benimsiyor ve birkaç ay içinde sessizce bırakıyor. Kanıt konusunda adil olmak gerekirse, bu çoğunlukla sahadan gelen deneyim; ADR&rsquo;lerin pratikte nasıl yaşadığına dair akademik çalışma hâlâ az (<a href="https://doi.org/10.1007/978-3-031-70797-1_22">ECSA 2024&rsquo;teki bir aksiyon araştırması</a> tam olarak bunu vurguluyor). Sık dile getirilen sebepler arasında bakım yükünün en az bağlama sahip kişiye düşmesi, ya da önemsiz kararların önemli olanların yanına birikip kimsenin günlüğe güvenmemesi var. Tek-yönlü-kapı, kaydın gerçek iş akışının dışında yaşaması sorununu hedefliyor; her kayıttaki importance derecesi, önemsiz kararların önemlileri gölgelemesi sorununu hedefliyor. Bakım yükünün en az bağlama sahip kişiye düşmesi — buna hâlâ iyi bir cevabım yok.</p>
+<p><strong>Inbox zehirlenebilir.</strong> Bir seferlik, önemsiz bir sapma kalıcı bir karara yükseltilirse, ajan yanlış bir dersi öğrenir ve tekrar tekrar öğrenmeye devam eder. Küratörlük (bir insanın ya da planlama ajanının gerçekten neyin tutulmaya değer olduğuna karar vermesi) yardımcı oluyor ama bu bir hafifletme, garanti değil.</p>
+<p><strong>Bunu küçük ölçeğin ötesinde test etmedim.</strong> Bu, az sayıda projesi ve seyrek, bilinçli kararları olan bir kurulum için inşa edildi. Büyük bir ekip ya da yüksek hızlı, çok sayıda küçük kararlı bir ortama koyunca nerede kırılacağını gerçekten bilmiyorum. Tahminim bir yerde kırılacağı ve oradan sonra otomatik bir hafıza sisteminin devralması — ama bu bir tahmin, doğrulanmış bir şey değil.</p>
+<h2>İlk yazdığımdan beri</h2>
+<p>İlk taslaktan sonra iki şey oldu, ikisi de kayda girmeyi hak ediyor.</p>
+<p><strong>Bir review trigger tetiklendi.</strong> README&rsquo;de, Claude Code&rsquo;un <code>AGENTS.md</code>&rsquo;yi native olarak okumadığını, bu yüzden <code>project-init</code>&rsquo;in onu import eden tek satırlık bir <code>CLAUDE.md</code> oluşturduğunu söyleyen bir paragraf vardı. O paragrafın kendi review trigger&rsquo;ı vardı: Claude Code&rsquo;un native desteği yayınlaması. Eylül 2026&rsquo;da, v2.1.277 ile bu oldu; <code>CLAUDE.md</code> olmadığında devreye giren bir fallback olarak. Kimsenin kontrol etmeyi hatırlaması gerekmedi; koşul, iddianın hemen yanına yazılmıştı. Paragraf ve skill güncellendi, değişiklik de skill&rsquo;in karar günlüğüne kendi kaydıyla girdi. Review mekanizmasının, aracın kendisi üzerinde tam da yapması gerekeni yapması bu.</p>
+<p><strong>Ölçmeye başladım.</strong> Yukarıdakilerin hepsi bir pratik, bir sonuç değil. Şu an bu fikirleri gerçekten çalışan bir şey üzerinde test etmek için sıfırdan küçük bir coding agent yazıyorum ve ilk ara not yayında: <a href="/yazilar/varsayim-yerine-olcum/">Varsayım yerine ölçüm</a>. Bulgularından ikisi doğrudan bu yazıya dokunuyor. Yazıya döktüğüm bir karar kodun hiçbir yerinde zorlanmıyordu; o projedeki karar tablosunda artık &ldquo;bu karar nerede zorlanıyor?&rdquo; sütunu olmasının sebebi bu. Kaydettiğim bir ders de ihtiyaç duyulduğunda getirilmedi. Bu bana &ldquo;yönlendirme&rdquo;nin ne demek olduğunu daha keskin söylemenin bir yolunu verdi: bir karar önce <em>saklanmalı</em>, sonra doğru anda <em>getirilmeli</em>, sonra <em>uygulanmalı</em>; bu kapıların her biri ayrı ayrı başarısız olabiliyor. Precedent ilk kapıyı iyi karşılıyor. Diğer ikisi, deneyin ölçmek için var olduğu şey.</p>
+<h2>Eksik olan parçayı al, gerisini bırak</h2>
+<p>Açıkça söylemekte fayda var: bu parçaların hiçbiri birbirini gerektirmiyor. Buradan sadece tek yönlü kapıyı alsan bile — bir ajanın, arkasındaki karar kalıcı bir yerde var olmadan çalıştırılabilir bir işi devralmasına izin verme — bu, şu an çalıştırdığın herhangi bir sistemde tek başına işe yarar. Inbox için de aynı, ya da revalidasyonu takvime değil kendi doğal kontrol noktalarına bağlamak için de. Ya da sadece fikrin kendisi — tarihi ikisinin değil tek bir ajanın sahiplenmesi — burada anlatılan spesifik dosya formatlarının hiçbirini almadan bile, elindeki kuruluma taşımaya değer. Bu, bir isim ve manifestoyla toptan benimsenecek bir metodoloji değil. Küçük bir alışkanlık setine daha yakın. Elindekinde eksik olanı al, gerisini bırak.</p>
+<h2>Neden yazıya döktüm</h2>
+<p>Bunların hiçbiri AI ajanlarını daha akıllı yapmıyor. <em>Kaydı</em> daha iyi yapıyor, bu daha sıkıcı ama daha kalıcı bir iyileştirme türü. Ajan, bir karar günlüğün olduğu için mimarinizi daha iyi düşünmeyecek. Ama altı ay sonra, biri — insan ya da ajan — sistemin neden garip bir şey yaptığını sorduğunda, &ldquo;kimse hatırlamıyor&rdquo; olmayan bir cevap olacak.</p>
+<p>Bu düşük bir çıta. Aynı zamanda çoğu projenin, AI-destekli olsun olmasın, sessizce geçemediği bir çıta.</p>
+</div>
+
+<section class="refs" id="refs">
+  <h2><span class="ui" lang="tr">Kaynaklar</span><span class="ui" lang="en">References</span></h2>
+  <ol>
+    <li>Nygard, M. (2011). Documenting architecture decisions. <a href="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">cognitect.com</a></li>
+    <li>Linux Foundation (2025, December 9). Formation of the Agentic AI Foundation (AAIF), anchored by MCP, goose and AGENTS.md. <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">linuxfoundation.org</a></li>
+    <li>GitHub. <i>Spec Kit.</i> <a href="https://github.com/github/spec-kit">github.com/github/spec-kit</a></li>
+    <li><i>Architecture Decision Records in Practice: An Action Research Study.</i> ECSA 2024. <a href="https://doi.org/10.1007/978-3-031-70797-1_22">doi:10.1007/978-3-031-70797-1_22</a></li>
+    <li>Anthropic. <i>How Claude remembers your project</i> (AGENTS.md). Claude Code docs. <a href="https://code.claude.com/docs/en/memory#agents-md">code.claude.com</a></li>
+    <li>Ertekin, İ. M. <i>Precedent</i> (README, skill and decision log). <a href="https://github.com/imertekin/precedent">github.com/imertekin/precedent</a></li>
+  </ol>
+</section>
+</article>
+
+<section class="citebox" id="cite">
+  <h2><span class="ui" lang="tr">Atıf</span><span class="ui" lang="en">Cite this</span></h2>
+  <p>Ertekin, İ. M. (2026). <i>Planlama ajanımı projenin tarihçisi yaptım — sonra kendi kararlarının makbuzunu da tutmasını öğrettim</i>. https://imertekin.com/yazilar/proje-tarihcisi/</p>
+  <pre id="bib">@misc{ertekin2026historian,
+  author       = {Ertekin, {\.I}lkay Murat},
+  title        = {Planlama ajanımı projenin tarihçisi yaptım — sonra kendi kararlarının makbuzunu da tutmasını öğrettim},
+  year         = {2026},
+  howpublished = {\url{https://imertekin.com/yazilar/proje-tarihcisi/}},
+  note         = {Essay. Methodology and skill: https://github.com/imertekin/precedent}
+}</pre>
+  <button type="button" data-copy="bib" data-label="BibTeX">BibTeX</button>
+</section>
+
+<div class="post-foot">
+  <section>
+    <h2><span class="ui" lang="tr">Değişiklik kaydı</span><span class="ui" lang="en">Changelog</span></h2>
+    <ol class="revlog">
+      <li><time>2026-09</time><span><span class="ui" lang="tr">v1.0 · imertekin.com’da yayında; “İlk yazdığımdan beri” bölümüyle</span><span class="ui" lang="en">v1.0 · Published on imertekin.com, with the “Since I first wrote this” section</span></span></li>
+    </ol>
+  </section>
+  <section>
+    <h2><span class="ui" lang="tr">İlgili</span><span class="ui" lang="en">Related</span></h2>
+    <ul class="related"><li><a href="/yazilar/varsayim-yerine-olcum/">Varsayım yerine ölçüm (ara not)</a><span class="badge">TR</span></li><li><a href="/writing/project-historian/">I turned my AI planning agent into the project’s historian (English)</a><span class="badge">EN</span></li><li><a href="https://github.com/imertekin/precedent">Precedent — GitHub</a><span class="badge">OSS</span></li></ul>
+  </section>
+</div>
+<footer class="margin-foot">
+  <div>
+    <h4>İlkay Murat Ertekin</h4>
+    <p>Software Engineer · <span class="ui" lang="tr">agentic sistemler</span><span class="ui" lang="en">agentic systems</span></p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Son güncelleme</span><span class="ui" lang="en">Last updated</span></h4>
+    <p>2026-09-28</p>
+  </div>
+  <div>
+    <h4><span class="ui" lang="tr">Bağlantılar</span><span class="ui" lang="en">Elsewhere</span></h4>
+    <p><a href="https://github.com/imertekin">GitHub</a> · <a href="https://orcid.org/0000-0002-1011-0284">ORCID</a> · <a href="https://twitter.com/im_ertekin">X</a><br><a href="mailto:iertekinx@gmail.com">iertekinx@gmail.com</a></p>
+  </div>
+</footer></div>
+<script>
+(() => {
+  const r = document.documentElement;
+  const langBtn = document.getElementById('langBtn');
+  const themeBtn = document.getElementById('themeBtn');
+  const setUI = (l) => {
+    r.dataset.ui = l; r.lang = l;
+    langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
+  };
+  langBtn.addEventListener('click', () => {
+    const next = r.dataset.ui === 'tr' ? 'en' : 'tr';
+    const alt = next === 'en' ? r.dataset.altEn : r.dataset.altTr;
+    if (alt) { location.href = alt; return; }
+    setUI(next);
+  });
+  const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const paint = () => {
+    const d = isDark();
+    themeBtn.querySelector('[lang=tr]').textContent = d ? 'Gündüz' : 'Gece';
+    themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
+  };
+  themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
+  setUI(r.dataset.ui || 'tr'); paint();
+})();
+</script><script>
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+  const el = document.getElementById(b.dataset.copy);
+  try { await navigator.clipboard.writeText(el.innerText); b.textContent = '✓'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(el); getSelection().removeAllRanges(); getSelection().addRange(r); }
+  setTimeout(() => b.textContent = b.dataset.label, 1400);
+}));
+</script>
+</body>
+</html>
