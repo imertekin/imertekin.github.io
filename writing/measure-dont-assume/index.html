@@ -745,8 +745,9 @@ after deleting __pycache__        → correct result
   const r = document.documentElement;
   const langBtn = document.getElementById('langBtn');
   const themeBtn = document.getElementById('themeBtn');
+  const store = (l) => { try { localStorage.setItem('ui', l); } catch (e) {} };
   const setUI = (l) => {
-    r.dataset.ui = l; r.lang = l;
+    r.dataset.ui = l; r.lang = l; store(l);
     langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
   };
   langBtn.addEventListener('click', () => {
