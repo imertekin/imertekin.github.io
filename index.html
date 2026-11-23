@@ -481,7 +481,7 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 <body>
 <div class="wrap"><header class="sheet-head">
   <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
-  <nav class="nav" aria-label="Main menu"><a href="/#work" aria-current="page">Work</a><a href="/#writing">Writing</a><a href="/#cv">CV</a></nav>
+  <nav class="nav" aria-label="Main menu"><a href="/#work" aria-current="page">Projects</a><a href="/#writing">Writing</a><a href="/#cv">CV</a></nav>
   <div class="toggles">
     <button type="button" id="themeBtn">Night</button>
   </div>
@@ -511,7 +511,7 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 
 <section class="block" id="work">
   <span id="calismalar"></span>
-  <div class="block-head"><h2>Work in progress</h2><span class="label">open source &amp; personal experiments</span></div>
+  <div class="block-head"><h2>Projects</h2><span class="label">open source &amp; personal experiments</span></div>
   <div class="work">
     <article>
       <div class="side"><span class="st">Published</span><span>open source · MIT</span><span><a href="https://github.com/imertekin/precedent">GitHub →</a></span></div>
@@ -525,12 +525,21 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
       </div>
     </article>
     <article>
-      <div class="side"><span class="st">In progress</span><span>personal experiment</span><span>link soon</span></div>
+      <div class="side"><span class="st">Written up · paused</span><span>personal experiment</span></div>
+      <div>
+        <h3>Mythic+ log coach</h3>
+        <p>A coach for World of Warcraft Mythic+ runs, built on a 14B local model. Code parses the combat log into SQLite and works out candidate findings; the model only writes them up. I compared the local model with four Claude models on the same input.</p>
+        <p class="card-link"><a href="/writing/what-the-model-was-shown/">Essay: What the model was shown →</a></p>
+        <div class="tags"><span>qwen3:14b · Ollama</span><span>combat log → SQLite</span><span>tool-calling agent</span><span>fixed coaching pipeline</span><span>number and citation checks</span><span>held-out runs</span><span>five-model comparison</span></div>
+      </div>
+    </article>
+    <article>
+      <div class="side"><span class="st">Paused</span><span>personal experiment</span><span><a href="/writing/measure-dont-assume/">Interim note: Measure, don’t assume →</a></span></div>
       <div>
         <h3>Coding agent harness experiment</h3>
         <p>I’m writing the core pieces of a small coding agent myself, without an agent framework, to see in practice where the boundaries lie between model, harness, tools, state, traces, memory and evaluation. The rule is simple: measure behaviour before assuming it.</p>
         <p style="font-size:.95rem;color:var(--ink-2)">Inspired by the SWE-agent team’s <a href="https://github.com/SWE-agent/mini-swe-agent">mini-swe-agent</a>, which showed how far a small, readable agent can go.</p>
-        <div class="tags"><span>shared model contract</span><span>Gemini provider</span><span>deterministic mock</span><span>cassette / replay</span><span>agent loop</span><span>context / state</span><span>tool registry</span><span>read_file · list_files · search_code</span><span>JSONL trace</span><span>NullMemory baseline</span><span>edit_file · run_tests</span><span>read-only git</span><span>allowlisted shell</span><span>target: tomlkit</span></div>
+        <div class="tags"><span>shared model contract</span><span>Gemini provider</span><span>deterministic mock</span><span>cassette / replay</span><span>agent loop</span><span>context / state</span><span>tool registry</span><span>read_file · list_files · search_code</span><span>JSONL trace</span><span>NullMemory baseline</span><span>edit_file · run_tests</span><span>git_diff</span><span>target: tomlkit</span></div>
         <p class="card-link"><a href="/writing/measure-dont-assume/">Interim note: Measure, don’t assume — seven assumptions that turned out wrong →</a></p>
         <details>
           <summary>Seven assumptions that turned out wrong</summary>
