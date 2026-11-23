@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-ui="en" data-alt-tr="/yazilar/proje-tarihcisi/">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,8 +12,6 @@
 <meta property="og:url" content="https://imertekin.com/writing/project-historian/">
 <meta property="og:type" content="website">
 <meta name="author" content="İlkay Murat Ertekin">
-<link rel="alternate" hreflang="tr" href="https://imertekin.com/yazilar/proje-tarihcisi/">
-<link rel="alternate" hreflang="en" href="https://imertekin.com/writing/project-historian/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
@@ -62,8 +60,6 @@ a { color: var(--water); text-decoration-thickness: 1px; text-underline-offset: 
 a:hover { text-decoration-thickness: 2px; }
 ::selection { background: color-mix(in srgb, var(--contour) 35%, transparent); }
 
-/* bilingual UI: every UI string exists twice */
-:root[data-ui="tr"] [lang="en"].ui, :root[data-ui="en"] [lang="tr"].ui { display: none !important; }
 
 .wrap { max-width: 68rem; margin: 0 auto; padding: 0 16px; }
 @media (min-width: 720px) { .wrap { padding: 0 32px; } }
@@ -485,13 +481,12 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 <body>
 <div class="wrap"><header class="sheet-head">
   <a class="sheet-id" href="/"><b>İME</b><span>imertekin.com</span></a>
-  <nav class="nav" aria-label="Ana menü"><a href="/#calismalar"><span class="ui" lang="tr">Çalışmalar</span><span class="ui" lang="en">Work</span></a><a href="/#yazilar" aria-current="page"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a><a href="/#cv"><span class="ui" lang="tr">Özgeçmiş</span><span class="ui" lang="en">CV</span></a></nav>
+  <nav class="nav" aria-label="Main menu"><a href="/#calismalar">Work</a><a href="/#yazilar" aria-current="page">Writing</a><a href="/#cv">CV</a></nav>
   <div class="toggles">
-    <button type="button" id="langBtn" aria-label="Dil / Language"><b>TR</b> / EN</button>
-    <button type="button" id="themeBtn"><span class="ui" lang="tr">Gece</span><span class="ui" lang="en">Night</span></button>
+    <button type="button" id="themeBtn">Night</button>
   </div>
 </header>
-<nav class="crumbs"><a href="/#yazilar"><span class="ui" lang="tr">Yazılar</span><span class="ui" lang="en">Writing</span></a> / <span class="ui" lang="tr">Makale</span><span class="ui" lang="en">Essay</span></nav>
+<nav class="crumbs"><a href="/#yazilar">Writing</a> / Essay</nav>
 
 <header class="post-head" lang="en">
   <h1>I Turned My AI Planning Agent Into the Project&rsquo;s Historian — And Made It Keep Receipts on Itself, Too</h1>
@@ -499,11 +494,10 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 </header>
 
 <dl class="survey-strip">
-  <div><dt><span class="ui" lang="tr">Tarih</span><span class="ui" lang="en">Date</span></dt><dd>2026-09</dd></div>
-  <div><dt><span class="ui" lang="tr">Durum</span><span class="ui" lang="en">Status</span></dt><dd><svg class="status done" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="fill"/></svg> <span class="ui" lang="tr">kararlı</span><span class="ui" lang="en">stable</span></dd></div>
-  <div><dt><span class="ui" lang="tr">Sürüm</span><span class="ui" lang="en">Version</span></dt><dd>1.0</dd></div>
-  <div><dt><span class="ui" lang="tr">Dil</span><span class="ui" lang="en">Language</span></dt><dd><span class="badge">EN</span> <a href="/yazilar/proje-tarihcisi/" hreflang="tr">TR →</a></dd></div>
-  <div><dt><span class="ui" lang="tr">Okuma</span><span class="ui" lang="en">Reading</span></dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 <span class="ui" lang="tr">dk</span><span class="ui" lang="en">min</span></dd></div>
+  <div><dt>Date</dt><dd>2026-09</dd></div>
+  <div><dt>Status</dt><dd><svg class="status done" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.2" class="fill"/></svg> stable</dd></div>
+  <div><dt>Version</dt><dd>1.0</dd></div>
+  <div><dt>Reading</dt><dd><span class="scalebar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span> ~12 min</dd></div>
 </dl>
 
 <p class="ongoing">The canonical, most current description of the methodology is the <a href="https://github.com/imertekin/precedent">Precedent README</a>; where this essay and the README differ, the README wins.</p>
@@ -590,7 +584,7 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 </div>
 
 <section class="refs" id="refs">
-  <h2><span class="ui" lang="tr">Kaynaklar</span><span class="ui" lang="en">References</span></h2>
+  <h2>References</h2>
   <ol>
     <li>Nygard, M. (2011). Documenting architecture decisions. <a href="https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions">cognitect.com</a></li>
     <li>Linux Foundation (2025, December 9). Formation of the Agentic AI Foundation (AAIF), anchored by MCP, goose and AGENTS.md. <a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">linuxfoundation.org</a></li>
@@ -603,7 +597,7 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 </article>
 
 <section class="citebox" id="cite">
-  <h2><span class="ui" lang="tr">Atıf</span><span class="ui" lang="en">Cite this</span></h2>
+  <h2>Cite this</h2>
   <p>Ertekin, İ. M. (2026). <i>I turned my AI planning agent into the project’s historian — and made it keep receipts on itself, too</i>. https://imertekin.com/writing/project-historian/</p>
   <pre id="bib">@misc{ertekin2026historian,
   author       = {Ertekin, {\.I}lkay Murat},
@@ -617,54 +611,38 @@ figcaption { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); m
 
 <div class="post-foot">
   <section>
-    <h2><span class="ui" lang="tr">Değişiklik kaydı</span><span class="ui" lang="en">Changelog</span></h2>
+    <h2>Changelog</h2>
     <ol class="revlog">
-      <li><time>2026-09</time><span><span class="ui" lang="tr">v1.0 · imertekin.com’da yayında; “İlk yazdığımdan beri” bölümüyle</span><span class="ui" lang="en">v1.0 · Published on imertekin.com, with the “Since I first wrote this” section</span></span></li>
+      <li><time>2026-09</time><span>v1.0 · Published on imertekin.com, with the “Since I first wrote this” section</span></li>
     </ol>
   </section>
   <section>
-    <h2><span class="ui" lang="tr">İlgili</span><span class="ui" lang="en">Related</span></h2>
-    <ul class="related"><li><a href="/writing/measure-dont-assume/">Measure, don’t assume (interim note)</a><span class="badge">EN</span></li><li><a href="/yazilar/proje-tarihcisi/">Planlama ajanımı projenin tarihçisi yaptım (Türkçe)</a><span class="badge">TR</span></li><li><a href="https://github.com/imertekin/precedent">Precedent — GitHub</a><span class="badge">OSS</span></li></ul>
+    <h2>Related</h2>
+    <ul class="related"><li><a href="/writing/measure-dont-assume/">Measure, don’t assume (interim note)</a><span class="badge">EN</span></li><li><a href="https://github.com/imertekin/precedent">Precedent — GitHub</a><span class="badge">OSS</span></li></ul>
   </section>
 </div>
 <footer class="margin-foot">
   <div>
     <h4>İlkay Murat Ertekin</h4>
-    <p>Software Engineer · <span class="ui" lang="tr">agentic sistemler</span><span class="ui" lang="en">agentic systems</span></p>
+    <p>Software Engineer · agentic systems</p>
   </div>
   <div>
-    <h4><span class="ui" lang="tr">Son güncelleme</span><span class="ui" lang="en">Last updated</span></h4>
+    <h4>Last updated</h4>
     <p>2026-09-28</p>
   </div>
   <div>
-    <h4><span class="ui" lang="tr">Bağlantılar</span><span class="ui" lang="en">Elsewhere</span></h4>
+    <h4>Elsewhere</h4>
     <p><a href="https://github.com/imertekin">GitHub</a> · <a href="https://orcid.org/0000-0002-1011-0284">ORCID</a> · <a href="https://twitter.com/im_ertekin">X</a><br><a href="mailto:iertekinx@gmail.com">iertekinx@gmail.com</a></p>
   </div>
 </footer></div>
 <script>
 (() => {
   const r = document.documentElement;
-  const langBtn = document.getElementById('langBtn');
   const themeBtn = document.getElementById('themeBtn');
-  const store = (l) => { try { localStorage.setItem('ui', l); } catch (e) {} };
-  const setUI = (l) => {
-    r.dataset.ui = l; r.lang = l; store(l);
-    langBtn.innerHTML = l === 'tr' ? '<b>TR</b> / EN' : 'TR / <b>EN</b>';
-  };
-  langBtn.addEventListener('click', () => {
-    const next = r.dataset.ui === 'tr' ? 'en' : 'tr';
-    const alt = next === 'en' ? r.dataset.altEn : r.dataset.altTr;
-    if (alt) { location.href = alt; return; }
-    setUI(next);
-  });
   const isDark = () => r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  const paint = () => {
-    const d = isDark();
-    themeBtn.querySelector('[lang=tr]').textContent = d ? 'Gündüz' : 'Gece';
-    themeBtn.querySelector('[lang=en]').textContent = d ? 'Day' : 'Night';
-  };
+  const paint = () => { themeBtn.textContent = isDark() ? 'Day' : 'Night'; };
   themeBtn.addEventListener('click', () => { r.dataset.theme = isDark() ? 'light' : 'dark'; paint(); });
-  setUI(r.dataset.ui || 'en'); paint();
+  paint();
 })();
 </script><script>
 document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
