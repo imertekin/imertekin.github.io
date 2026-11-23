@@ -5,9 +5,9 @@ Personal site served at https://imertekin.com via GitHub Pages.
 ## Site structure
 
 - Static HTML only — no build step, no framework.
-- Every page carries both languages side by side as `class="ui" lang="tr|en"` pairs; the language toggle shows one and hides the other.
-- When you add or change visible text, add/update **both** the TR and the EN element. Never leave a string in only one language.
-- Turkish articles live under `yazilar/`, their English counterparts under `writing/`.
+- The site is English-only (`lang="en"`); there is no language toggle and no Turkish UI.
+- Articles live under `writing/`.
+- `yazilar/*/index.html` are redirect stubs (meta refresh + JS) that send the old Turkish article URLs to their English versions. Keep them; the Turkish texts are in git history.
 
 ## Commit rules
 
